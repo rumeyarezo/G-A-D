@@ -1,19 +1,6 @@
-Contas, cartões, cofrinhos, metas e categorias agora são individuais; você escolhe o que compartilhar (selo “Compartilhada”).
-Quem paga escolhe a conta: o saldo muda só nela e o parceiro recebe o aviso.
-No celular, o logo do Grana a Dois no topo sincroniza e busca atualizações. Zoom padrão volta a 100%.
-Convites: quem já tem conta agora vê o convite ao abrir o app e aceita com um toque.
-Barra de texto com botão +: atualizar saldo, compra no crédito/débito, guardar no cofrinho e pagar conta.
-Menu do botão + no celular organizado acima do botão, sem sobrepor.
-Avisos com o app fechado: parceiro lançou/pagou e vencimentos do dia chegam por notificação push.
-# Uma linha por novidade (as 3 primeiras aparecem no aviso de atualização). Linhas com # são ignoradas.
-Lançamento por texto entende qualquer número como valor e abre como receita com "receber" ou "recebi".
-Crie categorias e subcategorias na hora do lançamento; botão Desfazer por 2 segundos após cada ação.
-Receitas com situação Recebido / A receber / A receber - Em atraso e botão Receber; índices de juros do Banco Central nos investimentos.
-Zoom em lista de 50% a 150% e rolagem do desktop liberada.
-MEU PERFIL: Tema, status de salvamento e compartilhamento sairam do cabecalho (erro de salvamento ainda avisa la).
-Foto de perfil: escolha uma imagem e ela e reduzida para preencher o circulo do perfil.
-Baixar backup, restaurar backup e zerar conta (com contagem de 9 segundos e escolha do que manter).
-Card Despesas em aberto no Inicio: total das pendentes e lista com botao Pagar.
-Ao digitar na barra de lancamento, o app sugere os comandos da lista (ex.: "cred" sugere Compra no credito).
-Notificacoes de bancos: o app entende o texto (por link de automacao ou Compartilhar) e abre a propria notificacao que leva ao lancamento de despesa ou receita.
-Lembrete de registrar gastos: aviso quando passam 3 dias sem lancar nada.
+# SOMENTE as mudancas do ultimo upload. A cada nova versao: mova estas linhas para NOVIDADES-HISTORICO.txt e escreva so as novas.
+# Uma linha por novidade (todas aparecem no aviso de atualizacao, ate 6). Linhas com # sao ignoradas.
+Listas de compra: digitou um item que não existe? Agora dá para cadastrá-lo na hora, direto da busca.
+Listas de compra: itens já marcados vão para uma seção "Comprados" ao final, e um filtro rápido mostra só "Falta pegar" ou "No carrinho".
+Listas de compra: itens do Mercado ganharam um campo de "Estoque em casa", para marcar quanto ainda tem.
+Barra de lançamento: novo comando "Compra no Pix", para compras pagas direto da conta.
