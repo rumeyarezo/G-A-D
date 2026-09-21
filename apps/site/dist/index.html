@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Grana a Dois">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<script>window.GRANA_BUILD={"v": "0657d63a5c", "notas": ["Contas, cartões, cofrinhos, metas e categorias agora são individuais; você escolhe o que compartilhar (selo “Compartilhada”).", "Quem paga escolhe a conta: o saldo muda só nela e o parceiro recebe o aviso.", "No celular, o logo do Grana a Dois no topo sincroniza e busca atualizações. Zoom padrão volta a 100%.", "Convites: quem já tem conta agora vê o convite ao abrir o app e aceita com um toque.", "Barra de texto com botão +: atualizar saldo, compra no crédito/débito, guardar no cofrinho e pagar conta.", "Menu do botão + no celular organizado acima do botão, sem sobrepor.", "Avisos com o app fechado: parceiro lançou/pagou e vencimentos do dia chegam por notificação push.", "Lançamento por texto entende qualquer número como valor e abre como receita com \"receber\" ou \"recebi\".", "Crie categorias e subcategorias na hora do lançamento; botão Desfazer por 2 segundos após cada ação.", "Receitas com situação Recebido / A receber / A receber - Em atraso e botão Receber; índices de juros do Banco Central nos investimentos.", "Zoom em lista de 50% a 150% e rolagem do desktop liberada.", "MEU PERFIL: Tema, status de salvamento e compartilhamento sairam do cabecalho (erro de salvamento ainda avisa la).", "Foto de perfil: escolha uma imagem e ela e reduzida para preencher o circulo do perfil.", "Baixar backup, restaurar backup e zerar conta (com contagem de 9 segundos e escolha do que manter).", "Card Despesas em aberto no Inicio: total das pendentes e lista com botao Pagar.", "Ao digitar na barra de lancamento, o app sugere os comandos da lista (ex.: \"cred\" sugere Compra no credito).", "Notificacoes de bancos: o app entende o texto (por link de automacao ou Compartilhar) e abre a propria notificacao que leva ao lancamento de despesa ou receita.", "Lembrete de registrar gastos: aviso quando passam 3 dias sem lancar nada.", "Formulario de lancamento redesenhado: valor em destaque, secoes com icones e listas suspensas modernas (folha arredondada que sobe da base).", "Recorrencias no celular reorganizadas: titulo, etiquetas, frequencia, valor e botoes Editar/Excluir em linhas separadas.", "Formularios sem movimento lateral: so rolagem vertical (campos com 16px para o iPhone nao dar zoom).", "Meu perfil agora e o ultimo item do menu. Nova Area do empreendedor em Configuracoes (razao social, CNPJ, conta PJ, chaves Pix e QR Code da loja).", "Novo cartao em janela com preview: tipo Credito, Debito ou Debito e Credito; limite so aparece com credito; final do cartao, fechamento, vencimento, melhor dia, cor, cartao padrao e adicionais.", "Nova conta em janela com preview: instituicao, tipo, grupo (PF, PJ, Investimento), saldo inicial, cheque especial, cor e opcao Ativar/Inativar (editavel depois em Editar).", "Nova secao Open Finance (Disponivel em breve). Barra lateral do computador 10% mais estreita.", "Configuracoes ganhou abas: Geral, Atividade (historico com filtros de 1 a 90 dias, tipo de acao, quem fez e antes/depois) e Seguranca.", "Seguranca: bloqueio do app por digital ou rosto, aparelhos conectados, verificacao em duas etapas e troca de senha.", "Nova secao Relatorios: receitas x despesas, despesas por subcategoria, top 5 x mes anterior e gasto medio por dia (Geral, PF, PJ, Investimentos).", "Numeros em destaque agora usam a fonte Inter, comum em apps de financas.", "O bloqueio por biometria não pede de novo ao atualizar a página: só depois de 5 minutos fora do app (você pode mudar o tempo em Segurança).", "Nova aba Listas de compra: Mercado com lista geral por categorias (Frutas e Legumes, Comida, Snack, Limpeza, Utensílio), lista de compras dos itens que \"Precisam comprar\" e listas por tema (ex.: desejos) com prioridade, preço sugerido e unidade.", "Cada item tem check de comprado, valor atual e último valor registrado, com a diferença entre os dois.", "Barra de lançamento: \"recebi/receber/salário\" abre um recebimento e \"precisa comprar 2 leite, arroz\" coloca itens na lista de compras (item novo pede a categoria)."]};</script>
+<script>window.GRANA_BUILD={"v": "57a3176447", "notas": ["Pagar e Receber agora abrem uma janela: valor pago (baixa parcial), juros/multa e data do pagamento (retroativa).", "Listas de compra: campo \"Estou levando\" soma quantidade × valor atual no resumo da compra, em tempo real.", "Cada preço mostra a unidade (/kg, /un) e tem a opção \"Este item está em promoção\".", "Notificações: marcar como lidas só apaga o selo; a lista guarda sempre as últimas 20."]};</script>
 <style>html,body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -178,6 +178,8 @@ a{color:inherit;}
 .popover-body{max-height:360px; overflow-y:auto;}
 .notif-row{display:flex; gap:10px; padding:11px 15px; border-bottom:1px solid var(--border);}
 .notif-row:last-child{border-bottom:0;}
+.notif-row.lida{opacity:.62;} .notif-row.nova .notif-txt{font-weight:700;} #notif-clear:disabled{opacity:.4; cursor:default;}
+.popover-body#notif-list{max-height:min(60vh,460px); overflow-y:auto;}
 .notif-dot{width:8px; height:8px; border-radius:50%; margin-top:6px; flex:none;}
 .notif-dot.good{background:var(--good);}
 .notif-dot.bad{background:var(--critical);}
@@ -821,6 +823,17 @@ html,body{overscroll-behavior-x:none;}
   .ls-row > :nth-child(1){grid-area:c;} .ls-row > .ls-main{grid-area:n;} .ls-row > .ls-precos{grid-area:p;} .ls-row > .ls-acts{grid-area:a;}
   .ls-resumo{gap:14px;} .ls-resumo .btn{margin-left:0; width:100%; justify-content:center;} .ls-head-acts{width:100%;} .ls-head-acts .btn{flex:1; justify-content:center;}
 }
+
+/* ===== round 12 ===== */
+.ls-un{font-style:normal; color:var(--accent-strong); font-weight:800; text-transform:none; letter-spacing:0;}
+.ls-promo{display:flex; align-items:center; gap:6px; margin-top:6px; font-size:11.5px; font-weight:600; color:var(--text-secondary); cursor:pointer; text-transform:none; letter-spacing:0;}
+.ls-promo input{width:15px; height:15px; accent-color:var(--accent);} .ls-promo.on{color:var(--warn);}
+.ls-promo-tag{font-style:normal; font-size:9.5px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--warn); background:var(--warn-soft); border-radius:999px; padding:1px 6px; margin-left:5px;}
+.ls-dif.promo{background:var(--warn-soft); color:var(--warn);}
+.ls-subtot{font-size:12px; color:var(--text-muted); margin-top:6px; min-height:16px; font-family:var(--font-mono);} .ls-subtot b{color:var(--text);}
+.ls-vals{display:flex; gap:22px; flex-wrap:wrap; align-items:center;} .ls-vals small{display:block; font-size:10.5px; color:var(--warn); font-weight:700;}
+.ls-total b{color:var(--accent-strong); font-size:19px;}
+.bx-resumo{margin-top:12px; padding:10px 12px; border-radius:var(--r-sm); background:var(--surface-2); font-size:12.5px; color:var(--text-secondary);} .bx-resumo b{font-family:var(--font-mono); color:var(--text);}
 </style>
 
 <div id="toast-wrap"></div>
@@ -1154,7 +1167,7 @@ let categorias = [
   {id:'pets', nome:'Pets', tipo:'despesa', subs:['Ração','Veterinário','Pet shop']},
   {id:'cuidados', nome:'Cuidados pessoais', tipo:'despesa', subs:['Salão / barbearia','Cosméticos','Estética']},
   {id:'familia', nome:'Filhos e família', tipo:'despesa', subs:['Escola','Brinquedos','Mesada']},
-  {id:'dividas', nome:'Dívidas e taxas', tipo:'despesa', subs:['Empréstimo','Juros do cartão','Tarifas bancárias','Impostos / IR']},
+  {id:'dividas', nome:'Dívidas e taxas', tipo:'despesa', subs:['Empréstimo','Juros do cartão','Juros e multas','Tarifas bancárias','Impostos / IR']},
   {id:'doacoes', nome:'Doações', tipo:'despesa', subs:['Dízimo','Ofertas','Caridade']},
   {id:'outrosd', nome:'Outros', tipo:'despesa', subs:['Diversos']},
   {id:'trabalho', nome:'Trabalho', tipo:'receita', subs:['Salário','13º salário','Férias','Bônus / PLR']},
@@ -1696,7 +1709,7 @@ function applyStateSnapshot(s){
   if(Array.isArray(s.investimentos)) investimentos = s.investimentos;
   if(Array.isArray(s.metas)) metas = partir(s.metas, visivelItem, 'metas');
   if(Array.isArray(s.transacoes)) transacoes = partir(s.transacoes, visivelTx, 'transacoes');
-  if(Array.isArray(s.notificacoes)) notificacoes = s.notificacoes;
+  if(Array.isArray(s.notificacoes)) notificacoes = s.notificacoes.slice(0, NOTIF_MAX);
   if(s.fotos && typeof s.fotos==='object') fotos = {caio:s.fotos.caio||'', marina:s.fotos.marina||''};
   if(Array.isArray(s.atividades)) atividades = sanAtividades(s.atividades);
   if(s.dispositivos && typeof s.dispositivos==='object') dispositivos = {caio:sanDispositivos(s.dispositivos.caio), marina:sanDispositivos(s.dispositivos.marina)};
@@ -2120,7 +2133,7 @@ function sanCompras(c){
     out.itens.push({id:txtA(i.id,40)||uid('it'), listaId:i.listaId, nome:txtA(i.nome,80).trim(), cat:COMPRA_CATS.includes(i.cat)?i.cat:null,
       qtd:(isFinite(q)&&q>0)?Math.min(q,9999):1, un:COMPRA_UN.some(u=>u[0]===i.un)?i.un:'un', prio:['alta','media','baixa'].includes(i.prio)?i.prio:'media',
       precoSug:numOuNull(i.precoSug), precoAtual:numOuNull(i.precoAtual), precoUltimo:numOuNull(i.precoUltimo),
-      precos:(Array.isArray(i.precos)?i.precos:[]).map(numOuNull).filter(v=>v!==null).slice(-30),
+      precos:(Array.isArray(i.precos)?i.precos:[]).map(numOuNull).filter(v=>v!==null).slice(-30), levando:numOuNull(i.levando), promo:i.promo===true, promoUltimo:i.promoUltimo===true,
       precisa:i.precisa===true, comprado:i.comprado===true, obs:txtA(i.obs,120), ts:Number(i.ts)||0});
   });
   return out;
@@ -2132,14 +2145,21 @@ function precoMedio(it){ const a = it.precos.slice(); if(it.precoAtual!=null) a.
 function precoRef(it){ if(it.precoAtual!=null) return it.precoAtual; const m = precoMedio(it); if(m!=null) return m; return it.precoSug!=null ? it.precoSug : 0; }
 /* o valor atual vira "último valor registrado" (e entra na média); depois o atual recebe o novo valor */
 function deslocarPreco(it, novo){
-  if(it.precoAtual!=null){ it.precoUltimo = it.precoAtual; it.precos.push(it.precoAtual); if(it.precos.length>30) it.precos.shift(); }
-  it.precoAtual = novo;
+  if(it.precoAtual!=null){ it.precoUltimo = it.precoAtual; it.promoUltimo = !!it.promo; it.precos.push(it.precoAtual); if(it.precos.length>30) it.precos.shift(); }
+  it.precoAtual = novo; it.promo = false;
 }
 function colocarNoCarrinho(it, qtd){
   if(!it.precisa){ deslocarPreco(it, null); it.precisa = true; }
-  it.comprado = false; if(qtd>0) it.qtd = qtd; it.ts = Date.now();
+  it.comprado = false; it.levando = null; if(qtd>0) it.qtd = qtd; it.ts = Date.now();
 }
-const lsNum = v => { const n = parseFloat(String(v||'').replace(/\./g,'').replace(',','.')); return isFinite(n) && n>=0 ? Math.round(n*100)/100 : null; };
+const lsNum = v => {
+  let t = String(v==null?'':v).trim().replace(/\s/g,''); if(!t) return null;
+  if(t.includes(',')) t = t.replace(/\./g,'').replace(',','.');
+  else if(/^\d{1,3}(\.\d{3})+$/.test(t)) t = t.replace(/\./g,'');
+  const n = parseFloat(t); return isFinite(n) && n>=0 ? Math.round(n*100)/100 : null;
+};
+const levEf = it => it.levando!=null ? it.levando : it.qtd;
+const subItem = it => it.precoAtual==null ? 0 : round2(levEf(it)*it.precoAtual);
 const lsEditNum = v => v==null ? '' : String(v).replace('.',',');
 const lsPreco = (v, un) => v==null ? '<span class="ls-vazio">—</span>' : `${fmtBRL(v)}<small>/${COMPRA_UN_LABEL[un]||'un'}</small>`;
 const lsQtd = q => String(Math.round(q*100)/100).replace('.',',');
@@ -2162,6 +2182,7 @@ function linhaCompra(it, modo){
   if(!merc && it.precoSug!=null) meta.push(`<span class="ls-qtd">sugerido ${lsPreco(it.precoSug, it.un)}</span>`);
   if(it.obs) meta.push(`<span class="ls-obs">${escHtml(it.obs)}</span>`);
   const media = precoMedio(it);
+  const un = COMPRA_UN_LABEL[it.un]||'un';
   const lead = modo==='catalogo'
     ? `<label class="switch ls-sw" title="Precisa comprar"><input type="checkbox" data-ls-precisa="${it.id}" ${it.precisa?'checked':''}><span class="switch-track"></span></label>`
     : `<label class="ls-chk" title="Marcar como comprado"><input type="checkbox" data-ls-chk="${it.id}" ${it.comprado?'checked':''}><span>${icon('check')}</span></label>`;
@@ -2170,15 +2191,33 @@ function linhaCompra(it, modo){
     <div class="ls-main"><div class="ls-nome">${escHtml(it.nome)}</div><div class="ls-meta">${meta.join('')}</div></div>
     <div class="ls-precos">
       ${modo==='catalogo'?`<div class="ls-p"><span>Médio</span><b>${lsPreco(media, it.un)}</b></div>`:''}
-      <div class="ls-p"><span>Último valor</span><b>${lsPreco(it.precoUltimo, it.un)}</b></div>
-      <div class="ls-p"><span>Valor atual</span><input type="text" inputmode="decimal" class="ls-in" data-ls-atual="${it.id}" value="${lsEditNum(it.precoAtual)}" placeholder="0,00" aria-label="Valor atual de ${escHtml(it.nome)}"></div>
-      ${difPreco(it)}
+      <div class="ls-p"><span>Último valor</span><b>${lsPreco(it.precoUltimo, it.un)}${it.precoUltimo!=null&&it.promoUltimo?'<em class="ls-promo-tag">promo</em>':''}</b></div>
+      <div class="ls-p"><span>Valor atual <i class="ls-un">/${un}</i></span><input type="text" inputmode="decimal" class="ls-in" data-ls-atual="${it.id}" value="${lsEditNum(it.precoAtual)}" placeholder="0,00" aria-label="Valor atual de ${escHtml(it.nome)}, por ${un}">
+        <label class="ls-promo ${it.promo?'on':''}"><input type="checkbox" data-ls-promo="${it.id}" ${it.promo?'checked':''}> Este item está em promoção</label></div>
+      ${modo!=='catalogo'?`<div class="ls-p"><span>Estou levando <i class="ls-un">(${un})</i></span><input type="text" inputmode="decimal" class="ls-in" data-ls-levando="${it.id}" value="${lsEditNum(it.levando)}" placeholder="${lsEditNum(it.qtd)}" aria-label="Quantidade que estou levando de ${escHtml(it.nome)}, em ${un}">
+        <div class="ls-subtot" data-ls-sub="${it.id}">${it.precoAtual!=null?`= <b>${fmtBRL(subItem(it))}</b>`:''}</div></div>`:''}
+      <span class="ls-difs" data-ls-dif="${it.id}">${difHtml(it)}</span>
     </div>
     <div class="ls-acts">
       <button type="button" class="btn btn-ghost btn-sm" data-ls-upd="${it.id}" title="Atualizar preço: o valor atual vira o último registrado" aria-label="Atualizar preço">${icon('repeat')}</button>
       <button type="button" class="btn btn-ghost btn-sm" data-ls-edit="${it.id}" title="Editar" aria-label="Editar">${icon('edit')}</button>
       <button type="button" class="btn btn-ghost btn-sm" data-ls-del="${it.id}" title="Excluir" aria-label="Excluir">${icon('trash')}</button>
     </div></div>`;
+}
+const difHtml = it => (it.promo?'<span class="ls-dif promo">★ promoção</span>':'') + difPreco(it);
+/* resumo da compra: Já no carrinho = soma de (quantidade que estou levando × valor atual) dos itens marcados */
+function lsResumoVals(lista){
+  const todos = itensDe(lista.id);
+  if(lista.tipo==='mercado'){
+    const cart = todos.filter(i=>i.precisa), feitos = cart.filter(i=>i.comprado);
+    const estim = cart.reduce((a,i)=>a+i.qtd*precoRef(i),0), gasto = feitos.reduce((a,i)=>a+subItem(i),0);
+    const semPreco = feitos.filter(i=>i.precoAtual==null).length;
+    return `<div><span>Na lista</span><b>${cart.length} ${cart.length===1?'item':'itens'}</b></div><div><span>Comprados</span><b>${feitos.length}</b></div><div><span>Estimado</span><b>${fmtBRL(estim)}</b></div><div class="ls-total"><span>Já no carrinho</span><b id="ls-gasto">${fmtBRL(gasto)}</b>${semPreco?`<small>${semPreco} sem valor atual</small>`:''}</div>`;
+  }
+  const feitos = todos.filter(i=>i.comprado);
+  const falta = todos.filter(i=>!i.comprado).reduce((a,i)=>a+i.qtd*(i.precoAtual!=null?i.precoAtual:(i.precoSug||0)),0);
+  const gasto = feitos.reduce((a,i)=>a+subItem(i),0);
+  return `<div><span>Itens</span><b>${todos.length}</b></div><div><span>Comprados</span><b>${feitos.length}</b></div><div><span>Falta comprar</span><b>${fmtBRL(falta)}</b></div><div class="ls-total"><span>Já no carrinho</span><b id="ls-gasto">${fmtBRL(gasto)}</b></div>`;
 }
 function renderListas(){
   garantirMercado();
@@ -2199,10 +2238,8 @@ function renderListas(){
     const abas = `<div class="ls-tabs" role="tablist"><button type="button" class="${lsAba==='carrinho'?'ativo':''}" data-ls-aba="carrinho">${icon('cart')} Lista de compras <b>${cart.length}</b></button><button type="button" class="${lsAba==='catalogo'?'ativo':''}" data-ls-aba="catalogo">${icon('layers')} Todos os itens <b>${todos.length}</b></button></div>`;
     if(lsAba==='carrinho'){
       const feitos = cart.filter(i=>i.comprado);
-      const estim = cart.reduce((a,i)=>a+i.qtd*precoRef(i),0);
-      const gasto = feitos.reduce((a,i)=>a+i.qtd*precoRef(i),0);
       const grupos = ['', ...COMPRA_CATS].map(c=>({c, its:cart.filter(i=>(i.cat||'')===c && passa(i))})).filter(g=>g.its.length);
-      corpo = abas + `<div class="ls-resumo card"><div><span>Na lista</span><b>${cart.length} ${cart.length===1?'item':'itens'}</b></div><div><span>Comprados</span><b>${feitos.length}</b></div><div><span>Estimado</span><b>${fmtBRL(estim)}</b></div><div><span>Já no carrinho</span><b>${fmtBRL(gasto)}</b></div>
+      corpo = abas + `<div class="ls-resumo card"><div class="ls-vals" id="ls-vals">${lsResumoVals(lista)}</div>
         <button type="button" class="btn btn-primary btn-sm" id="ls-concluir" ${feitos.length?'':'disabled'}>${icon('check')} Concluir compra</button></div>`
         + (cart.length ? grupos.map(g=>`<div class="ls-grupo"><div class="ls-grupo-t">${g.c||'Sem categoria'}<span>${g.its.length}</span></div>${g.its.map(i=>linhaCompra(i,'carrinho')).join('')}</div>`).join('')
           : `<div class="empty ls-vazia">${icon('cart')}<div>A lista de compras está vazia.</div><small>Marque “Precisa comprar” em <b>Todos os itens</b> ou digite “precisa comprar leite” na barra de lançamento.</small></div>`);
@@ -2214,8 +2251,7 @@ function renderListas(){
   } else {
     const ordem = {alta:0, media:1, baixa:2};
     const its = todos.filter(passa).sort((a,b)=>(a.comprado-b.comprado)||(ordem[a.prio]-ordem[b.prio])||a.nome.localeCompare(b.nome,'pt-BR'));
-    const totalSug = todos.filter(i=>!i.comprado).reduce((a,i)=>a+i.qtd*(i.precoAtual!=null?i.precoAtual:(i.precoSug||0)),0);
-    corpo = `<div class="ls-resumo card"><div><span>Itens</span><b>${todos.length}</b></div><div><span>Comprados</span><b>${todos.filter(i=>i.comprado).length}</b></div><div><span>Falta comprar</span><b>${fmtBRL(totalSug)}</b></div></div>`
+    corpo = `<div class="ls-resumo card"><div class="ls-vals" id="ls-vals">${lsResumoVals(lista)}</div></div>`
       + (its.length ? `<div class="ls-grupo">${its.map(i=>linhaCompra(i,'lista')).join('')}</div>` : `<div class="empty ls-vazia">${icon('tag')}<div>${todos.length?'Nenhum item com esse nome.':'Esta lista ainda está vazia.'}</div>${todos.length?'':'<small>Adicione o que você quer comprar, com prioridade, preço sugerido e unidade de medida.</small>'}</div>`);
   }
   host.innerHTML = `
@@ -2238,9 +2274,23 @@ function ligarListas(lista){
   host.querySelectorAll('[data-ls-aba]').forEach(b=>b.addEventListener('click', ()=>{ lsAba = b.dataset.lsAba; renderListas(); }));
   const bus = document.getElementById('ls-busca');
   bus.addEventListener('input', ()=>{ lsBusca = bus.value; const pos = bus.selectionStart; renderListas(); const n = document.getElementById('ls-busca'); n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} });
-  host.querySelectorAll('[data-ls-chk]').forEach(c=>c.addEventListener('change', ()=>{ const it = item(c.dataset.lsChk); if(!it) return; it.comprado = c.checked; if(c.checked && it.precoAtual==null) toast('Marcado como comprado. Preencha o valor atual para comparar preços.','warn'); salvar(); }));
+  const persistir = ()=>schedulePersist();
+  const vivo = ()=>{
+    const v = document.getElementById('ls-vals'); if(v) v.innerHTML = lsResumoVals(lista);
+    host.querySelectorAll('[data-ls-sub]').forEach(el=>{ const it = item(el.dataset.lsSub); if(it) el.innerHTML = it.precoAtual!=null ? `= <b>${fmtBRL(subItem(it))}</b>` : ''; });
+    host.querySelectorAll('[data-ls-dif]').forEach(el=>{ const it = item(el.dataset.lsDif); if(it) el.innerHTML = difHtml(it); });
+    host.querySelectorAll('.ls-row[data-id]').forEach(r=>{ const it = item(r.dataset.id); if(it){ r.classList.toggle('feito', !!it.comprado && !r.querySelector('[data-ls-precisa]')); const pl = r.querySelector('.ls-promo'); if(pl) pl.classList.toggle('on', !!it.promo); } });
+    const cc = document.getElementById('ls-concluir'); if(cc) cc.disabled = !itensDe(MERCADO_ID).some(i=>i.precisa && i.comprado);
+  };
+  host.querySelectorAll('[data-ls-chk]').forEach(c=>c.addEventListener('change', ()=>{ const it = item(c.dataset.lsChk); if(!it) return; it.comprado = c.checked; if(c.checked && it.levando==null) it.levando = it.qtd; if(c.checked && it.precoAtual==null) toast('Marcado como comprado. Preencha o valor atual para somar no total.','warn'); const lv = host.querySelector(`[data-ls-levando="${it.id}"]`); if(lv && c.checked && !lv.value) lv.value = lsEditNum(it.levando); persistir(); vivo(); }));
+  host.querySelectorAll('[data-ls-atual]').forEach(inp=>inp.addEventListener('input', ()=>{ const it = item(inp.dataset.lsAtual); if(!it) return; it.precoAtual = lsNum(inp.value); vivo(); }));
+  host.querySelectorAll('[data-ls-levando]').forEach(inp=>{
+    inp.addEventListener('input', ()=>{ const it = item(inp.dataset.lsLevando); if(!it) return; it.levando = lsNum(inp.value); vivo(); });
+    inp.addEventListener('change', ()=>{ persistir(); vivo(); });
+  });
+  host.querySelectorAll('[data-ls-promo]').forEach(c=>c.addEventListener('change', ()=>{ const it = item(c.dataset.lsPromo); if(!it) return; it.promo = c.checked; persistir(); vivo(); }));
   host.querySelectorAll('[data-ls-precisa]').forEach(c=>c.addEventListener('change', ()=>{ const it = item(c.dataset.lsPrecisa); if(!it) return; if(c.checked) colocarNoCarrinho(it); else { it.precisa = false; it.comprado = false; } salvar(); }));
-  host.querySelectorAll('[data-ls-atual]').forEach(inp=>inp.addEventListener('change', ()=>{ const it = item(inp.dataset.lsAtual); if(!it) return; it.precoAtual = lsNum(inp.value); salvar(); }));
+  host.querySelectorAll('[data-ls-atual]').forEach(inp=>inp.addEventListener('change', ()=>{ const it = item(inp.dataset.lsAtual); if(!it) return; it.precoAtual = lsNum(inp.value); persistir(); vivo(); }));
   host.querySelectorAll('[data-ls-upd]').forEach(b=>b.addEventListener('click', ()=>abrirAtualizarPreco(item(b.dataset.lsUpd))));
   host.querySelectorAll('[data-ls-edit]').forEach(b=>b.addEventListener('click', ()=>abrirItemModal(item(b.dataset.lsEdit), {semFechar: !item(b.dataset.lsEdit).cat && item(b.dataset.lsEdit).listaId===MERCADO_ID})));
   host.querySelectorAll('[data-ls-del]').forEach(b=>b.addEventListener('click', ()=>{ const it = item(b.dataset.lsDel); confirmarExclusao('“'+it.nome+'”', ()=>{ compras.itens = compras.itens.filter(x=>x.id!==it.id); salvar(); }); }));
@@ -2250,19 +2300,20 @@ function ligarListas(lista){
   const cc = document.getElementById('ls-concluir'); if(cc) cc.addEventListener('click', ()=>{
     const f = itensDe(MERCADO_ID).filter(i=>i.precisa && i.comprado);
     openChoiceModal({title:'Concluir compra?', desc:`${f.length} ${f.length===1?'item sai':'itens saem'} da lista de compras e ${f.length===1?'fica':'ficam'} no cadastro com o valor pago. Na próxima vez que voltarem à lista, esse valor vira o “último valor registrado”.`,
-      options:[{label:'Concluir', onChoose:()=>{ f.forEach(i=>{ i.precisa=false; i.comprado=false; }); toast('Compra concluída','good'); salvar(); }},{label:'Cancelar', onChoose:()=>{}}]});
+      options:[{label:'Concluir', onChoose:()=>{ f.forEach(i=>{ i.precisa=false; i.comprado=false; i.levando=null; }); toast('Compra concluída','good'); salvar(); }},{label:'Cancelar', onChoose:()=>{}}]});
   });
 }
 function abrirAtualizarPreco(it){
   if(!it) return;
   const m = abrirMini({ic:'repeat', titulo:'Atualizar preço', sub:escHtml(it.nome),
     corpo:`<div class="view-sub" style="margin-bottom:12px;">${it.precoAtual!=null?`O valor atual (${fmtBRL(it.precoAtual)}) passa a ser o <b>último valor registrado</b> e o novo valor entra como atual.`:'Ainda não há valor atual: o novo valor entra como atual.'}</div>
-      <div class="field"><label for="up-v">Novo valor (R$ ${COMPRA_UN_LABEL[it.un]==='un'?'por unidade':'por '+COMPRA_UN_LABEL[it.un]})</label><input id="up-v" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"></div><div class="mfa-err hidden-el" id="up-err"></div>`,
+      <div class="field"><label for="up-v">Novo valor (R$ ${COMPRA_UN_LABEL[it.un]==='un'?'por unidade':'por '+COMPRA_UN_LABEL[it.un]})</label><input id="up-v" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"></div>
+      <label class="ls-promo" style="margin-top:12px;"><input type="checkbox" id="up-promo"> Este item está em promoção</label><div class="mfa-err hidden-el" id="up-err"></div>`,
     rodape:`<button type="button" class="btn btn-ghost" id="up-x">Cancelar</button><button type="button" class="btn btn-primary" id="up-ok">${icon('check')} Atualizar</button>`});
   const inp = m.w.querySelector('#up-v'); setTimeout(()=>inp.focus(), 50);
   m.w.querySelector('#up-x').addEventListener('click', m.fechar);
   const ok = ()=>{ const v = lsNum(inp.value); if(v==null){ const e = m.w.querySelector('#up-err'); e.textContent='Digite um valor válido.'; e.classList.remove('hidden-el'); return; }
-    deslocarPreco(it, v); m.fechar(); schedulePersist(); renderListas(); };
+    deslocarPreco(it, v); it.promo = m.w.querySelector('#up-promo').checked; m.fechar(); schedulePersist(); renderListas(); };
   m.w.querySelector('#up-ok').addEventListener('click', ok); inp.addEventListener('keydown', e=>{ if(e.key==='Enter') ok(); });
 }
 function abrirListaModal(l){
@@ -2301,7 +2352,7 @@ function abrirItemModal(it, opc){
       </div>
       <div class="form-grid" style="margin-top:10px;">
         ${merc?'':`<div class="field"><label for="it-sug">Preço sugerido (R$)</label><input id="it-sug" type="text" inputmode="decimal" placeholder="0,00" value="${lsEditNum(d.precoSug)}"></div>`}
-        <div class="field"><label for="it-atual">Valor atual (R$)</label><input id="it-atual" type="text" inputmode="decimal" placeholder="0,00" value="${lsEditNum(d.precoAtual)}"></div>
+        <div class="field"><label for="it-atual">Valor atual (R$)</label><input id="it-atual" type="text" inputmode="decimal" placeholder="0,00" value="${lsEditNum(d.precoAtual)}"><label class="ls-promo" style="margin-top:6px;"><input type="checkbox" id="it-promo" ${d.promo?'checked':''}> Este item está em promoção</label></div>
       </div>
       <div class="field" style="margin-top:10px;"><label for="it-obs">Observação</label><input id="it-obs" type="text" maxlength="120" value="${escHtml(d.obs||'')}" placeholder="Marca, tamanho, onde comprar…"></div>
       ${merc?`<div class="row-between" style="margin-top:12px;"><div><div class="row-lbl">Precisa comprar</div><div class="row-sub">Coloca o item na lista de compras.</div></div><label class="switch"><input type="checkbox" id="it-precisa" ${d.precisa?'checked':''}><span class="switch-track"></span></label></div>`:''}
@@ -2319,10 +2370,10 @@ function abrirItemModal(it, opc){
     const q = lsNum(m.w.querySelector('#it-qtd').value); if(!q || q<=0) return erro('Informe uma quantidade maior que zero.');
     const un = m.w.querySelector('#it-un').value;
     const atualNovo = lsNum(m.w.querySelector('#it-atual').value);
-    const alvo = it || {id:uid('it'), listaId:lista.id, precoUltimo:null, precos:[], precisa:false, comprado:false, ts:Date.now()};
+    const alvo = it || {id:uid('it'), listaId:lista.id, precoUltimo:null, precos:[], levando:null, promo:false, promoUltimo:false, precisa:false, comprado:false, ts:Date.now()};
     Object.assign(alvo, {nome, cat, qtd:q, un, obs:m.w.querySelector('#it-obs').value.trim()});
     if(!merc){ alvo.prio = m.w.querySelector('#it-prio').value; alvo.precoSug = lsNum(m.w.querySelector('#it-sug').value); } else alvo.prio = alvo.prio||'media';
-    alvo.precoAtual = atualNovo;
+    alvo.precoAtual = atualNovo; alvo.promo = atualNovo!=null && m.w.querySelector('#it-promo').checked;
     if(merc){ const p = m.w.querySelector('#it-precisa').checked; if(p && !alvo.precisa){ const guarda = alvo.precoAtual; alvo.precoAtual = null; colocarNoCarrinho(alvo, q); alvo.precoAtual = atualNovo!=null ? atualNovo : (guarda!=null ? guarda : null); if(atualNovo==null && guarda!=null) { /* voltou ao carrinho sem novo valor: o atual antigo virou último */ alvo.precoAtual = null; alvo.precoUltimo = guarda; alvo.precos.push(guarda); } } else if(!p && alvo.precisa){ alvo.precisa=false; alvo.comprado=false; } }
     if(novo) compras.itens.push(alvo);
     opc.semFechar = false; m.fechar(); schedulePersist(); renderListas();
@@ -2381,7 +2432,7 @@ async function processarCompras(partes){
       naLista.push(it.nome + (ja?' (já estava)':''));
     } else {
       const nome = q.nome.charAt(0).toUpperCase()+q.nome.slice(1);
-      const novo = {id:uid('it'), listaId:MERCADO_ID, nome, cat:null, qtd:q.qtd||1, un:q.un||'un', prio:'media', precoSug:null, precoAtual:null, precoUltimo:null, precos:[], precisa:true, comprado:false, obs:'', ts:Date.now()};
+      const novo = {id:uid('it'), listaId:MERCADO_ID, nome, cat:null, qtd:q.qtd||1, un:q.un||'un', prio:'media', precoSug:null, precoAtual:null, precoUltimo:null, precos:[], levando:null, promo:false, promoUltimo:false, precisa:true, comprado:false, obs:'', ts:Date.now()};
       compras.itens.push(novo); novos.push(novo); naLista.push(nome+' (novo)');
     }
   }
@@ -2452,19 +2503,32 @@ function toast(texto,tipo){
   ultimoToast = {el, ts:Date.now()};
   setTimeout(()=>{ el.style.transition='opacity .3s'; el.style.opacity='0'; setTimeout(()=>el.remove(),320); }, 4200);
 }
+const NOTIF_MAX = 20;
 function addNotificacao(texto,tipo){
-  notificacoes.unshift({id:uid('n'), tipo, texto, tempo:'agora', por:state.user, ts:Date.now()});
+  notificacoes.unshift({id:uid('n'), tipo, texto, tempo:'agora', por:state.user, ts:Date.now(), lidas:[]});
+  notificacoes = notificacoes.slice(0, NOTIF_MAX);
   renderNotifBell();
   if(typeof enviarPushParceiro==='function') enviarPushParceiro(texto);
 }
+/* "lida" é por pessoa: quem marca como lida só apaga o selo dele; o histórico (últimas 20) continua na lista */
+const notifLida = n => Array.isArray(n.lidas) && n.lidas.includes(state.user);
+function tempoRelativo(ts){
+  if(!ts) return '';
+  const m = Math.floor((Date.now()-ts)/60000);
+  if(m<1) return 'agora'; if(m<60) return `há ${m} min`;
+  const h = Math.floor(m/60); if(h<24) return `há ${h} h`;
+  const d = Math.floor(h/24); return d===1 ? 'ontem' : `há ${d} dias`;
+}
 function renderNotifBell(){
   const dot = document.getElementById('bell-dot');
-  const unread = notificacoes.length>0;
-  dot.classList.toggle('hidden-el', !unread);
-  document.getElementById('notif-list').innerHTML = notificacoes.length ? notificacoes.map(n=>`
-    <div class="notif-row">
+  const lista = notificacoes.slice(0, NOTIF_MAX);
+  const naoLidas = lista.filter(n=>!notifLida(n)).length;
+  dot.classList.toggle('hidden-el', naoLidas===0);
+  const clr = document.getElementById('notif-clear'); if(clr) clr.disabled = naoLidas===0;
+  document.getElementById('notif-list').innerHTML = lista.length ? lista.map(n=>`
+    <div class="notif-row ${notifLida(n)?'lida':'nova'}">
       <span class="notif-dot ${n.tipo==='bad'?'bad':'good'}"></span>
-      <div><div class="notif-txt">${n.texto}</div><div class="notif-time">${n.tempo}</div></div>
+      <div><div class="notif-txt">${n.texto}</div><div class="notif-time">${n.ts?tempoRelativo(n.ts):(n.tempo||'')}</div></div>
     </div>`).join('') : `<div class="empty-state">Nenhuma notificação por aqui.</div>`;
 }
 
@@ -3091,7 +3155,7 @@ function renderLedger(){
             <div class="txn-desc">${t.desc} ${seloCompartilhado(t)} ${t.recorrenciaId?`<span class="shared-tag">${icon('repeat')}</span>`:''}</div>
             <div class="txn-meta">
               <span class="avatar" style="width:16px;height:16px;font-size:8px;">${avatarInterno(t.pessoa)}</span>
-              ${catById(t.catId).nome} · ${t.sub||''} · ${fmtDateShort(t.data)} · ${t.forma}
+              ${catById(t.catId).nome} · ${t.sub||''} · ${fmtDateShort(t.data)}${t.pagoEm&&t.pagoEm!==t.data?` · ${t.tipo==='receita'?'recebido':'pago'} em ${fmtDateShort(t.pagoEm)}`:''} · ${t.forma}
             </div>
           </div>
           ${statusPill}
@@ -3140,27 +3204,94 @@ function concluirBaixa(t, contaId, viaCartao){
   if(t.compartilhada && USERS[state.user]) addNotificacao(`${USERS[state.user].nome} ${t.tipo==='receita'?'recebeu':'pagou'}: ${t.desc} — ${fmtBRL(t.valor)}`,'good');
   refreshCurrentView();
 }
+/* Janela de pagar/receber: valor (parcial), juros/multa e data (retroativa) */
+function abrirBaixaModal(o){
+  const rec = o.tipo==='receita';
+  const lista = contas.length && !o.viaCartao ? contasAtivas(o.contaId) : [];
+  const conta0 = lista.some(c=>c.id===o.contaId) ? o.contaId : (lista[0] && lista[0].id) || '';
+  const conta = lista.length ? `<div class="field" style="margin-top:10px;"><label for="bx-conta">${rec?'Recebido em':'Pago com'}</label><select id="bx-conta">${lista.map(c=>`<option value="${c.id}" ${c.id===conta0?'selected':''}>${escHtml(nomeConta(c))}</option>`).join('')}<option value="">Sem mexer em nenhuma conta</option></select></div>`
+    : (o.viaCartao ? `<div class="row-sub" style="margin-top:10px;">${icon('card')} Entra na fatura do cartão.</div>` : '');
+  const m = abrirMini({ic:rec?'money':'check', titulo:o.titulo, sub:o.sub||'',
+    corpo:`<div class="form-grid">
+        <div class="field"><label for="bx-valor">${rec?'Valor recebido':'Valor pago'} (R$)</label><input id="bx-valor" type="text" inputmode="decimal" value="${lsEditNum(o.valor)}" autocomplete="off"></div>
+        <div class="field"><label for="bx-juros">Juros / multa (R$)</label><input id="bx-juros" type="text" inputmode="decimal" placeholder="0,00 (se houver)" autocomplete="off"></div>
+      </div>
+      <div class="field" style="margin-top:10px;"><label for="bx-data">Data do ${rec?'recebimento':'pagamento'}</label><input id="bx-data" type="date" value="${HOJE}" max="${HOJE}"></div>
+      ${conta}
+      <div class="bx-resumo" id="bx-resumo"></div><div class="mfa-err hidden-el" id="bx-err"></div>`,
+    rodape:`<button type="button" class="btn btn-ghost" id="bx-x">Cancelar</button><button type="button" class="btn btn-primary" id="bx-ok">${icon('check')} ${rec?'Receber':'Pagar'}</button>`});
+  const $q = q=>m.w.querySelector(q);
+  const ler = ()=>({v:lsNum($q('#bx-valor').value), j:lsNum($q('#bx-juros').value)||0, data:$q('#bx-data').value, contaId:$q('#bx-conta')?$q('#bx-conta').value:''});
+  const atualizar = ()=>{ const r = ler(); const el = $q('#bx-resumo');
+    if(!(r.v>0)){ el.innerHTML = 'Informe o valor.'; return; }
+    const resto = round2(o.valor - r.v);
+    el.innerHTML = `Total ${rec?'recebido':'pago'}: <b>${fmtBRL(round2(r.v + r.j))}</b>${r.j>0?` (${fmtBRL(r.v)} + ${fmtBRL(r.j)} de juros)`:''}. ` + (resto>0.004 ? `Baixa parcial: restam <b>${fmtBRL(resto)}</b> em aberto.` : (r.v>o.valor+0.004?'Maior que o valor em aberto.':'Quita o valor em aberto.')); };
+  ['#bx-valor','#bx-juros'].forEach(q=>$q(q).addEventListener('input', atualizar)); atualizar();
+  $q('#bx-x').addEventListener('click', m.fechar);
+  $q('#bx-ok').addEventListener('click', ()=>{
+    const r = ler(); const erro = t=>{ const e=$q('#bx-err'); e.textContent=t; e.classList.remove('hidden-el'); };
+    if(!(r.v>0)) return erro('Informe um valor maior que zero.');
+    if(r.v > o.valor + 0.004) return erro('O valor é maior que o valor em aberto. Use o campo Juros / multa para o que passar disso.');
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(r.data)) return erro('Informe a data.');
+    if(r.data > HOJE) return erro('A data não pode ser no futuro.');
+    m.fechar(); o.aoConfirmar({v:r.v, j:r.j, data:r.data, contaId:r.contaId||null});
+  });
+  setTimeout(()=>{ const v=$q('#bx-valor'); v.focus(); v.select(); }, 60);
+  return m;
+}
+/* cria o lançamento de juros/multa ligado a um pagamento */
+function lancarJuros(base, j, data, contaId, viaCartao, cartaoId){
+  if(!(j>0)) return;
+  const rec = base.tipo==='receita';
+  const cat = categorias.find(c=>c.id==='dividas');
+  if(!rec && cat && Array.isArray(cat.subs) && !cat.subs.includes('Juros e multas')) cat.subs.push('Juros e multas');
+  const t = {id:uid('t'), criadoPor:state.user, tipo:rec?'receita':'despesa', desc:(rec?'Juros recebidos: ':'Juros/multa: ')+String(base.desc||'').replace(/ \(parcial\)$/,''), valor:round2(j), data, pagoEm:data, status:'pago', pessoa:base.pessoa, compartilhada:!!base.compartilhada, forma:base.forma||'Pix',
+    catId: rec ? base.catId : (cat?'dividas':(base.catId||(categorias.find(c=>c.tipo==='despesa')||{}).id)), sub: rec ? (base.sub||null) : (cat?'Juros e multas':(base.sub||null)), recorrente:false, pagoPor:state.user};
+  if(viaCartao && cartaoId){ t.cartaoId = cartaoId; const c = cardById(cartaoId); if(c && !rec) c.faturaAtual = round2(c.faturaAtual + j); }
+  else if(contaId){ t.contaId = contaId; }
+  transacoes.unshift(t);
+}
+function aplicarBaixaTransacao(t, r, viaCartao){
+  const rec = t.tipo==='receita';
+  const resto = round2(t.valor - r.v);
+  let alvo = t;
+  if(resto > 0.004){
+    alvo = Object.assign({}, t, {id:uid('t'), criadoPor:state.user, valor:r.v, data:r.data, desc:`${t.desc} (parcial)`, recorrente:false, frequencia:null, recorrenciaId:null, venceDia:undefined, intervaloDias:undefined});
+    t.valor = resto; transacoes.unshift(alvo);
+  }
+  alvo.status = 'pago'; alvo.pagoPor = state.user; alvo.pagoEm = r.data;
+  if(viaCartao){ const c = cardById(alvo.cartaoId); if(c && !rec) c.faturaAtual = round2(c.faturaAtual + r.v); }
+  else { alvo.cartaoId = undefined; alvo.contaId = r.contaId || undefined; if(r.contaId && (!alvo.forma || /cr[eé]dito/i.test(alvo.forma))) alvo.forma = 'Pix'; }
+  lancarJuros(alvo, r.j, r.data, r.contaId, viaCartao, alvo.cartaoId);
+  recalcSaldos();
+  if(resumoState.tipo==='abertas' && !document.getElementById('resumo-wrap').classList.contains('hidden-el')) setTimeout(renderResumoBody,0);
+  const txt = resto>0.004 ? `${fmtBRL(r.v)} ${rec?'recebidos':'pagos'} de "${t.desc}". Restam ${fmtBRL(resto)} em aberto.` : `"${t.desc}" marcado como ${rec?'recebido':'pago'}`;
+  toast(txt + (r.j>0?` Juros: ${fmtBRL(r.j)}.`:''),'good');
+  if(t.compartilhada && USERS[state.user]) addNotificacao(`${USERS[state.user].nome} ${rec?'recebeu':'pagou'}${resto>0.004?' parte de':''}: ${t.desc} — ${fmtBRL(r.v)}${r.j>0?' + '+fmtBRL(r.j)+' de juros':''}`,'good');
+  refreshCurrentView();
+}
 function darBaixaTransacao(id){
   const t = transacoes.find(x=>x.id===id);
   if(!t || t.status==='pago') return;
-  pedirBaixa(t, {confirmar:false, titulo:`${t.tipo==='receita'?'Receber':'Pagar'} “${t.desc}”?`, desc:`Valor ${fmtBRL(t.valor)}.`}, (contaId,viaCartao)=>concluirBaixa(t, contaId, viaCartao));
+  const r = contaParaBaixa(t);
+  abrirBaixaModal({tipo:t.tipo, titulo:`${t.tipo==='receita'?'Receber':'Pagar'} “${t.desc}”`, sub:`Valor em aberto: ${fmtBRL(t.valor)}`, valor:t.valor, contaId:r.contaId||t.contaId, viaCartao:!!r.viaCartao,
+    aoConfirmar:res=>aplicarBaixaTransacao(t, res, !!r.viaCartao)});
 }
 function pagarFatura(cardId){
   const c = cardById(cardId);
   if(!c || !c.faturaAtual) return;
-  const valor = c.faturaAtual;
-  const pagar = contaId=>{
-    transacoes.unshift({id:uid('t'), criadoPor:state.user, tipo:'despesa', desc:`Pagamento fatura ${c.nome}`, catId:'dividas', sub:'Juros do cartão', valor, data:HOJE, pessoa:state.user, compartilhada:!!c.compartilhada, forma:'Pix', contaId:contaId||undefined, status:'pago', recorrente:false});
-    c.faturaAtual = 0;
-    recalcSaldos();
-    toast(`Fatura de ${fmtBRL(valor)} paga`,'good');
-    if(c.compartilhada && USERS[state.user]) addNotificacao(`${USERS[state.user].nome} pagou a fatura do cartão ${c.nome} — ${fmtBRL(valor)}`,'good');
-    refreshCurrentView();
-  };
-  const opts = contasAtivas(c.contaId).sort((a,b)=>(b.id===c.contaId)-(a.id===c.contaId)).map(k=>({label:`Pagar com ${nomeConta(k)}`, onChoose:()=>pagar(k.id)}));
-  opts.push({label: contas.length ? 'Sem mexer em nenhuma conta' : 'Pagar fatura', onChoose:()=>pagar(null)});
-  opts.push({label:'Cancelar', onChoose:()=>{}});
-  openChoiceModal({title:`Pagar fatura de ${fmtBRL(valor)}?`, desc:`Registramos o pagamento da fatura do ${c.nome} como uma despesa e zeramos a fatura atual. O saldo muda só na conta que você escolher.`, options:opts});
+  const total = c.faturaAtual;
+  abrirBaixaModal({tipo:'despesa', titulo:`Pagar fatura do ${c.nome}`, sub:`Fatura atual: ${fmtBRL(total)}`, valor:total, contaId:c.contaId, viaCartao:false,
+    aoConfirmar:r=>{
+      transacoes.unshift({id:uid('t'), criadoPor:state.user, tipo:'despesa', desc:`Pagamento fatura ${c.nome}`, catId:'dividas', sub:'Juros do cartão', valor:r.v, data:r.data, pagoEm:r.data, pessoa:state.user, compartilhada:!!c.compartilhada, forma:'Pix', contaId:r.contaId||undefined, status:'pago', recorrente:false});
+      c.faturaAtual = round2(total - r.v);
+      lancarJuros({tipo:'despesa', desc:`fatura ${c.nome}`, pessoa:state.user, compartilhada:c.compartilhada, forma:'Pix'}, r.j, r.data, r.contaId, false, null);
+      recalcSaldos();
+      const resto = round2(total - r.v);
+      toast(`Fatura: ${fmtBRL(r.v)} pagos${resto>0.004?`, restam ${fmtBRL(resto)}`:''}${r.j>0?`. Juros: ${fmtBRL(r.j)}`:''}`,'good');
+      if(c.compartilhada && USERS[state.user]) addNotificacao(`${USERS[state.user].nome} pagou ${resto>0.004?'parte da fatura':'a fatura'} do cartão ${c.nome} — ${fmtBRL(r.v)}`,'good');
+      refreshCurrentView();
+    }});
 }
 
 /* ============ POPUP DE LANÇAMENTO (despesa/receita/transferência) ============ */
@@ -5117,7 +5248,7 @@ function relGrupoDe(t){
   return (c && c.grupo) || 'pf';
 }
 function relEfetivadas(){
-  return transacoes.filter(t=>(t.tipo==='despesa'||t.tipo==='receita') && t.status==='pago' && t.data && !/^Pagamento fatura /.test(t.desc||'') && (relGrupo==='geral' || relGrupoDe(t)===relGrupo));
+  return transacoes.map(t=>t.pagoEm && t.status==='pago' ? Object.assign({}, t, {data:t.pagoEm}) : t).filter(t=>(t.tipo==='despesa'||t.tipo==='receita') && t.status==='pago' && t.data && !/^Pagamento fatura /.test(t.desc||'') && (relGrupo==='geral' || relGrupoDe(t)===relGrupo));
 }
 const relDentro = (t, modo, ref)=> modo==='mensal' ? monthKey(t.data)===ref : t.data.slice(0,4)===ref.slice(0,4);
 const relAnterior = (modo, ref)=> modo==='mensal' ? ymShift(ref,-1) : String(Number(ref.slice(0,4))-1)+ref.slice(4);
@@ -6204,7 +6335,7 @@ function bannerAtualizacao(html, botoes){
   b.innerHTML = `<div class="upd-txt">${html}</div><div style="display:flex; gap:8px;">${botoes}</div>`;
   document.body.appendChild(b); return b;
 }
-function notasHtml(notas){ return notas.slice(0,3).map(n=>`<div class="hint" style="margin-top:3px;">• ${n}</div>`).join(''); }
+function notasHtml(notas){ return notas.slice(0,6).map(n=>`<div class="hint" style="margin-top:3px;">• ${n}</div>`).join(''); }
 function avisarNovaVersao(j){
   const ex = document.getElementById('upd-banner'); if(ex && ex.dataset.tipo==='nova') return;
   const b = bannerAtualizacao(`<b>Nova versão do Grana a Dois</b>${notasHtml(j.notas||[])}`,
@@ -6631,7 +6762,7 @@ function iniciarApp(){
   document.addEventListener('click', e=>{ if(e.target.closest('#btn-theme')) setTheme(currentEffectiveTheme()==='dark' ? 'light' : 'dark'); });
 
   document.getElementById('btn-bell').addEventListener('click', e=>{ e.stopPropagation(); document.getElementById('notif-panel').classList.toggle('open'); });
-  document.getElementById('notif-clear').addEventListener('click', ()=>{ notificacoes = []; renderNotifBell(); });
+  document.getElementById('notif-clear').addEventListener('click', ()=>{ notificacoes.forEach(n=>{ if(!Array.isArray(n.lidas)) n.lidas = []; if(!n.lidas.includes(state.user)) n.lidas.push(state.user); }); renderNotifBell(); schedulePersist(); });
   document.addEventListener('click', ()=>closePopovers());
   document.querySelectorAll('.popover').forEach(p=>p.addEventListener('click', e=>e.stopPropagation()));
 

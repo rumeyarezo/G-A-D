@@ -62,3 +62,5 @@ RODADA 9 - Novo cartao (credito, debito ou debito e credito) e nova conta em jan
 RODADA 10 - Configuracoes > Atividade (historico com filtros), Configuracoes > Seguranca (biometria, aparelhos, 2FA, senha), menu Relatorios com dashboards e fonte Inter nos numeros. Biometria e um bloqueio deste aparelho; 2FA depende de MFA habilitado no Supabase Auth do projeto.
 
 RODADA 11 - Biometria só pede de novo após 5 min fora do app (atualizar a página não bloqueia). Nova aba Listas de compra (Mercado com itens por categoria + listas por tema). Barra de lançamento ganhou "Recebimento" e "Precisa comprar".
+
+RODADA 12 - Pagar/Receber com valor, juros e data; listas de compra com "Estou levando" e promocao; notificacoes mantem historico das ultimas 20.
