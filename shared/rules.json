@@ -1,0 +1,143 @@
+{
+  "_doc": "Regras de categorização compartilhadas entre TypeScript (@grana/core) e Python (services/api). Todos os padrões são case-insensitive. Edite AQUI; os dois lados leem este arquivo e os testes cruzados (shared/vectors.json) garantem o mesmo resultado.",
+  "categoria": [
+    [
+      "merc|supermerc|carrefour|extra|paodeacucar|pão de açúcar",
+      "alimentacao",
+      "Supermercado"
+    ],
+    [
+      "ifood|delivery|rappi",
+      "alimentacao",
+      "Delivery / iFood"
+    ],
+    [
+      "restaurante|rodizio|rodízio|churrasc",
+      "alimentacao",
+      "Restaurante"
+    ],
+    [
+      "uber|99|taxi|táxi",
+      "transporte",
+      "Uber / 99"
+    ],
+    [
+      "posto|gasolina|combust",
+      "transporte",
+      "Combustível"
+    ],
+    [
+      "netflix|spotify|prime|disney|hbo",
+      "assinaturas",
+      "Streaming"
+    ],
+    [
+      "aluguel",
+      "moradia",
+      "Aluguel"
+    ],
+    [
+      "condom",
+      "moradia",
+      "Condomínio"
+    ],
+    [
+      "luz|energia|enel|cemig|light",
+      "moradia",
+      "Energia elétrica"
+    ],
+    [
+      "internet|vivo|claro|net |tim ",
+      "moradia",
+      "Internet"
+    ],
+    [
+      "farmacia|farmácia|drogaria",
+      "saude",
+      "Farmácia"
+    ],
+    [
+      "academia|smartfit|smart fit",
+      "saude",
+      "Academia"
+    ],
+    [
+      "salario|salário",
+      "trabalho",
+      "Salário"
+    ],
+    [
+      "freela",
+      "rendaextra",
+      "Freelance"
+    ]
+  ],
+  "forma": [
+    [
+      "\\bpix\\b",
+      "Pix"
+    ],
+    [
+      "d[ée]bito",
+      "Débito"
+    ],
+    [
+      "cr[ée]dito|cart[ãa]o",
+      "Crédito"
+    ],
+    [
+      "dinheiro|esp[ée]cie",
+      "Dinheiro"
+    ]
+  ],
+  "banco": [
+    [
+      "nubank|\\bnu\\b",
+      "Nubank"
+    ],
+    [
+      "ita[uú]",
+      "Itaú"
+    ],
+    [
+      "\\bc6\\b",
+      "C6 Bank"
+    ],
+    [
+      "\\bnext\\b",
+      "Next"
+    ],
+    [
+      "bradesco",
+      "Bradesco"
+    ],
+    [
+      "santander",
+      "Santander"
+    ],
+    [
+      "caixa",
+      "Caixa Econômica"
+    ],
+    [
+      "\\binter\\b",
+      "Inter"
+    ],
+    [
+      "picpay",
+      "PicPay"
+    ],
+    [
+      "pagbank|pagseguro",
+      "PagBank (PagSeguro)"
+    ],
+    [
+      "mercado ?pago",
+      "Mercado Pago"
+    ],
+    [
+      "\\bwise\\b",
+      "Wise"
+    ]
+  ]
+}

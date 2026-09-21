@@ -1,0 +1,4 @@
+# Publicação contínua opcional: ao conectar este repositório ao Netlify, cada atualização vai ao ar sozinha
+# e os aparelhos recebem o aviso "nova versão disponível" (o app confere versao.json).
+[build]
+  publish = "apps/site/dist"

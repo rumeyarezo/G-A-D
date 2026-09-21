@@ -1,0 +1,56 @@
+GRANA A DOIS — site instalável (usa o projeto Supabase "grana-a-dois", separado do Acervo dos Rezos)
+
+ATUALIZAR O SITE NO NETLIFY (mantém o mesmo endereço)
+  app.netlify.com -> clique no site -> aba "Deploys" -> arraste ESTA pasta inteira na área "Drag and drop".
+
+CONFIGURAR O SUPABASE (uma vez só)
+  supabase.com/dashboard -> projeto "grana-a-dois" -> Authentication -> URL Configuration
+  - Site URL: https://grana-a-dois-beta.netlify.app   (sem barra no final)
+  - Redirect URLs -> Add URL: o mesmo endereço -> Save changes.
+
+PRIMEIRO USO
+  As contas do projeto antigo não existem aqui: cada pessoa cria a sua em "Criar conta".
+  A segunda pessoa deve ser convidada pelo e-mail em Configurações e criar a conta com ESSE mesmo e-mail.
+
+INSTALAR
+  Abra o endereço no Chrome/Edge (desktop: ícone de instalar na barra) ou no celular
+  (Android: menu > Instalar app; iPhone: Safari > Compartilhar > Adicionar à Tela de Início).
+
+DEPOIS DE ATUALIZAR
+  Para o app instalado pegar a versão nova: feche e abra de novo (ou, no navegador, Ctrl+Shift+R).
+
+NOTIFICAÇÕES
+  O app pede permissão ao abrir (se o aparelho exigir um toque, pede no primeiro toque; há também um botão "Ativar notificações" no topo).
+  Avisa: lançamentos e pagamentos do parceiro, e contas/faturas que vencem no dia. Ajustes em Configurações > Notificações.
+  Os avisos chegam com o app aberto ou em segundo plano no aparelho. Com o app totalmente fechado, o envio é feito por push pelo servidor (função grana-push no Supabase do Grana a Dois; vencimentos do dia às 8h de Brasília). No iPhone é preciso instalar o app na Tela de Início.
+
+TAMANHO DA TELA
+  O zoom é fixo (padrão 110%, sem gesto de pinça). Para mudar: Configurações > Aparência > Tamanho da tela.
+
+=== RODADA 3 ===
+ATUALIZACOES: o app checa versao.json sozinho (ao abrir, a cada 30 min, ao voltar ao app). Quando ha versao nova,
+mostra aviso "Atualizar agora / Depois" e uma notificacao do aparelho (pede permissao se ainda nao foi dada).
+Ninguem precisa refazer conta: os dados ficam no Supabase e o estado e migrado automaticamente (ESTADO_SCHEMA).
+Para publicar: arraste a pasta no Netlify (Deploys). Edite NOVIDADES.txt antes de rodar build.py.
+INDICES: o app busca CDI, Selic, IPCA e poupanca no Banco Central (SGS) ao abrir e a cada hora; guarda no aparelho.
+Investimentos podem render por CDI/Selic/IPCA+/pre/poupanca. Valores brutos, sem IR/IOF.
+ZOOM: lista de 50 a 150% em Configuracoes (padrao 110%). Rolagem normal.
+DESFAZER: botao por 2 segundos apos cada acao (UNDO_MS no codigo).
+
+=== RODADA 4 ===
+CONVITES: o convidado que JA tem conta ve o convite ao abrir o app (Aceitar / Agora nao / Recusar). A troca de grupo e feita
+no servidor (funcoes grana_aceitar_convite e grana_recusar_convite). Quem cria a conta depois continua entrando automaticamente.
+O convite nao envia e-mail: use "Compartilhar convite" (WhatsApp/compartilhar) e, se o convidado tiver push ativo, ele recebe aviso.
+COMANDOS POR TEXTO (botao + na barra de Inicio): Atualizar saldo, Compra no credito, Compra no debito, Guardar no cofrinho, Pagar conta.
+Tambem funcionam digitando o comando (ex.: "guardar 200 viagem", "pagar conta luz 100"). Contas, cartoes, cofrinhos e despesas
+sao reconhecidos por nome, banco, final do cartao, fornecedor, categoria e subcategoria; se houver duvida o app pergunta.
+
+=== RODADA 5 ===
+INDIVIDUAL x COMPARTILHADO: contas, cartoes, cofrinhos, metas e categorias sao de quem criou, salvo se marcados "Compartilhar com <parceiro>".
+Lancamentos tambem: so aparecem para o outro se marcados como compartilhados. O que existia antes desta versao continua visivel para os dois.
+Aviso de privacidade: a separacao e feita pelo app; os dados dos dois ficam no mesmo registro da conta compartilhada no Supabase.
+PAGAR/RECEBER: quem paga escolhe a conta; o saldo muda so nela (nunca na conta individual do outro) e o outro recebe aviso.
+LOGO NO CELULAR: toque no logo (topo) para sincronizar e buscar versao nova sem sair do app.
+ZOOM: padrao 100%; a escolha feita em Configuracoes fica guardada no aparelho.
+
+RODADA 6 - Meu perfil: tema, "Salvo" e compartilhamento agora ficam la (o cabecalho so mostra aviso se o salvamento falhar). Foto de perfil reduzida a 256x256. Dados da conta: baixar backup (JSON com o que voce enxerga), restaurar backup (com desfazer) e zerar conta (botao de confirmar libera apos 9s; escolha o que manter: contas, cartoes, cofrinhos, metas, categorias; saldos, limites e valores guardados vao a zero; lancamentos, investimentos e notificacoes sao apagados).

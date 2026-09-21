@@ -1,0 +1,37 @@
+{
+  "_doc": "Casos que TypeScript e Python precisam resolver IGUAL. Cada lado tem um teste que lê este arquivo.",
+  "categoria": [
+    ["Mercado", "alimentacao", "Supermercado"],
+    ["Pão de Açúcar", "alimentacao", "Supermercado"],
+    ["iFood jantar", "alimentacao", "Delivery / iFood"],
+    ["Uber", "transporte", "Uber / 99"],
+    ["Posto Ipiranga", "transporte", "Combustível"],
+    ["Netflix", "assinaturas", "Streaming"],
+    ["Aluguel", "moradia", "Aluguel"],
+    ["Conta de energia", "moradia", "Energia elétrica"],
+    ["Farmácia", "saude", "Farmácia"],
+    ["Academia Smart Fit", "saude", "Academia"],
+    ["Salário", "trabalho", "Salário"],
+    ["Freela logo", "rendaextra", "Freelance"],
+    ["Livro", null, null],
+    ["", null, null]
+  ],
+  "forma": [
+    ["compra no pix", "Pix"],
+    ["débito", "Débito"],
+    ["cartão de crédito", "Crédito"],
+    ["dinheiro vivo", "Dinheiro"],
+    ["mercado", null]
+  ],
+  "banco": [
+    ["nubank", "Nubank"],
+    ["nu 25", "Nubank"],
+    ["menu 25", null],
+    ["genuino", null],
+    ["itaú", "Itaú"],
+    ["c6", "C6 Bank"],
+    ["mercado pago", "Mercado Pago"],
+    ["inter", "Inter"],
+    ["internet", null]
+  ]
+}

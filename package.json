@@ -1,0 +1,10 @@
+{
+  "name": "grana-a-dois",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "test": "npm run test -w @grana/core",
+    "typecheck": "npm run typecheck -w @grana/core"
+  }
+}
