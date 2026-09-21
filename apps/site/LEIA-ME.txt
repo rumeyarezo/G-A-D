@@ -54,3 +54,17 @@ LOGO NO CELULAR: toque no logo (topo) para sincronizar e buscar versao nova sem 
 ZOOM: padrao 100%; a escolha feita em Configuracoes fica guardada no aparelho.
 
 RODADA 6 - Meu perfil: tema, "Salvo" e compartilhamento agora ficam la (o cabecalho so mostra aviso se o salvamento falhar). Foto de perfil reduzida a 256x256. Dados da conta: baixar backup (JSON com o que voce enxerga), restaurar backup (com desfazer) e zerar conta (botao de confirmar libera apos 9s; escolha o que manter: contas, cartoes, cofrinhos, metas, categorias; saldos, limites e valores guardados vao a zero; lancamentos, investimentos e notificacoes sao apagados).
+
+RODADA 8 - Formulario de lancamento com secoes e icones; listas suspensas arredondadas (folha que sobe da base); recorrencias organizadas no celular; sem movimento lateral nos formularios; Meu perfil por ultimo no menu; Configuracoes > Area do empreendedor (razao social, CNPJ, conta PJ, chaves Pix e QR Code da loja, visivel so no seu login).
+
+RODADA 9 - Novo cartao (credito, debito ou debito e credito) e nova conta em janelas com preview; Open Finance (em breve); barra lateral 10% mais estreita.
+
+RODADA 10 - Configuracoes > Atividade (historico com filtros), Configuracoes > Seguranca (biometria, aparelhos, 2FA, senha), menu Relatorios com dashboards e fonte Inter nos numeros. Biometria e um bloqueio deste aparelho; 2FA depende de MFA habilitado no Supabase Auth do projeto.
+
+RODADA 11 - Biometria só pede de novo após 5 min fora do app (atualizar a página não bloqueia). Nova aba Listas de compra (Mercado com itens por categoria + listas por tema). Barra de lançamento ganhou "Recebimento" e "Precisa comprar".
+
+RODADA 12 - Pagar/Receber com valor, juros e data; listas de compra com "Estou levando" e promocao; notificacoes mantem historico das ultimas 20.
+
+RODADA 13 - Listas de compra ganharam botao Compartilhar (WhatsApp, compartilhar do sistema ou copiar o texto pronto).
+
+RODADA 14 - Listas de compra: buscar um item que nao existe oferece cadastra-lo na hora; itens ja marcados vao para uma secao "Comprados" ao final e ha um filtro rapido "Todos / Falta pegar / No carrinho"; itens do Mercado ganharam campo de estoque em casa. Barra de lancamento ganhou o comando "Compra no Pix".

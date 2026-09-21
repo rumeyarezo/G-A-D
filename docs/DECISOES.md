@@ -83,3 +83,41 @@ Pendente: criar os logins no projeto novo e copiar o estado antigo com `grana_mi
 - Sugestao de comandos ao digitar (sugerirComandos, #qp-sugg; setas/Tab/Enter).
 - Notificacoes de bancos: PWA nao le notificacoes de outros apps. Entrada por ?notif=<texto> (MacroDroid/Tasker) ou Web Share Target (manifest); interpretarNotifBanco -> notificacao propria (data.nb) -> abrirRascunhoBanco abre o popup preenchido. Sem permissao: modal. iPhone: so pelo Compartilhar/Atalhos.
 - Lembrete 3 dias sem lancar: cliente (verificarLembreteLancamentos, so sem push) + Edge Function grana-push v4 (rodarLembretes no cron diario, por pessoa, pref lembrar).
+
+## Rodada 8
+- Listas suspensas: todo <select> (menos .no-dd) e envolvido por um botao arredondado; o select nativo continua no DOM (opacity 0) mantendo value/selectedIndex/eventos (propriedades sobrescritas na instancia + MutationObserver). Opcoes abrem numa folha fixa (bottom-sheet no celular, centrada no desktop) com busca quando ha mais de 7 opcoes; Esc fecha so a folha.
+- Formulario de lancamento: mesmos ids/handlers; so o markup mudou (hero de valor + secoes .lanc-sec com icones .fic). Icones novos em ICONS.
+- Sem movimento lateral: html{touch-action:pan-y}; excecoes com pan-x nas faixas que rolam (bottom-nav, tabelas, filtros). Inputs 16px em ponteiro grosso (iOS nao da zoom ao focar).
+- Meu perfil e o ultimo de NAV_ITEMS.
+- Area do empreendedor: estado.empresas[caio|marina] = {razao,cnpj,banco,agencia,conta,tipoConta,pix[],qr,qrRotulo}. Cada pessoa ve/edita so a sua (mesma limitacao da separacao pela interface: o JSON e unico por household). CNPJ com mascara e digitos verificadores; QR reduzido a 640px (JPEG) sem cortar; sanEmpresa valida tudo ao carregar. Backup leva a empresa de quem baixou; zerar conta NAO apaga a empresa.
+
+## Rodada 9
+- Cartao: continua tipo 'credito'|'debito' (toda a logica de fatura/limite intacta). "Debito e Credito" = tipo 'credito' + debito:true (+ contaId para o debito). Novos campos: final (so 4 digitos; numero completo nunca e guardado), cor, padrao, adicionais[{nome,final}]; lancamento no credito ganha "Quem usou o cartao" (t.adicional) quando ha adicionais. Debito puro: limiteBase 0, sem datas; nao cria mais conta automatica, usa a conta escolhida.
+- Conta: novos campos tipoConta, grupo (pf|pj|inv), cor, limiteEspecial (informativo, fora do saldo e do patrimonio), ativa (undefined = true). Inativa: fora das listas de lancamento/baixa/comandos e do saldo total; historico e mantido. Editar conta reutiliza a mesma janela (saldo so via Ajustar saldo).
+- abrirFormModal: janela generica com preview (usada por cartao e conta). Open Finance: view placeholder, nav depois de Investimentos. --sidebar-w 236 -> 212.
+
+## Rodada 10
+- Atividades: log por diff (registrarDiff compara o snapshot estavel anterior/atual em checarMudanca) -> entradas {id,ts,quem,dono,tipo,ent,titulo,detalhe,comp,disp,mud[{c,de,para}]}. So campos mapeados em ATIV_CAMPOS contam (saldo derivado, fatura, historico do cofrinho nao). Guarda 400 entradas / 90 dias em estado.atividades. Desfazer remove as atividades do lote. Visibilidade: so as suas, as compartilhadas (comp) e as de sistema suas - de novo, nivel de interface (o JSON e unico por household).
+- Seguranca: bloqueio por biometria = WebAuthn com autenticador da plataforma (userVerification required), credencial guardada em localStorage (grana-bio-<uid>). E um bloqueio LOCAL do aparelho, nao validado no servidor. 2FA = TOTP do Supabase Auth (sb.auth.mfa.*): precisa de MFA habilitado nas configuracoes de Auth do projeto; nao testado contra o Supabase real (testes usam mock). Trocar senha: reautentica com signInWithPassword e depois updateUser. "Sair dos outros aparelhos" = signOut({scope:'others'}). Lista de aparelhos = registro proprio em estado.dispositivos (sem IP; nao lista sessoes reais).
+- Relatorios: efetivadas = status 'pago'; ignora lancamentos "Pagamento fatura ..." (evita contar duas vezes a compra no credito e o pagamento). Filtro Geral/PF/PJ/Investimentos pelo grupo da conta (cartao usa a conta dele). Graficos em SVG puro, sem biblioteca. Exporta CSV.
+- Fonte dos numeros: Inter com tabular-nums (variavel --font-mono mantida por compatibilidade).
+
+## Rodada 11
+- Bloqueio: localStorage grana-ativo-<uid> guarda a ultima atividade (toque/tecla/rolagem, batimento de 20s, pagehide). Ao abrir/voltar, so bloqueia se ficou fora mais que c.espera (padrao 300s; configs antigas migradas para 300 via v:2). Continua sendo bloqueio local do aparelho.
+- Listas de compra: estado.compras = {listas:[{id,nome,tipo,dono,comp}], itens:[...]}. Lista 'l_mercado' (compartilhada) e o catalogo geral; "lista de compras" = itens com precisa:true. Categoria obrigatoria no Mercado (5 fixas); item criado pela barra entra sem categoria e abre modal sem botao de fechar ate escolher. Outras listas: prioridade, preco sugerido, sem categoria. Visibilidade por interface (dono/comp), como o resto.
+- Precos: precoAtual (digitado), precoUltimo, precos[] (historico). Ao voltar ao carrinho ou em "Atualizar preco", o atual passa a ultimo e entra no historico; media = historico + atual. Concluir compra tira os comprados da lista e mantem o valor pago.
+- Barra: comandos 'receber' (recebi/receber/recebimento/salario no inicio) e 'comprar' (precisa comprar, precisamos, comprar, falta, acabou). Itens separados por virgula, ";" ou " e "; aceita quantidade/unidade (2 leite, 2kg de banana). Casamento por nome normalizado (singular/plural); ambiguo pergunta.
+
+## Rodada 12
+- Pagar/Receber: abrirBaixaModal (valor, juros/multa, data <= hoje, conta). Baixa parcial cria um clone pago (data = pagamento) e deixa o resto pendente; quitacao mantem `data` (vencimento) e grava `pagoEm`. Juros viram lancamento a parte (despesa em "Dividas e taxas > Juros e multas", ou receita "Juros recebidos"). Fatura de cartao usa a mesma janela (parcial reduz faturaAtual). Relatorios contam pela data `pagoEm||data`; as demais telas continuam por `data` (competencia).
+- Listas: item ganha `levando` (mesma unidade do preco), `promo`, `promoUltimo`. Ao marcar o check sem levando, usa a quantidade planejada. Subtotal = round2(levando × precoAtual); "Ja no carrinho" = soma dos marcados, atualizada a cada tecla sem re-renderizar (re-render tirava o foco ao trocar de campo). Promocao do preco atual vira `promoUltimo` quando o preco desloca para "ultimo".
+- Notificacoes: `lidas:[user]` por pessoa; selo so conta nao lidas; lista e historico mantem as ultimas 20 (NOTIF_MAX).
+
+## Rodada 13
+- Compartilhar lista: botao no cabecalho de Listas de compra. textoLista() monta texto (Mercado: so os itens "Precisa comprar" por categoria, com check e total estimado; outras: prioridade e preco). Usa navigator.share quando existe, mais WhatsApp (wa.me) e Copiar. Em lista individual o modal tambem tem a chave "visivel para o parceiro" (lista.comp).
+
+## Rodada 14
+- Busca sem resultado (Mercado ou lista propria) mostra "Adicionar '<texto>' agora": abre o modal de item ja com o nome preenchido (abrirItemModal com opc.nome), fecha a busca ao salvar. No Mercado a categoria continua obrigatoria (mesma regra ja existente).
+- Itens marcados ("comprado") saem dos grupos por categoria e vao para um bloco "Comprados" ao final da lista (renderListas separa pend/don antes de montar o HTML); no Mercado o bloco "Comprados" fica ordenado por categoria+nome, sem subdivisao. Filtro rapido lsFiltro ('todos'|'falta'|'carrinho') some por cima do resumo quando a lista/aba tem itens; reseta para 'todos' ao trocar de lista ou aba. Marcar/desmarcar o check agora chama renderListas() (antes so patchava via vivo()) para reordenar na hora.
+- Estoque em casa: campo numerico opcional (estoque) nos itens do Mercado, editavel direto na linha do catalogo (input, como o "Valor atual") e tambem no modal de novo/editar item. So aparece nos itens do Mercado (faz sentido nas demais listas? decidimos que nao, sao itens avulsos sem recompra). Sem alerta automatico de estoque baixo (fora do pedido); so o numero fica destacado em vermelho quando chega a zero.
+- Comando "Compra no Pix" (barra de lancamento): mesma familia do "Compra no debito", mas sem cartao - sempre sai direto de uma conta (contasAtivas()). Reaproveita cmdCompra com tipoCartao='pix'; forma da transacao = 'Pix', contaId da conta escolhida.
