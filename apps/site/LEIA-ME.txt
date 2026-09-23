@@ -70,3 +70,5 @@ RODADA 13 - Listas de compra ganharam botao Compartilhar (WhatsApp, compartilhar
 RODADA 14 - Listas de compra: buscar um item que nao existe oferece cadastra-lo na hora; itens ja marcados vao para uma secao "Comprados" ao final e ha um filtro rapido "Todos / Falta pegar / No carrinho"; itens do Mercado ganharam campo de estoque em casa. Barra de lancamento ganhou o comando "Compra no Pix".
 
 RODADA 15 - Correcao de bug serio de perda de dados: se voce criasse algo (uma lista de compras, um lancamento etc.) bem na hora em que outro aparelho salvava qualquer outra coisa, o que voce tinha acabado de criar podia sumir sem nenhum aviso de erro. Isso foi corrigido: agora um item recem-criado nunca e descartado antes de ser salvo.
+
+RODADA 16 - Botao "Registrar lancamento" agora e preenchido de vermelho solido (despesa) ou verde solido (receita), em vez de um tom clarinho. Biometria/PIN: agora e pedida SEMPRE que voce fecha e abre o app de novo (carga nova da pagina), nao importa o tempo configurado em "pedir de novo depois de". Essa opcao de tempo continua valendo so para quando o app fica em segundo plano com a pagina ainda aberta (trocar de aba, minimizar).

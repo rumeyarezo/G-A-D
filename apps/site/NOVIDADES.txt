@@ -1,3 +1,4 @@
 # SOMENTE as mudancas do ultimo upload. A cada nova versao: mova estas linhas para NOVIDADES-HISTORICO.txt e escreva so as novas.
 # Uma linha por novidade (todas aparecem no aviso de atualizacao, ate 6). Linhas com # sao ignoradas.
-Corrigido um problema sério: se algo fosse criado (uma lista de compras, um lançamento etc.) bem na hora em que o outro aparelho salvava alguma coisa, o que você tinha acabado de criar podia sumir sem aviso. Agora isso não acontece mais.
+O botão "Registrar lançamento" agora fica preenchido de vermelho (despesa) ou verde (receita), não só com um tom clarinho.
+A biometria/PIN agora é pedida sempre que você fecha e abre o app de novo, mesmo com a opção "pedir de novo" configurada para um tempo longo.
