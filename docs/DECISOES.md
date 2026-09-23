@@ -163,7 +163,6 @@ Pendente: criar os logins no projeto novo e copiar o estado antigo com `grana_mi
 - **Centralizado**: o `.fab` (e o `.fab-menu`, o conjunto de opcoes que abre acima dele) deixou de ficar grudado no canto direito (`right:24px`/`16px`) e passa a ficar centralizado na largura visivel. No celular (sem barra lateral) isso e `left:50%; transform:translateX(-50%)`. No computador, como a barra lateral (`--sidebar-w`, 212px) ocupa a esquerda, centralizar na tela inteira deixaria o botao fora do centro visual da area de conteudo - por isso o calculo usa `left:calc(50% + var(--sidebar-w)/2)`, que centraliza dentro do espaco a direita da barra lateral.
 - As cores das opcoes do menu (despesa vermelho, receita verde, transferencia azul) ja existiam desde antes (`.c-despesa`/`.c-receita`/`.c-transferencia`); o visual do menu em si (deixar "mais bonito e parecido com o tema") fica pra proxima rodada, que e um pedido separado do Caio.
 
-
 ## Rodada 20 - menu do botao + redesenhado
 
 - **Pedido do Caio**: quando o + e acionado, as opcoes que aparecem devem ser mais bonitas e mais parecidas com o tema geral do app, mantendo as cores respectivas (verde/vermelho/azul).
