@@ -38,3 +38,7 @@ Listas de compra: campo "Estou levando" soma quantidade × valor atual no resumo
 Cada preço mostra a unidade (/kg, /un) e tem a opção "Este item está em promoção".
 Notificações: marcar como lidas só apaga o selo; a lista guarda sempre as últimas 20.
 Listas de compra: novo botão Compartilhar. Envia a lista por WhatsApp ou qualquer app, ou copia o texto pronto.
+Listas de compra: digitou um item que não existe? Agora dá para cadastrá-lo na hora, direto da busca.
+Listas de compra: itens já marcados vão para uma seção "Comprados" ao final, e um filtro rápido mostra só "Falta pegar" ou "No carrinho".
+Listas de compra: itens do Mercado ganharam um campo de "Estoque em casa", para marcar quanto ainda tem.
+Barra de lançamento: novo comando "Compra no Pix", para compras pagas direto da conta.

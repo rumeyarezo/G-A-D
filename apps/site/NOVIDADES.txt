@@ -1,6 +1,3 @@
 # SOMENTE as mudancas do ultimo upload. A cada nova versao: mova estas linhas para NOVIDADES-HISTORICO.txt e escreva so as novas.
 # Uma linha por novidade (todas aparecem no aviso de atualizacao, ate 6). Linhas com # sao ignoradas.
-Listas de compra: digitou um item que não existe? Agora dá para cadastrá-lo na hora, direto da busca.
-Listas de compra: itens já marcados vão para uma seção "Comprados" ao final, e um filtro rápido mostra só "Falta pegar" ou "No carrinho".
-Listas de compra: itens do Mercado ganharam um campo de "Estoque em casa", para marcar quanto ainda tem.
-Barra de lançamento: novo comando "Compra no Pix", para compras pagas direto da conta.
+Corrigido um problema sério: se algo fosse criado (uma lista de compras, um lançamento etc.) bem na hora em que o outro aparelho salvava alguma coisa, o que você tinha acabado de criar podia sumir sem aviso. Agora isso não acontece mais.
