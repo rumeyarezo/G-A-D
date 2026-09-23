@@ -989,6 +989,7 @@ html,body{overscroll-behavior-x:none;}
   <div class="fab-backdrop hidden-el" id="fab-backdrop"></div>
   <div class="fab-menu" id="fab-menu"></div>
   <button class="fab" id="fab-add" title="Adicionar" aria-label="Adicionar"></button>
+  <input type="file" id="input-comprovante" accept="image/*" capture="environment" hidden>
 
   <div class="tour-welcome-wrap hidden-el" id="tour-welcome">
     <div class="tour-welcome-card">
@@ -1126,6 +1127,7 @@ const ICONS = {
   chevRight:'<path d="M9 6l6 6-6 6"/>',
   chevLeft:'<path d="M15 6l-6 6 6 6"/>',
   sparkle:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/><circle cx="12" cy="12" r="2.2"/>',
+  camera:'<path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1-2h7l1 2h2A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5Z"/><circle cx="12" cy="13" r="3.3"/>',
   bank:'<path d="M4 9.5 12 4l8 5.5"/><path d="M4 9.5h16"/><path d="M5.5 12v6M9.7 12v6M14.3 12v6M18.5 12v6"/><path d="M3.3 19h17.4"/>',
   mail:'<rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/>',
   transfer:'<path d="M4 7.5h13.5"/><path d="M14 4l3.5 3.5L14 11"/><path d="M20 16.5H6.5"/><path d="M10 20l-3.5-3.5L10 13"/>',
@@ -6106,6 +6108,94 @@ function reduzirFoto(file, lado){
   });
 }
 
+/* ---------- comprovante por foto (Rodada 24): OCR local (Tesseract.js), sem enviar a foto pra nenhum servidor ---------- */
+function prepararImagemOCR(file, ladoMax){
+  return new Promise((ok, falha)=>{
+    if(!file || !/^image\//.test(file.type||'image/')) return falha(new Error('tipo'));
+    const url = URL.createObjectURL(file); const img = new Image();
+    img.onload = ()=>{
+      try{
+        const w = img.naturalWidth||img.width, h = img.naturalHeight||img.height; if(!w||!h) throw new Error('vazia');
+        const esc = Math.min(1, ladoMax/Math.max(w,h));
+        const cw = Math.max(1,Math.round(w*esc)), ch = Math.max(1,Math.round(h*esc));
+        const c = document.createElement('canvas'); c.width=cw; c.height=ch;
+        const g = c.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(img,0,0,cw,ch);
+        URL.revokeObjectURL(url); ok(c);
+      }catch(e){ URL.revokeObjectURL(url); falha(e); }
+    };
+    img.onerror = ()=>{ URL.revokeObjectURL(url); falha(new Error('img')); };
+    img.src = url;
+  });
+}
+let tesseractCarregando = null;
+function carregarTesseract(){
+  if(window.Tesseract) return Promise.resolve();
+  if(tesseractCarregando) return tesseractCarregando;
+  tesseractCarregando = new Promise((ok, falha)=>{
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+    s.onload = ()=>ok(); s.onerror = ()=>{ tesseractCarregando=null; falha(new Error('cdn')); };
+    document.head.appendChild(s);
+  });
+  return tesseractCarregando;
+}
+/* lê o texto de um comprovante/nota fiscal (já OCRizado) e monta um rascunho de despesa, reaproveitando
+   os mesmos parsers do lançamento por texto (extrairValorDoTexto, sugerirCategoria, sugerirForma etc.) */
+function interpretarComprovante(texto){
+  const linhas = String(texto||'').split(/\r?\n/).map(l=>l.replace(/\s+/g,' ').trim()).filter(Boolean);
+  if(!linhas.length) return null;
+  const tudo = linhas.join(' ');
+  /* valor: prioriza uma linha com "total" (mas não "subtotal"), senão usa o maior valor achado no texto inteiro */
+  let valor = 0;
+  linhas.filter(l=>/\btotal\b/i.test(l) && !/sub\s*total/i.test(l)).forEach(l=>{ const ex = extrairValorDoTexto(l); if(ex.valor>valor) valor = ex.valor; });
+  if(!valor){ const ex = extrairValorDoTexto(tudo); valor = ex.valor; }
+  if(!(valor>0)) return null;
+  /* data: primeira dd/mm(/aaaa) do texto, se não for no futuro */
+  let data = HOJE;
+  const dm = tudo.match(/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/) || tudo.match(/\b(\d{1,2})\/(\d{1,2})\b/);
+  if(dm){
+    const dd=Number(dm[1]), mm=Number(dm[2]); let yy = dm[3]!==undefined ? Number(dm[3]) : Number(HOJE.slice(0,4)); if(yy<100) yy+=2000;
+    if(dd>=1&&dd<=31&&mm>=1&&mm<=12){ const cand = yy+'-'+String(mm).padStart(2,'0')+'-'+String(dd).padStart(2,'0'); if(cand<=HOJE) data = cand; }
+  }
+  /* nome: em comprovante de Pix (muito comum ser um print de transferência), o destinatário costuma vir
+     rotulado ("Para:", "Favorecido:", "Recebedor:", "Destinatário:") - isso é mais confiável que a 1ª linha */
+  let nome = null;
+  const mPix = tudo.match(/\b(?:para|favorecido|recebedor|destinat[aá]rio)\s*[:\-]?\s*([A-ZÀ-Ú][^\n.,;:]{2,40})/i);
+  if(mPix) nome = mPix[1].trim();
+  /* senão, primeira linha "de verdade" entre as 6 primeiras (nem CNPJ/CPF/endereço/data, nem só números) */
+  if(!nome){
+    for(const l of linhas.slice(0,6)){
+      if(/^(cnpj|cpf|endere[cç]o|data|hora|hor[aá]rio)\b/i.test(l)) continue;
+      if(!/[a-zA-ZÀ-ú]{3,}/.test(l) || /^\d+$/.test(l.replace(/[.\-\/]/g,''))) continue;
+      nome = l.replace(/[.:,\-–]+$/,'').trim();
+      if(nome.length>2) break; else nome = null;
+    }
+  }
+  if(nome && nome.length>40) nome = nome.slice(0,40).trim();
+  const desc = nome || 'Comprovante lido por foto';
+  const d = parseQuickEntry(desc);
+  const forma = sugerirForma(tudo);
+  return Object.assign(d, {tipo:'despesa', desc, valor, data, status:'pago', forma: forma || d.forma || null, fornecedor: nome || undefined, origem:'comprovante'});
+}
+async function lerComprovante(file){
+  if(!file) return;
+  toast('Lendo o comprovante… isso pode levar alguns segundos.','good');
+  try{
+    const canvas = await prepararImagemOCR(file, 1600);
+    await carregarTesseract();
+    const resultado = await Tesseract.recognize(canvas, 'por');
+    const texto = (resultado && resultado.data && resultado.data.text) || '';
+    const d = interpretarComprovante(texto);
+    if(!d){ toast('Não consegui achar um valor nesse comprovante. Preencha manualmente.','bad'); goto('transacoes'); openLancamentoPopup('despesa'); return; }
+    pendingDraft = d;
+    goto('transacoes');
+    openLancamentoPopup(d.tipo);
+    toast(`Comprovante lido: ${fmtBRL(d.valor)}${d.desc && d.desc!=='Comprovante lido por foto' ? ' · '+d.desc : ''}. Confira antes de salvar.`,'good');
+  }catch(e){
+    toast('Não consegui processar essa imagem. Tente outra foto ou lance manualmente.','bad');
+  }
+}
+
 /* ---------- backup ---------- */
 function baixarBackup(){
   recalcSaldos();
@@ -6886,6 +6976,7 @@ function fabOptionsForView(view){
     case 'dashboard':
     case 'transacoes':
       return [
+        {label:'Ler comprovante', cls:'c-neutral', ic:'camera', onClick:()=>document.getElementById('input-comprovante').click()},
         {label:'Transferência', cls:'c-transferencia', ic:'transfer', onClick:()=>openLancamentoPopup('transferencia')},
         {label:'Receita', cls:'c-receita', ic:'plus', onClick:()=>openLancamentoPopup('receita')},
         {label:'Despesa', cls:'c-despesa', ic:'minus', onClick:()=>openLancamentoPopup('despesa')},
@@ -7094,6 +7185,12 @@ function iniciarApp(){
   document.getElementById('choice-wrap').addEventListener('click', e=>{ if(e.target.id==='choice-wrap') closeChoiceModal(); });
 
   initFab();
+
+  /* comprovante por foto (Rodada 24): OCR local, sem servidor */
+  document.getElementById('input-comprovante').addEventListener('change', ()=>{
+    const inp = document.getElementById('input-comprovante');
+    const f = inp.files && inp.files[0]; inp.value=''; if(f) lerComprovante(f);
+  });
 
   /* ---- recuperação de senha ---- */
   document.getElementById('recovery-form').addEventListener('submit', async e=>{

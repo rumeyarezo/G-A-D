@@ -1,3 +1,3 @@
 # SOMENTE as mudancas do ultimo upload. A cada nova versao: mova estas linhas para NOVIDADES-HISTORICO.txt e escreva so as novas.
 # Uma linha por novidade (todas aparecem no aviso de atualizacao, ate 6). Linhas com # sao ignoradas.
-Lembretes de lançar gastos agora vêm com botões "+ Despesa" e "+ Receita" direto na notificação, e ficam na tela até você tocar em algo (não somem sozinhos).
+Novo no botão +: "Ler comprovante" tira uma foto (ou escolhe da galeria) e o app já lê o valor, a data e o estabelecimento, abrindo a despesa pronta pra conferir e salvar.
