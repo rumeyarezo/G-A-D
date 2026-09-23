@@ -4665,7 +4665,7 @@ async function sendInvite(email){
 let conviteAdiado = null, conviteModalAberto = false;
 function compartilharConvite(){
   const email = USERS.marina.email||'';
-  const url = location.origin && location.origin!=='null' ? location.origin+location.pathname : 'https://grana-a-dois-beta.netlify.app/';
+  const url = location.origin && location.origin!=='null' ? location.origin+location.pathname : 'https://g-a-d.grana-a-dois.workers.dev/';
   const texto = `Te convidei para compartilhar as finanças no Grana a Dois! Abra ${url} e entre com o e-mail ${email} — o convite aparece na tela para você aceitar.`;
   if(navigator.share){ navigator.share({title:'Convite Grana a Dois', text:texto}).catch(()=>{}); return; }
   window.open('https://wa.me/?text='+encodeURIComponent(texto), '_blank', 'noopener');
