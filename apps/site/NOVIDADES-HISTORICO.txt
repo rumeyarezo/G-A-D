@@ -1,4 +1,6 @@
 # Historico (nao vai para o app). Novidades de rodadas anteriores.
+O botão "Registrar lançamento" agora fica preenchido de vermelho (despesa) ou verde (receita), não só com um tom clarinho.
+A biometria/PIN agora é pedida sempre que você fecha e abre o app de novo, mesmo com a opção "pedir de novo" configurada para um tempo longo.
 Contas, cartões, cofrinhos, metas e categorias agora são individuais; você escolhe o que compartilhar (selo “Compartilhada”).
 Quem paga escolhe a conta: o saldo muda só nela e o parceiro recebe o aviso.
 No celular, o logo do Grana a Dois no topo sincroniza e busca atualizações. Zoom padrão volta a 100%.
