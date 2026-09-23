@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Grana a Dois">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<script>window.GRANA_BUILD={"v": "b32a3caaa2", "notas": ["O menu que abre no botão + ficou mais bonito: cada opção agora tem a etiqueta e o círculo na cor certa (vermelho para despesa, verde para receita, azul para transferência), com uma sombra suave por trás do menu."]};</script>
+<script>window.GRANA_BUILD={"v": "82f506956c", "notas": ["Novo em Configurações > Notificações: \"Horários agendados\". Escolha um ou vários horários e dias da semana para ser lembrado de lançar seus gastos (além do aviso automático de 3 dias sem lançar nada)."]};</script>
 <style>html,body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -436,6 +436,11 @@ main{padding:22px; flex:1; min-width:0;}
 .resumo-filters{display:flex; align-items:center; gap:8px; padding:12px 20px; border-bottom:1px solid var(--border); flex-wrap:wrap; flex:none;}
 .resumo-chip{border:1px solid var(--border); background:var(--surface-2); border-radius:999px; padding:5px 12px; font-size:12px; font-weight:600; color:var(--text-secondary);}
 .resumo-chip.active{background:var(--accent-soft); border-color:var(--accent-ring); color:var(--accent-strong);}
+.lembrete-dias{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
+.lembrete-chips{display:flex; flex-wrap:wrap; gap:8px;}
+.lembrete-chip{display:flex; align-items:center; gap:6px; padding:6px 6px 6px 12px; border-radius:999px; background:var(--accent-soft); border:1px solid var(--accent-ring); font-size:12.5px; font-weight:700; color:var(--accent-strong);}
+.lembrete-chip .btn-icon{padding:5px; background:transparent; border:0;}
+.lembrete-chip-txt{white-space:nowrap;}
 .resumo-custom{display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-muted); margin-left:auto;}
 .resumo-custom input{width:52px; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-xs); padding:5px 7px; font-family:var(--font-mono); text-align:center;}
 .resumo-body{overflow-y:auto; padding:16px 20px 22px;}
@@ -5249,6 +5254,8 @@ function renderConfiguracoes(){
       <div class="row-between"><div><div class="row-lbl">Lançamentos e pagamentos do parceiro</div><div class="row-sub">Aviso no aparelho quando ${USERS.marina.status==='ativo' ? (state.user==='caio'?USERS.marina.nome:USERS.caio.nome) : 'seu parceiro'} registrar ou pagar algo compartilhado</div></div><label class="switch"><input type="checkbox" id="pref-parceiro" ${notifPrefs().parceiro?'checked':''}><span class="switch-track"></span></label></div>
       <div class="row-between"><div><div class="row-lbl">Vencimentos e recebimentos do dia</div><div class="row-sub">Um aviso no dia de despesas e faturas a pagar e de receitas a receber</div></div><label class="switch"><input type="checkbox" id="pref-venc" ${notifPrefs().venc?'checked':''}><span class="switch-track"></span></label></div>
       <div class="row-between"><div><div class="row-lbl">Lembrete de registrar gastos</div><div class="row-sub">Um aviso quando passar de 3 dias sem lançar nenhuma despesa ou receita</div></div><label class="switch"><input type="checkbox" id="pref-lembrar" ${notifPrefs().lembrar?'checked':''}><span class="switch-track"></span></label></div>
+      <div class="row-between"><div><div class="row-lbl">Horários agendados</div><div class="row-sub">Escolha horários e dias específicos pra ser lembrado, além do aviso de 3 dias acima</div></div><button class="btn btn-ghost btn-sm" id="cfg-lembrete-add">${icon('plus')} Adicionar horário</button></div>
+      <div id="cfg-lembretes-lista" style="padding:0 0 12px;">${lembretesAgLista()}</div>
       ${permissaoNotif()==='granted'?(pushSuportado()?`<div class="row-between"><div><div class="row-lbl">Avisos com o app fechado</div><div class="row-sub" id="cfg-push-status">${pushAtivoLocal()?'Ativos: você recebe os avisos mesmo com o app fechado.':(notifPrefs().push===false?'Desligados neste aparelho.':'Não foi possível ativar agora. Abra o app com internet e tente de novo.')}</div></div><div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">${pushAtivoLocal()?`<button class="btn btn-ghost btn-sm" id="cfg-push-teste">${icon('bell')} Testar</button>`:''}<label class="switch"><input type="checkbox" id="pref-push" ${notifPrefs().push!==false?'checked':''}><span class="switch-track"></span></label></div></div>`:`<div class="row-sub" style="margin-top:8px;">Avisos com o app fechado não estão disponíveis neste navegador. No iPhone, instale o app na Tela de Início e abra por lá.</div>`):''}
       <div class="row-sub" style="margin-top:8px;">Os avisos também aparecem no sino (topo da tela).</div>
     </div>
@@ -5292,6 +5299,9 @@ function renderConfiguracoes(){
   const pPush=document.getElementById('pref-push'); if(pPush) pPush.addEventListener('change', async e=>{ setNotifPref('push', e.target.checked); if(e.target.checked){ const ok=await ativarPush(); toast(ok?'Avisos com o app fechado ativados':'Não foi possível ativar agora', ok?'good':'bad'); } else { await desativarPush(); toast('Avisos com o app fechado desligados','good'); } renderConfiguracoes(); });
   const bPT=document.getElementById('cfg-push-teste'); if(bPT) bPT.addEventListener('click', async ()=>{ bPT.disabled=true; const ok=await testarPush(); toast(ok?'Teste enviado: a notificação chega em instantes':'O servidor não conseguiu enviar o teste', ok?'good':'bad'); bPT.disabled=false; });
   { const pl=document.getElementById('pref-lembrar'); if(pl) pl.addEventListener('change', e=>{ setNotifPref('lembrar', e.target.checked); if(e.target.checked) verificarLembreteLancamentos(); }); }
+  { const bAdd=document.getElementById('cfg-lembrete-add'); if(bAdd) bAdd.addEventListener('click', ()=>abrirLembreteModal(null));
+    document.querySelectorAll('[data-lembrete-edit]').forEach(b=>b.addEventListener('click', ()=>{ const r=(notifPrefs().lembretes||[]).find(x=>x.id===b.dataset.lembreteEdit); if(r) abrirLembreteModal(r); }));
+    document.querySelectorAll('[data-lembrete-del]').forEach(b=>b.addEventListener('click', ()=>{ const l=(notifPrefs().lembretes||[]).filter(r=>r.id!==b.dataset.lembreteDel); salvarLembretesAg(l); renderConfiguracoes(); toast('Horário removido','good'); })); }
   document.getElementById('pref-venc').addEventListener('change', e=>{ setNotifPref('venc', e.target.checked); if(e.target.checked) verificarVencimentosHoje(); });
   document.getElementById('cfg-idx-atualizar').addEventListener('click', async e=>{ e.currentTarget.disabled=true; await atualizarIndices(); });
   document.getElementById('cfg-download').addEventListener('click',()=>toast('Solicitação registrada. Você receberá seus dados em até 15 dias, conforme a LGPD.','good'));
@@ -6286,8 +6296,70 @@ new MutationObserver(()=>{ if(rotularAgendado) return; rotularAgendado = true; r
 const NOTIF_PREFS_KEY='grana-notif-prefs', NOTIF_VISTOS_KEY='grana-notif-vistos', NOTIF_VENC_KEY='grana-notif-venc';
 function notifSuportada(){ return typeof Notification!=='undefined'; }
 function permissaoNotif(){ return notifSuportada() ? Notification.permission : 'unsupported'; }
-function notifPrefs(){ let o={}; try{ o = JSON.parse(localStorage.getItem(NOTIF_PREFS_KEY)||'{}')||{}; }catch(e){} return Object.assign({parceiro:true, venc:true, push:true, lembrar:true}, o); }
+function notifPrefs(){ let o={}; try{ o = JSON.parse(localStorage.getItem(NOTIF_PREFS_KEY)||'{}')||{}; }catch(e){} return Object.assign({parceiro:true, venc:true, push:true, lembrar:true, lembretes:[]}, o); }
 function setNotifPref(k,v){ const o=notifPrefs(); o[k]=!!v; try{ localStorage.setItem(NOTIF_PREFS_KEY, JSON.stringify(o)); }catch(e){} if(k!=='push' && pushAtivoLocal()) ativarPush(); }
+/* ---- Lembretes agendados (Rodada 21): vários horários/dias configuráveis, além do aviso "3 dias sem lançar" ---- */
+const DIAS_SEMANA_ABREV = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+function descLembrete(r){
+  const dias = (r.dias && r.dias.length && r.dias.length<7) ? r.dias.slice().sort((a,b)=>a-b).map(i=>DIAS_SEMANA_ABREV[i]).join('/') : 'Todo dia';
+  return `${dias} às ${r.hora}`;
+}
+function salvarLembretesAg(lista){
+  const o = notifPrefs(); o.lembretes = lista;
+  try{ localStorage.setItem(NOTIF_PREFS_KEY, JSON.stringify(o)); }catch(e){}
+  if(pushAtivoLocal()) ativarPush();   /* resincroniza com o servidor, que é quem entrega com o app fechado */
+}
+function lembretesAgLista(){
+  const l = notifPrefs().lembretes||[];
+  if(!l.length) return `<div class="hint" style="margin-top:6px;">Nenhum horário agendado ainda — o app avisa só uma vez por horário, no dia certo, se ainda não tiver nada lançado.</div>`;
+  return `<div class="lembrete-chips">${l.map(r=>`<div class="lembrete-chip"><span class="fic">${icon('clock')}</span><span class="lembrete-chip-txt">${escHtml(descLembrete(r))}</span><button type="button" class="btn-icon btn-sm" data-lembrete-edit="${r.id}" aria-label="Editar horário">${icon('edit')}</button><button type="button" class="btn-icon btn-sm" data-lembrete-del="${r.id}" aria-label="Remover horário">${icon('trash')}</button></div>`).join('')}</div>`;
+}
+function abrirLembreteModal(existente){
+  const diasSel = new Set(existente ? (existente.dias&&existente.dias.length?existente.dias:[0,1,2,3,4,5,6]) : [0,1,2,3,4,5,6]);
+  const horaIni = existente ? existente.hora : '20:00';
+  const m = abrirMini({ic:'clock', titulo: existente?'Editar horário':'Novo horário', sub:'Escolha o horário e os dias em que quer ser lembrado, se ainda não tiver lançado nada no dia.',
+    corpo:`<div class="field"><label for="lb-hora">Horário</label><input id="lb-hora" type="time" step="300" value="${horaIni}"></div>
+      <div class="field" style="margin-top:10px;"><label>Dias da semana</label><div class="lembrete-dias" id="lb-dias-row">${DIAS_SEMANA_ABREV.map((l,i)=>`<button type="button" class="resumo-chip ${diasSel.has(i)?'active':''}" data-dia="${i}">${l}</button>`).join('')}</div></div>
+      <div class="mfa-err hidden-el" id="lb-err"></div>`,
+    rodape:`${existente?`<button type="button" class="btn btn-ghost" style="color:var(--critical);" id="lb-excluir">${icon('trash')} Excluir</button>`:'<span></span>'}<button type="button" class="btn btn-ghost" id="lb-cancelar">Cancelar</button><button type="button" class="btn btn-primary" id="lb-ok">${icon('check')} Salvar</button>`});
+  const erro = t=>{ const e=m.w.querySelector('#lb-err'); e.textContent=t; e.classList.remove('hidden-el'); };
+  m.w.querySelectorAll('#lb-dias-row [data-dia]').forEach(b=>b.addEventListener('click', ()=>{ const i=Number(b.dataset.dia); if(diasSel.has(i)) diasSel.delete(i); else diasSel.add(i); b.classList.toggle('active'); }));
+  m.w.querySelector('#lb-cancelar').addEventListener('click', m.fechar);
+  const bx = m.w.querySelector('#lb-excluir'); if(bx) bx.addEventListener('click', ()=>{ const l=(notifPrefs().lembretes||[]).filter(r=>r.id!==existente.id); salvarLembretesAg(l); m.fechar(); renderConfiguracoes(); toast('Horário removido','good'); });
+  m.w.querySelector('#lb-ok').addEventListener('click', ()=>{
+    let hora = m.w.querySelector('#lb-hora').value;
+    if(!hora) return erro('Escolha um horário.');
+    if(!diasSel.size) return erro('Escolha ao menos um dia da semana.');
+    const [hh,mm] = hora.split(':').map(Number);
+    let mmArred = Math.round(mm/5)*5, hhArred = hh;
+    if(mmArred===60){ mmArred=0; hhArred=(hh+1)%24; }
+    hora = String(hhArred).padStart(2,'0')+':'+String(mmArred).padStart(2,'0');
+    const dias = diasSel.size===7 ? [] : [...diasSel].sort((a,b)=>a-b);
+    const l = notifPrefs().lembretes||[];
+    if(existente){ const r=l.find(x=>x.id===existente.id); if(r){ r.hora=hora; r.dias=dias; } }
+    else { if(l.length>=10) return erro('Máximo de 10 horários agendados.'); l.push({id:uid('lb'), hora, dias}); }
+    salvarLembretesAg(l);
+    m.fechar(); renderConfiguracoes();
+    toast(existente?'Horário atualizado':'Horário adicionado','good');
+  });
+}
+/* checa se o horário/dia de algum lembrete agendado bateu com agora, e se a pessoa ainda não lançou nada hoje */
+const LEMBRETE_AG_KEY = 'grana-lembrete-ag-feitos';
+function verificarLembretesAgendados(){
+  if(!estadoCarregado || permissaoNotif()!=='granted' || pushAtivoLocal()) return;   /* com o push ligado, o servidor avisa (também com o app fechado) */
+  const lista = notifPrefs().lembretes||[]; if(!lista.length) return;
+  const agora = new Date();
+  const hhmm = String(agora.getHours()).padStart(2,'0')+':'+String(Math.floor(agora.getMinutes()/5)*5).padStart(2,'0');
+  const diaSemana = agora.getDay();
+  const hoje = hojeSP();
+  let registro = lerJson(LEMBRETE_AG_KEY, {}); if(registro.data!==hoje) registro = {data:hoje, ids:[]};
+  const bateu = lista.find(r=> r.hora===hhmm && (!r.dias||!r.dias.length||r.dias.includes(diaSemana)) && !registro.ids.includes(r.id));
+  if(!bateu) return;
+  registro.ids.push(bateu.id);
+  try{ localStorage.setItem(LEMBRETE_AG_KEY, JSON.stringify(registro)); }catch(e){}
+  if(diasSemLancar()===0) return;   /* já lançou algo hoje: não precisa avisar, mas já marcou como feito acima */
+  notificarDispositivo('Não se esqueça de registrar seus gastos!', 'Chegou o horário que você escolheu para lançar suas despesas e receitas de hoje.', 'lembrete-ag-'+hoje+'-'+bateu.id, 'transacoes');
+}
 function textoStatusNotif(){
   switch(permissaoNotif()){
     case 'granted': return 'Ativadas neste aparelho.';
@@ -6387,7 +6459,7 @@ async function ativarPush(){
     const reg = await navigator.serviceWorker.getRegistration(); if(!reg) return false;
     let sub = await reg.pushManager.getSubscription();
     if(!sub) sub = await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:b64ParaU8(VAPID_PUBLIC)});
-    const {error} = await sb.functions.invoke('grana-push', {body:{acao:'assinar', sub:sub.toJSON(), prefs:{parceiro:notifPrefs().parceiro, venc:notifPrefs().venc, lembrar:notifPrefs().lembrar}}});
+    const {error} = await sb.functions.invoke('grana-push', {body:{acao:'assinar', sub:sub.toJSON(), prefs:{parceiro:notifPrefs().parceiro, venc:notifPrefs().venc, lembrar:notifPrefs().lembrar, lembretes:notifPrefs().lembretes||[]}}});
     if(error) throw error;
     setPushFlag(true); return true;
   }catch(e){ setPushFlag(false); return false; }
@@ -6471,10 +6543,11 @@ function verificarLembreteLancamentos(){
 let notifIniciado = false;
 function iniciarNotificacoesDoDispositivo(){
   atualizarBannerNotif();
-  ativarPush().catch(()=>{}).then(()=>{ notificarNovosDoParceiro(); verificarVencimentosHoje(); verificarLembreteLancamentos(); if(state.view==='configuracoes') renderConfiguracoes(); });
+  ativarPush().catch(()=>{}).then(()=>{ notificarNovosDoParceiro(); verificarVencimentosHoje(); verificarLembreteLancamentos(); verificarLembretesAgendados(); if(state.view==='configuracoes') renderConfiguracoes(); });
   if(notifIniciado) return; notifIniciado = true;
-  setInterval(()=>{ verificarVencimentosHoje(); verificarLembreteLancamentos(); }, 30*60*1000);
-  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible'){ verificarVencimentosHoje(); verificarLembreteLancamentos(); atualizarBannerNotif(); } });
+  /* 5 min (era 30) para os horários agendados (Rodada 21) baterem certo com o app aberto; o push no servidor cobre o app fechado */
+  setInterval(()=>{ verificarVencimentosHoje(); verificarLembreteLancamentos(); verificarLembretesAgendados(); }, 5*60*1000);
+  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible'){ verificarVencimentosHoje(); verificarLembreteLancamentos(); verificarLembretesAgendados(); atualizarBannerNotif(); } });
   if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e=>{ const d=e.data||{}; if(d.tipo==='goto' && viewValida(d.view)) goto(d.view); if(d.nb) abrirRascunhoBanco(d.nb); });
 }
 /* pede permissão assim que o app abre; se o navegador exigir um toque (ex.: Safari), pede no primeiro toque */

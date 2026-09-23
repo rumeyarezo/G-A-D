@@ -1,4 +1,5 @@
 # Historico (nao vai para o app). Novidades de rodadas anteriores.
+O menu que abre no botão + ficou mais bonito: cada opção agora tem a etiqueta e o círculo na cor certa (vermelho para despesa, verde para receita, azul para transferência), com uma sombra suave por trás do menu.
 O botão + agora é redondo e fica centralizado embaixo da tela (mobile e computador), só com o sinal de +, sem a palavra "Adicionar".
 Nas Listas de compras: ao buscar um item que não existe, aperte Enter para já abrir a tela de cadastro com o nome preenchido, e Enter de novo para salvar como está — sem precisar tocar em botão.
 O botão "Registrar lançamento" agora fica preenchido de vermelho (despesa) ou verde (receita), não só com um tom clarinho.

@@ -17,7 +17,7 @@ async function config() {
   const { data, error } = await admin.from('grana_push_config').select('chave,valor');
   if (error) throw error;
   cfg = Object.fromEntries((data ?? []).map((r: any) => [r.chave, r.valor]));
-  webpush.setVapidDetails('https://grana-a-dois-beta.netlify.app', cfg.vapid_public, cfg.vapid_private);
+  webpush.setVapidDetails('https://g-a-d.grana-a-dois.workers.dev', cfg.vapid_public, cfg.vapid_private);
   return cfg;
 }
 
@@ -44,6 +44,14 @@ async function enviar(subs: any[], payload: { titulo: string; corpo: string; vie
 
 const hojeSP = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
 const brl = (n: number) => Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+// hora atual em SP, arredondada pra baixo nos 5 min (mesma granularidade do cron de horários agendados) e dia da semana (0=dom) em SP
+function agoraSP() {
+  const partes = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+  const obj = Object.fromEntries(partes.map((p) => [p.type, p.value]));
+  const semana: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+  const mm = Math.floor(Number(obj.minute) / 5) * 5;
+  return { hhmm: `${obj.hour}:${String(mm).padStart(2, '0')}`, diaSemana: semana[obj.weekday] ?? 0 };
+}
 
 async function rodarVencimentos() {
   const hoje = hojeSP(), diaHoje = Number(hoje.slice(8));
@@ -100,6 +108,36 @@ async function rodarLembretes() {
   return resumo;
 }
 
+// Lembretes agendados (Rodada 21): a pessoa escolhe vários horários/dias; roda a cada 5 min (job separado do cron diário
+// acima, pra não mudar a cadência nem o comportamento do que já funcionava). Só avisa se ainda não lançou nada hoje,
+// e no máximo uma vez por horário configurado por dia (marcado em prefs.lembretesFeitos da própria assinatura).
+async function rodarLembretesAgendados() {
+  const hoje = hojeSP();
+  const { hhmm, diaSemana } = agoraSP();
+  const { data: todas } = await admin.from('grana_push_subs').select('*');
+  const porHH = new Map<string, any[]>();
+  for (const s of todas ?? []) { if (!Array.isArray(s.prefs?.lembretes) || !s.prefs.lembretes.length) continue; if (!porHH.has(s.household_id)) porHH.set(s.household_id, []); porHH.get(s.household_id)!.push(s); }
+  const resumo: any[] = [];
+  for (const [id, subs] of porHH) {
+    const { data: h } = await admin.from('grana_households').select('estado').eq('id', id).single();
+    const { data: perfis } = await admin.from('grana_profiles').select('id,papel').eq('household_id', id);
+    const est: any = h?.estado ?? {};
+    const txs = (est.transacoes ?? []).filter((t: any) => (t.tipo === 'despesa' || t.tipo === 'receita') && t.data === hoje);
+    for (const s of subs) {
+      const feitos = s.prefs?.lembretesFeitos?.data === hoje ? (s.prefs.lembretesFeitos.ids ?? []) : [];
+      const bateram = (s.prefs.lembretes as any[]).filter((r) => r?.hora === hhmm && (!Array.isArray(r.dias) || !r.dias.length || r.dias.includes(diaSemana)) && !feitos.includes(r.id));
+      if (!bateram.length) continue;
+      const novosFeitos = { data: hoje, ids: [...feitos, ...bateram.map((r) => r.id)] };
+      await admin.from('grana_push_subs').update({ prefs: { ...s.prefs, lembretesFeitos: novosFeitos } }).eq('endpoint', s.endpoint);
+      const chave = (perfis ?? []).find((p: any) => p.id === s.user_id)?.papel === 'dono' ? 'caio' : 'marina';
+      const jaLancouHoje = txs.some((t: any) => t.compartilhada === true || t.pessoa === chave || t.criadoPor === chave || (!t.pessoa && !t.criadoPor));
+      if (jaLancouHoje) { resumo.push({ sub: s.endpoint.slice(-8), pulou: 'já lançou hoje' }); continue; }
+      resumo.push({ sub: s.endpoint.slice(-8), horarios: bateram.map((r) => r.id), ...(await enviar([s], { titulo: 'Não se esqueça de registrar seus gastos!', corpo: 'Chegou o horário que você escolheu para lançar suas despesas e receitas de hoje.', view: 'transacoes', tag: 'lembrete-ag-' + hoje })) });
+    }
+  }
+  return resumo;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
   if (req.method !== 'POST') return json({ erro: 'método' }, 405);
@@ -111,6 +149,12 @@ Deno.serve(async (req) => {
     const segredo = req.headers.get('x-cron-secret');
     if (segredo) {
       if (segredo !== c.cron_secret) return json({ erro: 'não autorizado' }, 401);
+      if (body.modo === 'agendados') {
+        // job separado (a cada 5 min) só dos horários agendados pela pessoa; não mexe no cron diário abaixo.
+        let agendados: any = [];
+        try { agendados = await rodarLembretesAgendados(); } catch (e: any) { console.error('lembretes agendados falhou', e); agendados = { erro: String(e?.message ?? e) }; }
+        return json({ modo: 'agendados', agendados });
+      }
       const venc = await rodarVencimentos();
       let lembretes: any = [];
       try { lembretes = await rodarLembretes(); } catch (e: any) { console.error('lembretes falhou', e); lembretes = { erro: String(e?.message ?? e) }; }
@@ -131,7 +175,17 @@ Deno.serve(async (req) => {
       case 'assinar': {
         const s = body.sub;
         if (!s?.endpoint || !s?.keys?.p256dh || !s?.keys?.auth) return json({ erro: 'assinatura inválida' }, 400);
-        const prefs = { parceiro: body.prefs?.parceiro !== false, venc: body.prefs?.venc !== false, lembrar: body.prefs?.lembrar !== false };
+        const horaRe = /^([01]\d|2[0-3]):[0-5]\d$/;
+        const lembretes = Array.isArray(body.prefs?.lembretes)
+          ? body.prefs.lembretes
+              .filter((r: any) => r && typeof r.id === 'string' && horaRe.test(r.hora) && (r.dias === undefined || (Array.isArray(r.dias) && r.dias.every((d: any) => Number.isInteger(d) && d >= 0 && d <= 6))))
+              .slice(0, 10)
+              .map((r: any) => ({ id: String(r.id).slice(0, 40), hora: r.hora, dias: Array.isArray(r.dias) ? r.dias.slice(0, 7) : [] }))
+          : [];
+        // preserva o registro de "já avisei hoje" dos horários agendados (lembretesFeitos): sem isso, toda vez que o app
+        // resincroniza (abrir o app, mudar qualquer preferência) o dedup do dia zerava e podia avisar de novo no mesmo horário.
+        const { data: existente } = await admin.from('grana_push_subs').select('prefs').eq('endpoint', s.endpoint).maybeSingle();
+        const prefs = { parceiro: body.prefs?.parceiro !== false, venc: body.prefs?.venc !== false, lembrar: body.prefs?.lembrar !== false, lembretes, lembretesFeitos: existente?.prefs?.lembretesFeitos };
         const { error } = await admin.from('grana_push_subs').upsert({ endpoint: s.endpoint, household_id: hh, user_id: user.id, p256dh: s.keys.p256dh, auth: s.keys.auth, prefs }, { onConflict: 'endpoint' });
         if (error) return json({ erro: error.message }, 500);
         return json({ ok: true });

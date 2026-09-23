@@ -1,3 +1,3 @@
 # SOMENTE as mudancas do ultimo upload. A cada nova versao: mova estas linhas para NOVIDADES-HISTORICO.txt e escreva so as novas.
 # Uma linha por novidade (todas aparecem no aviso de atualizacao, ate 6). Linhas com # sao ignoradas.
-O menu que abre no botão + ficou mais bonito: cada opção agora tem a etiqueta e o círculo na cor certa (vermelho para despesa, verde para receita, azul para transferência), com uma sombra suave por trás do menu.
+Novo em Configurações > Notificações: "Horários agendados". Escolha um ou vários horários e dias da semana para ser lembrado de lançar seus gastos (além do aviso automático de 3 dias sem lançar nada).
