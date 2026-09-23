@@ -1,4 +1,3 @@
 # SOMENTE as mudancas do ultimo upload. A cada nova versao: mova estas linhas para NOVIDADES-HISTORICO.txt e escreva so as novas.
 # Uma linha por novidade (todas aparecem no aviso de atualizacao, ate 6). Linhas com # sao ignoradas.
-O botão "Registrar lançamento" agora fica preenchido de vermelho (despesa) ou verde (receita), não só com um tom clarinho.
-A biometria/PIN agora é pedida sempre que você fecha e abre o app de novo, mesmo com a opção "pedir de novo" configurada para um tempo longo.
+Nas Listas de compras: ao buscar um item que não existe, aperte Enter para já abrir a tela de cadastro com o nome preenchido, e Enter de novo para salvar como está — sem precisar tocar em botão.

@@ -13,6 +13,7 @@
   --accent-soft:rgba(239,106,16,.11); --accent-ring:rgba(239,106,16,.35); --accent-glow:rgba(239,106,16,.45);
   --good:#15803d; --good-soft:rgba(21,128,61,.10); --good-border:rgba(21,128,61,.28);
   --critical:#b91c1c; --critical-soft:rgba(185,28,28,.09); --critical-border:rgba(185,28,28,.26);
+  --good-fill:#15803d; --on-good-fill:#ffffff; --critical-fill:#b91c1c; --on-critical-fill:#ffffff;
   --warn:#b8860a; --warn-soft:rgba(184,134,10,.10);
   --cat-0:#2a78d6; --cat-1:#eb6834; --cat-2:#1baf7a; --cat-3:#eda100;
   --cat-4:#e87ba4; --cat-5:#1c8a1c; --cat-6:#4a3aa7; --cat-7:#e34948;
@@ -113,6 +114,8 @@ a{color:inherit;}
 .btn-ghost{background:var(--surface-2); color:var(--text); border-color:var(--border);}
 .btn-ghost:hover{background:var(--surface-hover);}
 .btn-danger{background:var(--critical-soft); color:var(--critical); border-color:var(--critical-border);}
+.btn-ds{background:var(--critical-fill); color:var(--on-critical-fill); border-color:var(--critical-fill);}
+.btn-rc{background:var(--good-fill); color:var(--on-good-fill); border-color:var(--good-fill);}
 .btn-danger:hover{filter:brightness(1.08);}
 .btn-sm{padding:7px 11px; font-size:12.5px; border-radius:var(--r-xs);}
 .btn-icon{padding:8px; border-radius:var(--r-xs); background:var(--surface-2); border:1px solid var(--border);}
@@ -2001,7 +2004,9 @@ async function iniciarSessaoReal(session, opc){
     const okMfa = await pedirCodigo2FA();
     if(!okMfa){ try{ await sb.auth.signOut(); }catch(e){} return false; }
   }
-  if(bioConfig() && !(opc && opc.senhaAgora) && precisaBloquearAoAbrir()) mostrarBloqueio();
+  /* app fechado e reaberto (carga nova da pagina): sempre pede a biometria, sem levar em conta a "espera" -
+     essa espera so vale pra quando o app fica em segundo plano dentro da MESMA sessao (visibilitychange abaixo) */
+  if(bioConfig() && !(opc && opc.senhaAgora)) mostrarBloqueio();
   marcarAtivo();
   let ok = false;
   try{ ok = await carregarPerfisEEstado(session.user.id); }catch(e){ ok = false; }
@@ -2340,6 +2345,7 @@ function ligarListas(lista){
   if(btnAddBusca) btnAddBusca.addEventListener('click', ()=>abrirItemModal(null, {listaId:lista.id, nome:lsBusca.trim(), precisa: lista.tipo==='mercado' && lsAba==='carrinho', aoSalvar:()=>{ lsBusca=''; renderListas(); }}));
   const bus = document.getElementById('ls-busca');
   bus.addEventListener('input', ()=>{ lsBusca = bus.value; const pos = bus.selectionStart; renderListas(); const n = document.getElementById('ls-busca'); n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} });
+  bus.addEventListener('keydown', e=>{ if(e.key!=='Enter') return; const btn = document.getElementById('ls-add-busca'); if(!btn) return; e.preventDefault(); btn.click(); });
   const persistir = ()=>schedulePersist();
   const vivo = ()=>{
     const v = document.getElementById('ls-vals'); if(v) v.innerHTML = lsResumoVals(lista);
@@ -2450,6 +2456,16 @@ function abrirItemModal(it, opc){
     if(novo) compras.itens.push(alvo);
     opc.semFechar = false; m.fechar(); schedulePersist(); renderListas();
     if(opc.aoSalvar) opc.aoSalvar(alvo);
+  });
+  /* Enter em qualquer campo de texto do formulário grava como estiver (mesmo clique em "Salvar").
+     Não mexe em botões (categoria/prioridade/unidade usam o seletor arredondado, não <select> nativo)
+     nem enquanto a folha do seletor está aberta, pra não atrapalhar a escolha de opção. */
+  m.w.addEventListener('keydown', e=>{
+    if(e.key!=='Enter') return;
+    if(e.target.tagName!=='INPUT' || e.target.type==='checkbox') return;
+    if(document.querySelector('.dd-ov')) return;
+    e.preventDefault();
+    m.w.querySelector('#it-ok').click();
   });
   setTimeout(()=>{ const n = m.w.querySelector('#it-nome'); const c = m.w.querySelector('#it-cat'); (novo&&!d.nome?n:(c&&!d.cat?c:n)).focus(); }, 60);
 }
@@ -3541,7 +3557,7 @@ function renderLancamentoForm(){
           ${tipo==='despesa'?`<label class="switch"><input type="checkbox" id="lanc-desconto" ${editing&&editing.desconto?'checked':''}><span class="switch-track"></span><span class="switch-label">Tem desconto para quem paga antes do vencimento</span></label>`:''}
         </div>
       </div>`)}
-      <div class="span2"><button type="submit" class="btn ${tipo==='despesa'?'btn-danger':''}" style="${tipo==='receita'?'background:var(--good-soft);color:var(--good);border-color:var(--good-border);':''}">${icon(editing?'check':'plus')} ${editing?'Salvar alterações':'Registrar lançamento'}</button></div>
+      <div class="span2"><button type="submit" class="btn ${tipo==='despesa'?'btn-ds':'btn-rc'}">${icon(editing?'check':'plus')} ${editing?'Salvar alterações':'Registrar lançamento'}</button></div>
     </form>`;
 
   const NOVA_SUB = '<option value="__nova__">＋ Nova subcategoria…</option>';
@@ -5886,7 +5902,7 @@ async function renderSeguranca(host){
   host.innerHTML = `
     <div class="card pad settings-section">
       <h3 class="emp-h"><span class="fic">${icon('fingerprint')}</span>Bloqueio do aplicativo</h3>
-      <div class="row-sub" style="margin-bottom:10px;">Pede a sua digital ou o reconhecimento facial quando você volta ao Grana a Dois depois de ficar fora do app pelo tempo escolhido (padrão: 5 minutos). Atualizar a página não bloqueia. É um bloqueio deste aparelho: a confirmação é feita pelo sistema do celular e nenhuma imagem sua sai dele.</div>
+      <div class="row-sub" style="margin-bottom:10px;">Sempre que você fecha e abre o Grana a Dois de novo, ele pede a sua digital ou o reconhecimento facial. Enquanto o app continua aberto (só em segundo plano), pede de novo depois do tempo escolhido abaixo. Atualizar a página não bloqueia. É um bloqueio deste aparelho: a confirmação é feita pelo sistema do celular e nenhuma imagem sua sai dele.</div>
       ${suporta ? `
         <div class="row-between"><div><div class="row-lbl">Bloquear com biometria</div><div class="row-sub" id="seg-bio-st">${ativoBio?'Ativado neste aparelho.':'Desativado.'}</div></div><label class="switch"><input type="checkbox" id="seg-bio" ${ativoBio?'checked':''}><span class="switch-track"></span></label></div>
         <div class="field ${ativoBio?'':'hidden-el'}" id="seg-bio-espera-w" style="margin-top:10px; max-width:340px;"><label for="seg-bio-espera"><span class="fic">${icon('clock')}</span>Pedir de novo</label><select id="seg-bio-espera">${ESPERAS_BLOQUEIO.map(([v,l])=>`<option value="${v}" ${(cfg?Number(cfg.espera)===v:v===300)?'selected':''}>${l}</option>`).join('')}</select></div>
