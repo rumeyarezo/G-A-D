@@ -1,8 +1,7 @@
-<title>Grana a Dois</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="vendor/supabase.js"></script>
 <style>
 :root{
   color-scheme:light;
@@ -436,15 +435,21 @@ main{padding:22px; flex:1; min-width:0;}
 
 /* FAB speed-dial */
 .fab-menu{position:fixed; left:calc(50% + var(--sidebar-w)/2); transform:translateX(-50%); bottom:calc(90px + env(safe-area-inset-bottom,0px)); z-index:61; display:flex; flex-direction:column; gap:10px; align-items:center;}
-.fab-mini-row{display:flex; align-items:center; gap:10px;}
-.fab-mini-label{background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-card); padding:6px 12px; border-radius:999px; font-size:12.5px; font-weight:600; white-space:nowrap;}
-.fab-mini-btn{width:42px; height:42px; border-radius:50%; border:0; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-card); color:#fff; flex:none;}
+@keyframes fabmenuin{from{opacity:0; transform:translateY(10px) scale(.94);} to{opacity:1; transform:translateY(0) scale(1);}}
+.fab-mini-row{display:flex; align-items:center; gap:10px; animation:fabmenuin .18s ease backwards;}
+.fab-mini-label{border:1px solid transparent; box-shadow:var(--shadow-card); padding:7px 13px; border-radius:999px; font-size:12.5px; font-weight:700; white-space:nowrap;}
+.fab-mini-label.c-despesa{background:var(--critical-soft); color:var(--critical); border-color:var(--critical-border);}
+.fab-mini-label.c-receita{background:var(--good-soft); color:var(--good); border-color:var(--good-border);}
+.fab-mini-label.c-transferencia{background:rgba(58,130,247,.12); color:#3a82f7; border-color:rgba(58,130,247,.35);}
+.fab-mini-label.c-neutral{background:var(--accent-soft); color:var(--accent-strong); border-color:var(--accent-ring);}
+.fab-mini-btn{width:42px; height:42px; border-radius:50%; border:0; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-card); color:#fff; flex:none; transition:transform .15s,box-shadow .15s;}
+.fab-mini-btn:hover{transform:scale(1.08);}
 .fab-mini-btn svg{width:19px; height:19px;}
-.fab-mini-btn.c-despesa{background:var(--critical);}
-.fab-mini-btn.c-receita{background:var(--good);}
-.fab-mini-btn.c-transferencia{background:#3a82f7;}
-.fab-mini-btn.c-neutral{background:var(--accent); color:var(--on-accent);}
-.fab-backdrop{position:fixed; inset:0; z-index:59; background:transparent;}
+.fab-mini-btn.c-despesa{background:var(--critical); box-shadow:0 3px 12px -2px var(--critical-border), var(--shadow-card);}
+.fab-mini-btn.c-receita{background:var(--good); box-shadow:0 3px 12px -2px var(--good-border), var(--shadow-card);}
+.fab-mini-btn.c-transferencia{background:#3a82f7; box-shadow:0 3px 12px -2px rgba(58,130,247,.35), var(--shadow-card);}
+.fab-mini-btn.c-neutral{background:var(--accent); color:var(--on-accent); box-shadow:0 3px 12px -2px var(--accent-glow), var(--shadow-card);}
+.fab-backdrop{position:fixed; inset:0; z-index:59; background:rgba(10,9,8,.3); backdrop-filter:blur(1.5px); -webkit-backdrop-filter:blur(1.5px);}
 .recur-fields{background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-sm); padding:10px; margin-top:4px;}
 .item-actions{display:flex; gap:6px;}
 
@@ -6830,8 +6835,8 @@ function openFabMenu(){
   fabOpen = true;
   document.getElementById('fab-backdrop').classList.remove('hidden-el');
   document.getElementById('fab-menu').innerHTML = opts.map((o,i)=>`
-    <div class="fab-mini-row">
-      <span class="fab-mini-label">${o.label}</span>
+    <div class="fab-mini-row" style="animation-delay:${i*35}ms">
+      <span class="fab-mini-label ${o.cls}">${o.label}</span>
       <button type="button" class="fab-mini-btn ${o.cls}" data-fab-opt="${i}" title="${o.label}" aria-label="${o.label}">${icon(o.ic)}</button>
     </div>`).join('');
   document.querySelectorAll('#fab-menu [data-fab-opt]').forEach((b,i)=>b.addEventListener('click', ()=>{ closeFabMenu(); opts[i].onClick(); }));

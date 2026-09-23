@@ -1,3 +1,3 @@
 # SOMENTE as mudancas do ultimo upload. A cada nova versao: mova estas linhas para NOVIDADES-HISTORICO.txt e escreva so as novas.
 # Uma linha por novidade (todas aparecem no aviso de atualizacao, ate 6). Linhas com # sao ignoradas.
-O botão + agora é redondo e fica centralizado embaixo da tela (mobile e computador), só com o sinal de +, sem a palavra "Adicionar".
+O menu que abre no botão + ficou mais bonito: cada opção agora tem a etiqueta e o círculo na cor certa (vermelho para despesa, verde para receita, azul para transferência), com uma sombra suave por trás do menu.
