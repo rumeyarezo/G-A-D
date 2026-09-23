@@ -1,5 +1,5 @@
 /* Service worker do Grana a Dois — só guarda o "casco" do app. Dados financeiros NUNCA passam por cache. */
-const VERSAO = 'grana-4ebd8ab792';
+const VERSAO = 'grana-4f52d6dcb9';
 const CASCO = ['./','index.html','manifest.webmanifest','vendor/supabase.js','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png','icons/apple-touch-icon.png','icons/favicon-32.png'];
 self.addEventListener('install', e=>{ e.waitUntil(caches.open(VERSAO).then(c=>c.addAll(CASCO)).then(()=>self.skipWaiting())); });
 self.addEventListener('activate', e=>{ e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==VERSAO).map(k=>caches.delete(k)))).then(()=>self.clients.claim())); });
