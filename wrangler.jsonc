@@ -1,0 +1,10 @@
+{
+  // Config do Cloudflare Workers para servir o site (apps/site/dist) como assets estaticos.
+  // O nome abaixo precisa ser IGUAL ao nome do Worker criado no painel da Cloudflare
+  // (Workers & Pages > Create application > Import a repository).
+  "name": "grana-a-dois",
+  "compatibility_date": "2026-09-23",
+  "assets": {
+    "directory": "./apps/site/dist"
+  }
+}
