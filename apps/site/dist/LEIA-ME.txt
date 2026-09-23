@@ -64,3 +64,9 @@ RODADA 10 - Configuracoes > Atividade (historico com filtros), Configuracoes > S
 RODADA 11 - Biometria só pede de novo após 5 min fora do app (atualizar a página não bloqueia). Nova aba Listas de compra (Mercado com itens por categoria + listas por tema). Barra de lançamento ganhou "Recebimento" e "Precisa comprar".
 
 RODADA 12 - Pagar/Receber com valor, juros e data; listas de compra com "Estou levando" e promocao; notificacoes mantem historico das ultimas 20.
+
+RODADA 13 - Listas de compra ganharam botao Compartilhar (WhatsApp, compartilhar do sistema ou copiar o texto pronto).
+
+RODADA 14 - Listas de compra: buscar um item que nao existe oferece cadastra-lo na hora; itens ja marcados vao para uma secao "Comprados" ao final e ha um filtro rapido "Todos / Falta pegar / No carrinho"; itens do Mercado ganharam campo de estoque em casa. Barra de lancamento ganhou o comando "Compra no Pix".
+
+RODADA 15 - Correcao de bug serio de perda de dados: se voce criasse algo (uma lista de compras, um lancamento etc.) bem na hora em que outro aparelho salvava qualquer outra coisa, o que voce tinha acabado de criar podia sumir sem nenhum aviso de erro. Isso foi corrigido: agora um item recem-criado nunca e descartado antes de ser salvo.
