@@ -6470,9 +6470,19 @@ async function pedirPermissaoAoAbrir(){
 }
 
 
-/* ============ ATUALIZAÇÕES DO APP: só um aviso, sem reinstalar e sem refazer conta ============ */
+/* ============ ATUALIZAÇÕES DO APP: só um aviso, sem reinstalar e sem refazer conta ============
+   Rodada 17: corrige o aviso voltando poucos segundos depois de clicar em "Atualizar agora".
+   Causa: o Cloudflare pode levar alguns segundos para propagar o build novo pra todas as suas
+   bordas; se a carga da página após o recarregamento ainda cair numa borda desatualizada, o app
+   comparava com versao.json de novo em 3s e via a mesma "versão nova" — parecia que nada tinha
+   acontecido. Agora, logo após o clique, o app guarda qual versão está esperando (sessionStorage)
+   e, ao recarregar, confere em silêncio (sem novo aviso) por até ~15s antes de desistir e voltar
+   ao fluxo normal. */
 const BUILD_ATUAL = (window.GRANA_BUILD && window.GRANA_BUILD.v) || null;
 const BUILD_NOTAS = (window.GRANA_BUILD && window.GRANA_BUILD.notas) || [];
+const UPD_PENDENTE_KEY = 'grana-upd-pendente';
+const UPD_MAX_TENTATIVAS = 5;   /* tentativas silenciosas de recarregar antes de voltar a avisar */
+const UPD_ESPERA_MS = 3000;     /* intervalo entre tentativas */
 function bannerAtualizacao(html, botoes){
   let b = document.getElementById('upd-banner'); if(b) b.remove();
   b = document.createElement('div'); b.id = 'upd-banner'; b.className = 'upd-banner'; b.setAttribute('role','status');
@@ -6480,12 +6490,14 @@ function bannerAtualizacao(html, botoes){
   document.body.appendChild(b); return b;
 }
 function notasHtml(notas){ return notas.slice(0,6).map(n=>`<div class="hint" style="margin-top:3px;">• ${n}</div>`).join(''); }
+function lerUpdPendente(){ try{ const s = sessionStorage.getItem(UPD_PENDENTE_KEY); return s ? JSON.parse(s) : null; }catch(e){ return null; } }
+function gravarUpdPendente(obj){ try{ if(obj) sessionStorage.setItem(UPD_PENDENTE_KEY, JSON.stringify(obj)); else sessionStorage.removeItem(UPD_PENDENTE_KEY); }catch(e){} }
 function avisarNovaVersao(j){
   const ex = document.getElementById('upd-banner'); if(ex && ex.dataset.tipo==='nova') return;
   const b = bannerAtualizacao(`<b>Nova versão do Grana a Dois</b>${notasHtml(j.notas||[])}`,
     `<button class="btn btn-primary btn-sm" id="upd-agora">${icon('check')} Atualizar agora</button><button class="btn btn-ghost btn-sm" id="upd-depois">Depois</button>`);
   b.dataset.tipo = 'nova';
-  document.getElementById('upd-agora').addEventListener('click', aplicarAtualizacao);
+  document.getElementById('upd-agora').addEventListener('click', ()=>aplicarAtualizacao(j.v));
   document.getElementById('upd-depois').addEventListener('click', ()=>b.remove());
   let avisado = null; try{ avisado = localStorage.getItem('grana-upd-avisado'); }catch(e){}
   if(avisado !== j.v){
@@ -6493,9 +6505,12 @@ function avisarNovaVersao(j){
     notificarDispositivo('Grana a Dois: nova versão disponível', (j.notas&&j.notas[0]) || 'Abra o app para atualizar.', 'upd-'+j.v, 'dashboard');
   }
 }
-async function aplicarAtualizacao(){
+async function aplicarAtualizacao(alvo){
+  const ex = document.getElementById('upd-banner');
+  if(ex){ const btn=document.getElementById('upd-agora'); if(btn){ btn.disabled = true; btn.textContent = 'Atualizando…'; } }
   try{ await persistState(); }catch(e){}     /* grava o que estiver pendente antes de recarregar */
   try{ const reg = await navigator.serviceWorker.getRegistration(); if(reg) await reg.update(); }catch(e){}
+  gravarUpdPendente({v: alvo, tent: 0, t: Date.now()});
   location.reload();
 }
 async function checarNovaVersao(){
@@ -6507,6 +6522,24 @@ async function checarNovaVersao(){
     if(j && j.v && j.v !== BUILD_ATUAL) avisarNovaVersao(j);
   }catch(e){}
 }
+/* logo após "Atualizar agora": confere em silêncio se o recarregamento já pegou a versão nova antes
+   de incomodar de novo. Retorna 'ok' (deu certo), 'retrying' (já disparou outro reload, não continuar
+   esta carga), 'gaveup' (desistiu de esperar, segue o fluxo normal) ou 'none' (não havia nada pendente). */
+async function conferirUpdPendente(){
+  const p = lerUpdPendente();
+  if(!p) return 'none';
+  if(BUILD_ATUAL === p.v){ gravarUpdPendente(null); return 'ok'; }
+  if((p.tent||0) >= UPD_MAX_TENTATIVAS){
+    gravarUpdPendente(null);
+    console.warn('[grana] atualização não propagou a tempo (esperado '+p.v+', build atual é '+BUILD_ATUAL+') — voltando ao aviso normal');
+    return 'gaveup';
+  }
+  gravarUpdPendente({v:p.v, tent:(p.tent||0)+1, t:p.t});
+  await new Promise(res=>setTimeout(res, UPD_ESPERA_MS));
+  try{ const reg = await navigator.serviceWorker.getRegistration(); if(reg) await reg.update(); }catch(e){}
+  location.reload();
+  return 'retrying';
+}
 /* depois de atualizado: mostra o que mudou uma única vez */
 function mostrarNovidadesSeAtualizou(){
   if(!BUILD_ATUAL) return;
@@ -6517,7 +6550,9 @@ function mostrarNovidadesSeAtualizou(){
   setTimeout(()=>{ if(b.isConnected) b.remove(); }, 15000);
 }
 let atualizadorIniciado = false;
-function iniciarAtualizador(){
+async function iniciarAtualizador(){
+  const st = await conferirUpdPendente();
+  if(st === 'retrying') return;   /* location.reload() já disparado; esta carga da página não continua */
   mostrarNovidadesSeAtualizou();
   if(atualizadorIniciado) return; atualizadorIniciado = true;
   setTimeout(checarNovaVersao, 3000);
