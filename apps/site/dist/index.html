@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Grana a Dois">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<script>window.GRANA_BUILD={"v": "75551676cc", "notas": ["Listas de compras: o botão \"Adicionar item\" virou \"Adicionar vários itens\" — a tela limpa depois de cada item salvo, pronta pra cadastrar o próximo sem fechar.", "Cadastrar item pelo campo de busca com Enter + Enter? O cursor já volta pro campo de texto, sem precisar clicar de novo.", "Linhas dos itens nas listas de compras ficaram mais finas: as informações (valor atual, último valor, estoque etc.) agora ficam lado a lado na mesma linha, mostrando mais itens na tela sem diminuir o texto."]};</script>
+<script>window.GRANA_BUILD={"v": "6180f84f2b", "notas": ["Lembretes de lançar gastos agora vêm com botões \"+ Despesa\" e \"+ Receita\" direto na notificação, e ficam na tela até você tocar em algo (não somem sozinhos)."]};</script>
 <style>html,body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -6368,7 +6368,7 @@ function verificarLembretesAgendados(){
   registro.ids.push(bateu.id);
   try{ localStorage.setItem(LEMBRETE_AG_KEY, JSON.stringify(registro)); }catch(e){}
   if(diasSemLancar()===0) return;   /* já lançou algo hoje: não precisa avisar, mas já marcou como feito acima */
-  notificarDispositivo('Não se esqueça de registrar seus gastos!', 'Chegou o horário que você escolheu para lançar suas despesas e receitas de hoje.', 'lembrete-ag-'+hoje+'-'+bateu.id, 'transacoes');
+  notificarDispositivo('Não se esqueça de registrar seus gastos!', 'Chegou o horário que você escolheu para lançar suas despesas e receitas de hoje.', 'lembrete-ag-'+hoje+'-'+bateu.id, 'transacoes', {lembrete:true});
 }
 function textoStatusNotif(){
   switch(permissaoNotif()){
@@ -6393,6 +6393,14 @@ const NB_ENTRADA = (function(){
     if(texto!==null || id!==null){ u.searchParams.delete('notif'); u.searchParams.delete('nb'); history.replaceState(null,'', u.pathname + (u.search||'') + u.hash); }
     return {texto: texto && texto.trim() ? texto : null, id: id||null};
   }catch(e){ return {texto:null, id:null}; }
+})();
+/* clique no botão Despesa/Receita de uma notificação de lembrete, com o app fechado: o service worker abre uma janela nova com ?lancar=despesa|receita */
+const LANCAR_ENTRADA = (function(){
+  try{
+    const u = new URL(location.href), tipo = u.searchParams.get('lancar');
+    if(tipo!==null){ u.searchParams.delete('lancar'); history.replaceState(null,'', u.pathname + (u.search||'') + u.hash); }
+    return {tipo: (tipo==='despesa'||tipo==='receita') ? tipo : null, done:false};
+  }catch(e){ return {tipo:null, done:false}; }
 })();
 const NB_KEY = 'grana-nb-';
 function interpretarNotifBanco(texto){
@@ -6443,9 +6451,19 @@ function consumirEntradaBanco(){
   const e = NB_ENTRADA; if(e.done) return; e.done = true;
   if(e.id) abrirRascunhoBanco(e.id); else if(e.texto) processarNotifBanco(e.texto);
 }
+function consumirEntradaLancar(){
+  const e = LANCAR_ENTRADA; if(!e.tipo || e.done) return; e.done = true;
+  if(!document.getElementById('view-app').classList.contains('active')) return;
+  goto('transacoes');
+  openLancamentoPopup(e.tipo);
+}
 async function notificarDispositivo(titulo, corpo, tag, view, extra){
   if(permissaoNotif()!=='granted') return false;
   const opts = {body:corpo, tag:tag||undefined, icon:'icons/icon-192.png', badge:'icons/icon-192.png', lang:'pt-BR', data:Object.assign({view:view||'dashboard'}, extra||{})};
+  /* lembretes de lançar: notificação persistente (não some sozinha) com atalhos Despesa/Receita direto na notificação.
+     Botões de ação só funcionam em notificação exibida via Service Worker (é o caminho normal aqui); em navegadores
+     sem suporte a "actions" eles são ignorados sem quebrar nada, e a notificação continua funcionando normalmente. */
+  if(extra && extra.lembrete){ opts.requireInteraction = true; opts.actions = [{action:'despesa', title:'+ Despesa'}, {action:'receita', title:'+ Receita'}]; }
   try{
     if('serviceWorker' in navigator){
       const reg = await navigator.serviceWorker.getRegistration();
@@ -6548,7 +6566,7 @@ function verificarLembreteLancamentos(){
   const dias = diasSemLancar(); if(dias===null || dias<=3) return;
   const hoje = hojeSP(); if(lerJson(LEMBRETE_KEY,'')===hoje) return;   /* no máximo um por dia */
   try{ localStorage.setItem(LEMBRETE_KEY, JSON.stringify(hoje)); }catch(e){}
-  notificarDispositivo('Não se esqueça de registrar seus gastos!', `Faz ${dias} dias que você não lança nenhuma despesa ou receita. Toque para registrar agora.`, 'lembrete-'+hoje, 'transacoes');
+  notificarDispositivo('Não se esqueça de registrar seus gastos!', `Faz ${dias} dias que você não lança nenhuma despesa ou receita. Toque para registrar agora.`, 'lembrete-'+hoje, 'transacoes', {lembrete:true});
 }
 let notifIniciado = false;
 function iniciarNotificacoesDoDispositivo(){
@@ -6558,7 +6576,12 @@ function iniciarNotificacoesDoDispositivo(){
   /* 5 min (era 30) para os horários agendados (Rodada 21) baterem certo com o app aberto; o push no servidor cobre o app fechado */
   setInterval(()=>{ verificarVencimentosHoje(); verificarLembreteLancamentos(); verificarLembretesAgendados(); }, 5*60*1000);
   document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible'){ verificarVencimentosHoje(); verificarLembreteLancamentos(); verificarLembretesAgendados(); atualizarBannerNotif(); } });
-  if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e=>{ const d=e.data||{}; if(d.tipo==='goto' && viewValida(d.view)) goto(d.view); if(d.nb) abrirRascunhoBanco(d.nb); });
+  if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e=>{
+    const d=e.data||{};
+    if(d.tipo==='lancar' && (d.tipoLancamento==='despesa'||d.tipoLancamento==='receita')){ if(viewValida('transacoes')) goto('transacoes'); openLancamentoPopup(d.tipoLancamento); return; }
+    if(d.tipo==='goto' && viewValida(d.view)) goto(d.view);
+    if(d.nb) abrirRascunhoBanco(d.nb);
+  });
 }
 /* pede permissão assim que o app abre; se o navegador exigir um toque (ex.: Safari), pede no primeiro toque */
 async function pedirPermissaoAoAbrir(){
@@ -6788,6 +6811,7 @@ function doLogin(){
   document.getElementById('view-app').classList.add('active');
   goto(viewInicial());
   setTimeout(consumirEntradaBanco, 900);
+  setTimeout(consumirEntradaLancar, 900);
   let seenVersion = 0;
   try{ seenVersion = parseInt(localStorage.getItem('grana-tour-version'))||0; }catch(e){}
   if(seenVersion===0){
