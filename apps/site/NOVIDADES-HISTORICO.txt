@@ -1,4 +1,5 @@
 # Historico (nao vai para o app). Novidades de rodadas anteriores.
+O botão + agora é redondo e fica centralizado embaixo da tela (mobile e computador), só com o sinal de +, sem a palavra "Adicionar".
 Nas Listas de compras: ao buscar um item que não existe, aperte Enter para já abrir a tela de cadastro com o nome preenchido, e Enter de novo para salvar como está — sem precisar tocar em botão.
 O botão "Registrar lançamento" agora fica preenchido de vermelho (despesa) ou verde (receita), não só com um tom clarinho.
 A biometria/PIN agora é pedida sempre que você fecha e abre o app de novo, mesmo com a opção "pedir de novo" configurada para um tempo longo.
