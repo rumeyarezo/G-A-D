@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Grana a Dois">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<script>window.GRANA_BUILD={"v": "854db80d0b", "notas": ["Nas Listas de compras: ao buscar um item que não existe, aperte Enter para já abrir a tela de cadastro com o nome preenchido, e Enter de novo para salvar como está — sem precisar tocar em botão."]};</script>
+<script>window.GRANA_BUILD={"v": "443ee2194e", "notas": ["O botão + agora é redondo e fica centralizado embaixo da tela (mobile e computador), só com o sinal de +, sem a palavra \"Adicionar\"."]};</script>
 <style>html,body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -247,9 +247,9 @@ main{padding:22px; flex:1; min-width:0;}
 .toast .dot{margin-top:0;}
 @keyframes toastin{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
 
-.fab{position:fixed; right:24px; bottom:calc(24px + env(safe-area-inset-bottom,0px)); z-index:60; width:54px; height:54px; border-radius:50%; background:var(--accent); color:var(--on-accent); border:0; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px -2px var(--accent-glow), 0 16px 36px -12px var(--accent-glow); transition:transform .15s,box-shadow .2s;}
+.fab{position:fixed; left:calc(50% + var(--sidebar-w)/2); transform:translateX(-50%); bottom:calc(24px + env(safe-area-inset-bottom,0px)); z-index:60; width:54px; height:54px; border-radius:50%; background:var(--accent); color:var(--on-accent); border:0; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px -2px var(--accent-glow), 0 16px 36px -12px var(--accent-glow); transition:transform .15s,box-shadow .2s;}
 .fab svg{width:24px; height:24px;}
-.fab:hover{transform:scale(1.06) translateY(-1px); box-shadow:0 6px 18px -2px var(--accent-glow), 0 20px 42px -8px var(--accent-glow);}
+.fab:hover{transform:translateX(-50%) scale(1.06) translateY(-1px); box-shadow:0 6px 18px -2px var(--accent-glow), 0 20px 42px -8px var(--accent-glow);}
 
 .bottom-nav{display:none;}
 @media (max-width:900px){
@@ -260,8 +260,8 @@ main{padding:22px; flex:1; min-width:0;}
   .bottom-nav .nav-item svg{width:27px; height:27px;}
   .bottom-nav .nav-item .avatar{width:27px; height:27px; font-size:11px;}
   main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px));}
-  .fab{bottom:calc(104px + env(safe-area-inset-bottom,0px)); right:16px;}
-  .fab-menu{bottom:calc(170px + env(safe-area-inset-bottom,0px)); right:16px;}
+  .fab{bottom:calc(104px + env(safe-area-inset-bottom,0px)); left:50%;}
+  .fab-menu{bottom:calc(170px + env(safe-area-inset-bottom,0px)); left:50%;}
   #toast-wrap{bottom:calc(112px + env(safe-area-inset-bottom,0px)); right:12px; left:12px; align-items:stretch;}
   .toast{max-width:none;}
 }
@@ -453,7 +453,7 @@ main{padding:22px; flex:1; min-width:0;}
 :root[data-theme="dark"] .transfer-icon, :root:not([data-theme="light"]) .transfer-icon{color:#6ea3ff;}
 
 /* FAB speed-dial */
-.fab-menu{position:fixed; right:24px; bottom:calc(90px + env(safe-area-inset-bottom,0px)); z-index:61; display:flex; flex-direction:column; gap:10px; align-items:flex-end;}
+.fab-menu{position:fixed; left:calc(50% + var(--sidebar-w)/2); transform:translateX(-50%); bottom:calc(90px + env(safe-area-inset-bottom,0px)); z-index:61; display:flex; flex-direction:column; gap:10px; align-items:center;}
 .fab-mini-row{display:flex; align-items:center; gap:10px;}
 .fab-mini-label{background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-card); padding:6px 12px; border-radius:999px; font-size:12.5px; font-weight:600; white-space:nowrap;}
 .fab-mini-btn{width:42px; height:42px; border-radius:50%; border:0; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-card); color:#fff; flex:none;}
@@ -524,11 +524,9 @@ table{max-width:100%;}
 .btn-icon.has-lbl svg{width:15px; height:15px; flex:none;}
 .btn-icon.has-lbl .btn-lbl{font-size:12px; font-weight:700; white-space:nowrap;}
 .btn-icon.lbl .btn-lbl{font-size:10.5px;}
-.fab{width:auto; padding:0 22px 0 18px; border-radius:999px; gap:9px; height:56px; font-weight:800; font-size:14.5px; font-family:var(--font-display);}
-.fab .fab-lbl{white-space:nowrap;}
-.fab-menu{bottom:calc(24px + 56px + 14px + env(safe-area-inset-bottom,0px)); max-height:calc(100vh / var(--z,1) - 170px); overflow-y:auto; overflow-x:hidden; padding:2px 0 2px 8px; scrollbar-width:none;}
+.fab-menu{bottom:calc(24px + 54px + 14px + env(safe-area-inset-bottom,0px)); max-height:calc(100vh / var(--z,1) - 170px); overflow-y:auto; overflow-x:hidden; padding:2px 8px; scrollbar-width:none;}
 .fab-menu::-webkit-scrollbar{display:none;}
-@media (max-width:900px){ .fab-menu{bottom:calc(104px + 56px + 14px + env(safe-area-inset-bottom,0px)); right:16px;} }
+@media (max-width:900px){ .fab-menu{bottom:calc(104px + 54px + 14px + env(safe-area-inset-bottom,0px)); left:50%;} }
 .nav-item .avatar{width:22px; height:22px; font-size:9.5px; flex:none; background:var(--accent-soft); color:var(--accent-strong); border-color:var(--accent-ring);}
 .perfil-hero{display:flex; align-items:center; gap:16px; flex-wrap:wrap;}
 .perfil-hero .avatar-xl{width:64px; height:64px; font-size:22px; border-radius:50%; background:var(--accent-soft); color:var(--accent-strong); border:2px solid var(--accent-ring); display:flex; align-items:center; justify-content:center; font-weight:800; font-family:var(--font-display); flex:none;}
@@ -2699,7 +2697,7 @@ function renderNavShell(){
   { const sb0 = document.getElementById('btn-sync'); if(sb0){ sb0.firstElementChild.innerHTML = icon('logo'); if(!sb0.dataset.ligado){ sb0.dataset.ligado='1'; sb0.addEventListener('click', sincronizarAgora); } } }
   document.getElementById('btn-bell').innerHTML = icon('bell') + '<span class="btn-lbl">Notificações</span>';
   atualizarBotaoTema();
-  if(!fabOpen) document.getElementById('fab-add').innerHTML = icon('plus') + '<span class="fab-lbl">Adicionar</span>';
+  if(!fabOpen) document.getElementById('fab-add').innerHTML = icon('plus');
   document.getElementById('trust-shield').innerHTML = icon('shield') + ' Dados protegidos com criptografia';
   document.getElementById('trust-lock').innerHTML = icon('lock') + ' Autenticação segura';
 
@@ -6855,14 +6853,14 @@ function openFabMenu(){
       <button type="button" class="fab-mini-btn ${o.cls}" data-fab-opt="${i}" title="${o.label}" aria-label="${o.label}">${icon(o.ic)}</button>
     </div>`).join('');
   document.querySelectorAll('#fab-menu [data-fab-opt]').forEach((b,i)=>b.addEventListener('click', ()=>{ closeFabMenu(); opts[i].onClick(); }));
-  document.getElementById('fab-add').innerHTML = icon('x') + '<span class="fab-lbl">Fechar</span>';
+  document.getElementById('fab-add').innerHTML = icon('x');
   document.getElementById('fab-add').title = 'Fechar';
 }
 function closeFabMenu(){
   fabOpen = false;
   document.getElementById('fab-backdrop').classList.add('hidden-el');
   document.getElementById('fab-menu').innerHTML = '';
-  document.getElementById('fab-add').innerHTML = icon('plus') + '<span class="fab-lbl">Adicionar</span>';
+  document.getElementById('fab-add').innerHTML = icon('plus');
   document.getElementById('fab-add').title = 'Adicionar';
 }
 
