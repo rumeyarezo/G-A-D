@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Grana a Dois">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<script>window.GRANA_BUILD={"v": "f8c1501e39", "notas": ["Novo no botão +: \"Ler comprovante\" tira uma foto (ou escolhe da galeria) e o app já lê o valor, a data e o estabelecimento, abrindo a despesa pronta pra conferir e salvar."]};</script>
+<script>window.GRANA_BUILD={"v": "cdefe4607f", "notas": ["Categorias que um dos dois usa num lançamento que o outro enxerga agora aparecem sozinhas na lista do parceiro — nada de lançamento com categoria \"faltando\" na conta dele(a)."]};</script>
 <style>html,body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -1901,6 +1901,7 @@ function schedulePersist(){
 async function persistState(){
   if(!sb || !currentHouseholdId || !estadoCarregado) return;
   if(persistindo){ schedulePersist(); return; }
+  avisarCategoriasDoParceiro(categoriasParaOParceiro());   /* rede de segurança: lançamento por texto/foto/recorrência/notificação também entram */
   const snap = buildStateSnapshot();
   const json = JSON.stringify(snap);
   if(json === ultimoSalvoJson) return;            /* nada mudou: não escreve */
@@ -2045,6 +2046,7 @@ async function iniciarSessaoReal(session, opc){
   if(!ok){ toast('Não foi possível carregar sua conta. Tente novamente em instantes.','bad'); return false; }
   renderNavShell();
   doLogin();
+  schedulePersist();   /* confere categorias de lançamentos já existentes que o parceiro enxerga (só grava se algo mudou) */
   registrarDispositivo();
   iniciarNotificacoesDoDispositivo();
   iniciarRotinaIndices();
@@ -2148,6 +2150,26 @@ const visivelTx = t => t.compartilhada===true || t.pessoa===state.user || t.cria
 function seloCompartilhado(it){ return (it && it.compartilhada && parceiroAtivo()) ? `<span class="badge-shared" title="Compartilhado com ${it.dono===state.user?nomeParceiro():'você'}">${icon('users')} Compartilhada</span>` : ''; }
 function campoCompartilhar(id, marcado){ return parceiroAtivo() ? `<label class="switch share-line"><input type="checkbox" id="${id}" ${marcado?'checked':''}><span class="switch-track"></span><span class="switch-label">Compartilhar com ${nomeParceiro()}</span></label>` : ''; }
 function donoDe(id){ const el = document.getElementById(id); return {dono:state.user, compartilhada:!!(el && el.checked)}; }
+/* Rodada 26: toda categoria usada num lançamento que o parceiro enxerga (compartilhado, ou marcado como dele) precisa existir na lista dele.
+   Cada categoria é de quem criou, a menos que seja compartilhada - então "criar no perfil do parceiro" = compartilhar a mesma categoria
+   (com as subcategorias), sem duplicar nem trocar o catId do lançamento. Idempotente; devolve os nomes das categorias que passaram a ser compartilhadas. */
+function categoriasParaOParceiro(){
+  if(!parceiroAtivo()) return [];
+  const outro = state.user==='caio' ? 'marina' : 'caio';
+  const feitas = [];
+  transacoes.forEach(t=>{
+    if(!t || t.tipo==='transferencia' || !t.catId) return;
+    if(!(t.compartilhada===true || t.pessoa===outro)) return;
+    const c = categorias.find(x=>x.id===t.catId);
+    if(!c || c.compartilhada===true || c.dono!==state.user) return;
+    c.compartilhada = true; feitas.push(c.nome);
+  });
+  return feitas;
+}
+function avisarCategoriasDoParceiro(nomes){
+  if(!nomes || !nomes.length) return;
+  toast(nomes.length===1 ? `Categoria “${nomes[0]}” também apareceu na lista de ${nomeParceiro()}` : `${nomes.length} categorias também apareceram na lista de ${nomeParceiro()}`, 'good');
+}
 function btnCompartilhar(col, it){
   if(!it || !parceiroAtivo() || it.dono!==state.user) return '';
   return `<button type="button" class="btn btn-ghost btn-sm" data-share-toggle="${col}|${it.id}" title="${it.compartilhada?'Deixar só para você':'Compartilhar com '+nomeParceiro()}">${icon('users')} ${it.compartilhada?'Tornar individual':'Compartilhar'}</button>`;
@@ -3780,6 +3802,8 @@ function submitLancamento(editing){
     }
     toast('Lançamento registrado com sucesso','good');
   }
+  const catsNovas = categoriasParaOParceiro();
+  if(catsNovas.length){ avisarCategoriasDoParceiro(catsNovas); schedulePersist(); }
   closeLancamentoPopup();
   refreshCurrentView();
 }
