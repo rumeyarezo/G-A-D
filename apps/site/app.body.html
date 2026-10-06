@@ -549,6 +549,15 @@ main{padding:22px; flex:1; min-width:0;}
 .cal-daynum{font-size:12px; font-weight:700;}
 .cal-dots{display:flex; gap:3px; margin-top:5px; flex-wrap:wrap;}
 .cal-dots span{width:6px; height:6px; border-radius:50%; flex:none;}
+.agenda-prox-lista{display:flex; flex-direction:column; gap:6px;}
+.agenda-prox{display:flex; align-items:center; gap:10px; width:100%; text-align:left; background:var(--surface-2); border:1px solid var(--border); border-radius:14px; padding:8px 12px; cursor:pointer; color:var(--text); font:inherit; transition:background .15s, border-color .15s;}
+.agenda-prox:hover{background:var(--surface-hover); border-color:var(--accent-ring);}
+.agenda-prox-d{display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:38px; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted); line-height:1.1;}
+.agenda-prox-d b{font-size:16px; color:var(--text); letter-spacing:0;}
+.agenda-prox-t{flex:1; min-width:0; display:flex; flex-direction:column; font-size:13px; font-weight:600; overflow:hidden; text-overflow:ellipsis;}
+.agenda-prox-t small{font-size:11.5px; font-weight:500; color:var(--text-muted);}
+.agenda-prox .mono{font-size:12.5px; white-space:nowrap;}
+.lanc-dur-resumo{font-size:12px; color:var(--text-muted); margin-top:6px;}
 .mini-cal-table{width:100%; border-collapse:separate; border-spacing:2px;}
 .mini-cal-table td{text-align:center; font-size:10.5px; padding:4px 0; border-radius:6px; color:var(--text-secondary); cursor:pointer;}
 .mini-cal-table td.has{font-weight:700; color:var(--accent-strong); background:var(--accent-soft);}
@@ -3042,6 +3051,66 @@ function seriesRecorrentes(){
   });
   return Object.values(map);
 }
+/* ===== Rodada 28: duração da recorrência e ocorrências futuras previstas =====
+   Cada conta fixa guarda UM lançamento (o mais recente). As próximas ocorrências não são gravadas: são calculadas aqui a partir
+   da frequência e respeitam a duração: parcelas = total de ocorrências contando a primeira; fimEm = última data possível. */
+function recIso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function recPasso(d, freq, venceDia, intervaloDias){
+  switch(freq){
+    case 'semanal': return new Date(d.getFullYear(), d.getMonth(), d.getDate()+7);
+    case 'quinzenal': return new Date(d.getFullYear(), d.getMonth(), d.getDate()+14);
+    case 'bimestral': return addMonthsClamped(d,2,venceDia);
+    case 'trimestral': return addMonthsClamped(d,3,venceDia);
+    case 'semestral': return addMonthsClamped(d,6,venceDia);
+    case 'anual': return addMonthsClamped(d,12,venceDia);
+    case 'personalizado': return new Date(d.getFullYear(), d.getMonth(), d.getDate()+(parseInt(intervaloDias,10)||15));
+    default: return addMonthsClamped(d,1,venceDia);
+  }
+}
+function recLimites(t){
+  const p = parseInt(t && t.parcelas, 10);
+  return {parcelas:(p>0 ? Math.min(p,600) : 0), fimEm:(t && /^\d{4}-\d{2}-\d{2}$/.test(t.fimEm||'')) ? t.fimEm : ''};
+}
+function recInicioDe(t){
+  let ini = t.data;
+  if(t.recorrenciaId) transacoes.forEach(x=>{ if(x.recorrenciaId===t.recorrenciaId && x.data<ini) ini = x.data; });
+  return ini;
+}
+/* Percorre as ocorrências da série (1, 2, 3...) até a duração acabar. cb(iso,n) devolve false para parar. */
+function recPercorrer(t, cb){
+  const lim = recLimites(t);
+  let d = new Date(recInicioDe(t)+'T00:00:00'), n = 1, guard = 0;
+  while(guard++ < 1500){
+    const iso = recIso(d);
+    if(lim.parcelas && n>lim.parcelas) return;
+    if(lim.fimEm && iso>lim.fimEm) return;
+    if(cb(iso,n)===false) return;
+    d = recPasso(d, t.frequencia||'mensal', t.venceDia, t.intervaloDias); n++;
+  }
+}
+/* Ocorrências futuras (hoje em diante, depois do lançamento já gravado) até ateIso. Não são salvas em lugar nenhum. */
+function recProjetadas(ateIso){
+  const out = [];
+  seriesRecorrentes().forEach(t=>{
+    const lim = recLimites(t);
+    recPercorrer(t,(iso,n)=>{
+      if(iso>ateIso) return false;
+      if(iso>t.data && iso>=HOJE) out.push(Object.assign({}, t, {id:'prev_'+t.recorrenciaId+'_'+n, data:iso, status:'pendente', projetada:true, parcelaN:n, parcelaTotal:lim.parcelas, pagoEm:undefined, pagoPor:undefined}));
+    });
+  });
+  return out;
+}
+function recProxima(t){
+  let achou = null;
+  recPercorrer(t,(iso,n)=>{ if(iso>t.data && iso>=HOJE){ achou = {data:iso, n}; return false; } });
+  return achou;
+}
+function recVigenciaTxt(t, n){
+  const lim = recLimites(t);
+  if(lim.parcelas) return n ? `Parcela ${n} de ${lim.parcelas}` : `${lim.parcelas} parcelas`;
+  if(lim.fimEm) return `até ${fmtDateFull(lim.fimEm)}`;
+  return '';
+}
 function renderMiniCalendar(containerId, ym, markedDays, onDayClick, selectedDay){
   const [y,m] = ym.split('-').map(Number);
   const first = new Date(y, m-1, 1);
@@ -3887,6 +3956,9 @@ function renderLancamentoForm(){
 
   const recFreq = editing ? (editing.frequencia||'') : (ctx.forcarRecorrente ? 'mensal' : '');
   const recOn = !!recFreq;
+  const durParc = editing && parseInt(editing.parcelas,10)>0 ? parseInt(editing.parcelas,10) : 0;
+  const durFim = editing && /^\d{4}-\d{2}-\d{2}$/.test(editing.fimEm||'') ? editing.fimEm : '';
+  const durModo = durParc ? 'parc' : (durFim ? 'ate' : 'sem');
   const FREQS = [['semanal','Semanal'],['quinzenal','A cada 2 semanas'],['mensal','Mensal'],['bimestral','Bimestral'],['trimestral','Trimestral'],['semestral','Semestral'],['anual','Anual'],['personalizado','Personalizada']];
   const diaBase = editing ? (editing.venceDia||'') : '';
   const CUSTOS = [['essencial','Essencial','Preciso manter para viver ou trabalhar.'],['ajustavel','Ajustável','Posso reduzir ou pausar se precisar.'],['fora','Fora do fixo','É aporte, fatura ou compra pontual.'],['confirmar','A confirmar','Decido isso depois.']];
@@ -3956,6 +4028,17 @@ function renderLancamentoForm(){
             ${FREQS.map(([v,label])=>`<button type="button" class="resumo-chip ${(recFreq||'mensal')===v?'active':''}" data-freq="${v}">${label}</button>`).join('')}
           </div>
           <div class="field hidden-el" id="lanc-field-intervalo" style="margin-bottom:10px;">${fl('repeat','Repetir a cada (dias)','lanc-intervalo')}<input id="lanc-intervalo" type="number" min="1" inputmode="numeric" value="${editing&&editing.intervaloDias?editing.intervaloDias:15}"></div>
+          <div style="margin-bottom:10px;">
+            <div class="lanc-q">Duração</div>
+            <div class="resumo-filters" id="lanc-dur-row" style="padding:0; border:0; margin-bottom:8px;">
+              <button type="button" class="resumo-chip ${durModo==='sem'?'active':''}" data-dur="sem">Sem data para acabar</button>
+              <button type="button" class="resumo-chip ${durModo==='parc'?'active':''}" data-dur="parc">Número de parcelas</button>
+              <button type="button" class="resumo-chip ${durModo==='ate'?'active':''}" data-dur="ate">Até uma data</button>
+            </div>
+            <div class="field ${durModo==='parc'?'':'hidden-el'}" id="lanc-field-parcelas">${fl('repeat','Total de parcelas (contando esta)','lanc-parcelas')}<input id="lanc-parcelas" type="number" min="1" max="600" inputmode="numeric" value="${durParc||12}"></div>
+            <div class="field ${durModo==='ate'?'':'hidden-el'}" id="lanc-field-fim">${fl('calendar','Repete até (última ocorrência)','lanc-fim')}<input id="lanc-fim" type="date" value="${durFim}"></div>
+            <div class="lanc-dur-resumo" id="lanc-dur-resumo"></div>
+          </div>
           <div id="lanc-field-diagrid" class="hidden-el" style="margin-bottom:10px;">
             <div class="lanc-q">Vence no dia</div>
             <div class="day-grid" id="lanc-day-grid">
@@ -4071,6 +4154,35 @@ function renderLancamentoForm(){
     document.getElementById('lanc-dia-ultimo').textContent = '✓ Usar último dia do mês';
   });
   diaGridVisivel();
+  let durEscolhida = durModo;
+  function durResumo(){
+    const el = document.getElementById('lanc-dur-resumo'); if(!el) return;
+    document.querySelectorAll('#lanc-dur-row [data-dur]').forEach(x=>x.classList.toggle('active', x.dataset.dur===durEscolhida));
+    document.getElementById('lanc-field-parcelas').classList.toggle('hidden-el', durEscolhida!=='parc');
+    document.getElementById('lanc-field-fim').classList.toggle('hidden-el', durEscolhida!=='ate');
+    const ini = document.getElementById('lanc-data').value || HOJE;
+    const t = {frequencia:freqEscolhida, venceDia:diaEscolhido||undefined, intervaloDias:parseInt(document.getElementById('lanc-intervalo').value,10)||15};
+    const passo = d=>recPasso(d, t.frequencia, t.venceDia, t.intervaloDias);
+    if(durEscolhida==='parc'){
+      const n = parseInt(document.getElementById('lanc-parcelas').value,10);
+      if(!(n>=1) || n>600){ el.textContent = 'Informe o total de parcelas, de 1 a 600.'; return; }
+      let d = new Date(ini+'T00:00:00'); for(let i=1;i<n;i++) d = passo(d);
+      el.textContent = n===1 ? 'Só esta ocorrência.' : `${n} parcelas: de ${fmtDateFull(ini)} até ${fmtDateFull(recIso(d))}.`;
+    } else if(durEscolhida==='ate'){
+      const fim = document.getElementById('lanc-fim').value;
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(fim)){ el.textContent = 'Escolha até quando a conta se repete.'; return; }
+      if(fim<ini){ el.textContent = 'A data final precisa ser igual ou depois da primeira.'; return; }
+      let d = new Date(ini+'T00:00:00'), n = 0;
+      while(recIso(d)<=fim && n<1500){ n++; d = passo(d); }
+      el.textContent = `${n} ocorrência${n===1?'':'s'}, de ${fmtDateFull(ini)} até ${fmtDateFull(fim)}.`;
+    } else {
+      el.textContent = 'Continua se repetindo até você encerrar a conta fixa.';
+    }
+  }
+  document.querySelectorAll('#lanc-dur-row [data-dur]').forEach(b=>b.addEventListener('click', ()=>{ durEscolhida = b.dataset.dur; durResumo(); }));
+  ['lanc-parcelas','lanc-fim','lanc-intervalo','lanc-data'].forEach(id=>{ const e = document.getElementById(id); if(e){ e.addEventListener('input', durResumo); e.addEventListener('change', durResumo); } });
+  document.getElementById('lanc-recur-fields').addEventListener('click', ()=>durResumo());
+  durResumo();
 
   if(!editing){
     if(ctx.cartaoId){ document.getElementById('lanc-forma').value='Crédito'; onFormaChange(); document.getElementById('lanc-cartao').value=ctx.cartaoId; onCartaoAdic(); }
@@ -4134,11 +4246,22 @@ function submitLancamento(editing){
   const valorVariavel = recChecked && valorVariavelEl ? valorVariavelEl.checked : false;
   const descontoEl = document.getElementById('lanc-desconto');
   const desconto = recChecked && descontoEl ? descontoEl.checked : false;
+  const durBtn = document.querySelector('#lanc-dur-row .resumo-chip.active');
+  const durSel = recChecked && durBtn ? durBtn.dataset.dur : 'sem';
+  let parcelas, fimEm;
+  if(durSel==='parc'){
+    parcelas = parseInt(document.getElementById('lanc-parcelas').value,10);
+    if(!(parcelas>=1) || parcelas>600){ toast('Informe o total de parcelas (de 1 a 600)','bad'); return; }
+  } else if(durSel==='ate'){
+    fimEm = document.getElementById('lanc-fim').value;
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(fimEm)){ toast('Escolha até quando a conta se repete','bad'); return; }
+    if(fimEm<data){ toast('A data final precisa ser igual ou depois da primeira data','bad'); return; }
+  }
 
   if(editing){
-    applyLancamentoEdit(editing, {adicional,desc,fornecedor,valor,catId,sub,data,forma,cartaoId,contaId,pessoa,status,compartilhada,classificacaoCusto,frequencia,intervaloDias,venceDia,valorVariavel,desconto});
+    applyLancamentoEdit(editing, {adicional,desc,fornecedor,valor,catId,sub,data,forma,cartaoId,contaId,pessoa,status,compartilhada,classificacaoCusto,frequencia,intervaloDias,venceDia,valorVariavel,desconto,parcelas,fimEm});
   } else {
-    const novo = {id:uid('t'), criadoPor:state.user, tipo:lancState.tipo, desc, fornecedor, catId, sub, valor, data, pessoa, compartilhada, forma, cartaoId, adicional, contaId, status, classificacaoCusto, recorrente:!!frequencia, frequencia, intervaloDias, venceDia, valorVariavel, desconto, recorrenciaId: frequencia ? uid('rec') : null};
+    const novo = {id:uid('t'), criadoPor:state.user, tipo:lancState.tipo, desc, fornecedor, catId, sub, valor, data, pessoa, compartilhada, forma, cartaoId, adicional, contaId, status, classificacaoCusto, recorrente:!!frequencia, frequencia, intervaloDias, venceDia, valorVariavel, desconto, parcelas, fimEm, recorrenciaId: frequencia ? uid('rec') : null};
     transacoes.unshift(novo);
     if(cartaoId && status==='pago' && novo.tipo==='despesa'){ const c=cardById(cartaoId); if(c) c.faturaAtual += valor; }
     if(contaId && status==='pago'){ const conta=contaById(contaId); if(conta) conta.saldo += novo.tipo==='receita' ? valor : -valor; }
@@ -4168,7 +4291,7 @@ function applyLancamentoEdit(editing, fields){
       desc:fields.desc, fornecedor:fields.fornecedor, valor:fields.valor, catId:fields.catId, sub:fields.sub, forma:fields.forma,
       cartaoId:fields.cartaoId, adicional:fields.adicional, contaId:fields.contaId, pessoa:fields.pessoa, status:fields.status,
       compartilhada:fields.compartilhada, classificacaoCusto:fields.classificacaoCusto,
-      frequencia:fields.frequencia, intervaloDias:fields.intervaloDias, venceDia:fields.venceDia, valorVariavel:fields.valorVariavel, desconto:fields.desconto,
+      frequencia:fields.frequencia, intervaloDias:fields.intervaloDias, venceDia:fields.venceDia, valorVariavel:fields.valorVariavel, desconto:fields.desconto, parcelas:fields.parcelas, fimEm:fields.fimEm,
       recorrente:!!fields.frequencia,
     });
     if(!manterData) t.data = fields.data;
@@ -4279,15 +4402,16 @@ const CUSTO_LABELS = {essencial:'Essencial', ajustavel:'Ajustável', fora:'Fora 
 function renderRecorrencias(){
   const host = document.getElementById('view-recorrencias');
   const series = seriesRecorrentes();
-  const comProx = series.map(t=>({t, prox: proximoVencimento(t.data, t.frequencia||'mensal', t.venceDia, t.intervaloDias)}));
-  comProx.sort((a,b)=>a.prox.localeCompare(b.prox));
+  const comProx = series.map(t=>{ const px = recProxima(t); return {t, prox: px?px.data:'', n: px?px.n:0}; });
+  comProx.sort((a,b)=> !a.prox ? (b.prox?1:0) : (!b.prox ? -1 : a.prox.localeCompare(b.prox)));
+  const ativasRec = comProx.filter(x=>x.prox);
 
   const despesas = comProx.filter(x=>x.t.tipo==='despesa');
   const receitas = comProx.filter(x=>x.t.tipo==='receita');
   const resultadoMensal = receitas.reduce((s,x)=>s+x.t.valor,0) - despesas.reduce((s,x)=>s+x.t.valor,0);
   const atrasadas = transacoes.filter(t=>t.recorrenciaId && t.status==='atrasado');
-  const proximo = comProx[0];
-  const previstosMes = comProx.filter(x=>monthKey(x.prox)===YM_ATUAL).reduce((s,x)=>s+x.t.valor,0);
+  const proximo = ativasRec[0];
+  const previstosMes = ativasRec.filter(x=>monthKey(x.prox)===YM_ATUAL).reduce((s,x)=>s+x.t.valor,0);
 
   let filtrados = comProx;
   if(recorrenciaTab==='receitas') filtrados = receitas;
@@ -4295,7 +4419,7 @@ function renderRecorrencias(){
   else if(recorrenciaTab==='movimentacoes') filtrados = [];
   if(recBusca) filtrados = filtrados.filter(x=>(x.t.desc+' '+(x.t.fornecedor||'')).toLowerCase().includes(recBusca.toLowerCase()));
 
-  const marcados = new Set(comProx.map(x=>x.prox));
+  const marcados = new Set(ativasRec.map(x=>x.prox));
   const catDist = {};
   despesas.forEach(x=>{ catDist[x.t.catId] = (catDist[x.t.catId]||0) + x.t.valor; });
   const catDistArr = Object.entries(catDist).map(([catId,v])=>({catId,v,i:catIndex(catId,'despesa')})).sort((a,b)=>b.v-a.v).slice(0,5);
@@ -4310,7 +4434,7 @@ function renderRecorrencias(){
       <div class="card stat"><div class="stat-top"><span class="stat-label">Resultado recorrente</span><span class="stat-icon">${icon('scale')}</span></div><div class="stat-value" style="color:${resultadoMensal>=0?'var(--good)':'var(--critical)'}">${fmtBRLSign(resultadoMensal)}</div></div>
       <div class="card stat"><div class="stat-top"><span class="stat-label">Próximo vencimento</span><span class="stat-icon">${icon('calendar')}</span></div><div class="stat-value" style="font-size:15px;">${proximo?proximo.t.desc:'Nada agendado'}</div><div class="hint">${proximo?fmtDateShort(proximo.prox):''}</div></div>
       <div class="card stat"><div class="stat-top"><span class="stat-label">${atrasadas.length?'Em atraso':'Tudo em dia'}</span><span class="stat-icon">${icon(atrasadas.length?'bolt':'check')}</span></div><div class="stat-value" style="font-size:19px; color:${atrasadas.length?'var(--critical)':'var(--good)'}">${atrasadas.length||'✓'}</div><div class="hint">${atrasadas.length?'pendência(s)':'nenhuma pendência'}</div></div>
-      <div class="card stat"><div class="stat-top"><span class="stat-label">Ativas</span><span class="stat-icon">${icon('repeat')}</span></div><div class="stat-value">${series.length}</div><div class="hint">contas cadastradas</div></div>
+      <div class="card stat"><div class="stat-top"><span class="stat-label">Ativas</span><span class="stat-icon">${icon('repeat')}</span></div><div class="stat-value">${ativasRec.length}</div><div class="hint">${series.length>ativasRec.length ? (series.length-ativasRec.length)+' encerrada(s)' : 'contas cadastradas'}</div></div>
     </div>
 
     <div class="grid grid-main">
@@ -4324,13 +4448,13 @@ function renderRecorrencias(){
           </div>
           <input type="search" id="rec-busca" placeholder="Buscar recorrência por nome..." value="${recBusca}" style="width:100%; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:9px 14px; font-size:12.8px; margin-bottom:12px;">
           <div id="rec-list">
-            ${filtrados.length ? filtrados.map(({t,prox})=>`
+            ${filtrados.length ? filtrados.map(({t,prox,n})=>`
               <div class="rec-card">
                 <div class="txn-cat-dot" style="background:${catColorVar(t.tipo,catIndex(t.catId,t.tipo))}">${initials(catById(t.catId)?catById(t.catId).nome:'?')}</div>
                 <div class="txn-mid rec-mid">
                   <div class="rec-title">${t.desc}</div>
                   <div class="rec-tags">${catById(t.catId)?`<span class="pill neutral">${catById(t.catId).nome}</span>`:''}${t.classificacaoCusto?`<span class="pill neutral">${CUSTO_LABELS[t.classificacaoCusto]}</span>`:''}</div>
-                  <div class="rec-meta"><span>${icon('repeat')}${FREQ_LABELS[t.frequencia]||t.frequencia}</span><span>${icon('calendar')}próx. ${fmtDateShort(prox)}</span>${t.fornecedor?`<span>${icon('store')}${t.fornecedor}</span>`:''}</div>
+                  <div class="rec-meta"><span>${icon('repeat')}${FREQ_LABELS[t.frequencia]||t.frequencia}</span>${prox?`<span>${icon('calendar')}próx. ${fmtDateShort(prox)}</span>`:`<span>${icon('check')}Encerrada</span>`}${recVigenciaTxt(t,prox?n:0)?`<span>${icon('flag')}${recVigenciaTxt(t,prox?n:0)}</span>`:''}${t.fornecedor?`<span>${icon('store')}${t.fornecedor}</span>`:''}</div>
                 </div>
                 <div class="txn-amt rec-amt ${t.tipo==='receita'?'money-pos':'money-neg'}">${t.tipo==='receita'?'+':'-'}${fmtBRL(t.valor).replace('-','')}${t.valorVariavel?' *':''}</div>
                 <div class="rec-actions">
@@ -4348,7 +4472,7 @@ function renderRecorrencias(){
       <div style="display:flex; flex-direction:column; gap:14px;">
         <div class="card pad">
           <div class="card-title-row"><h3>Próximos vencimentos e recebimentos</h3></div>
-          ${comProx.slice(0,5).map(({t,prox})=>`<div class="insight-row"><span class="insight-ic neutral">${icon('calendar')}</span><div class="insight-txt" style="flex:1;">${t.desc}<div class="hint">${fmtDateFull(prox)}</div></div><div class="mono" style="font-weight:600;">${fmtBRL(t.valor)}</div></div>`).join('') || `<div class="empty-state">Nada nos próximos dias.</div>`}
+          ${ativasRec.slice(0,5).map(({t,prox})=>`<div class="insight-row"><span class="insight-ic neutral">${icon('calendar')}</span><div class="insight-txt" style="flex:1;">${t.desc}<div class="hint">${fmtDateFull(prox)}</div></div><div class="mono" style="font-weight:600;">${fmtBRL(t.valor)}</div></div>`).join('') || `<div class="empty-state">Nada nos próximos dias.</div>`}
         </div>
         <div class="card pad">
           <div class="card-title-row"><h3>Calendário</h3></div>
@@ -4382,7 +4506,22 @@ const FREQ_LABELS = {semanal:'Semanal', quinzenal:'Quinzenal', mensal:'Mensal', 
 let agendaYm = YM_ATUAL;
 let agendaSelecionado = HOJE;
 let agendaView = 'calendario';
-function saldoInicialMes(ym){ return saldoFimDoMes(ymShift(ym,-1)); }
+function saldoInicialMes(ym){
+  const prev = ymShift(ym,-1);
+  if(ym<=YM_ATUAL) return saldoFimDoMes(prev);
+  /* mês futuro: parte do saldo do fim do mês passado e soma tudo o que está lançado ou previsto até o mês anterior a este */
+  let s = saldoFimDoMes(ymShift(YM_ATUAL,-1));
+  const soma = t=>{ if(t.tipo==='transferencia') return; const k = monthKey(t.data); if(k<YM_ATUAL || k>prev) return; const v = Number(t.valor)||0; s += t.tipo==='receita' ? v : (t.tipo==='despesa' ? -v : 0); };
+  transacoes.forEach(soma);
+  recProjetadas(prev+'-31').forEach(soma);
+  return Number.isFinite(s) ? Math.round(s*100)/100 : 0;
+}
+/* Próximos lançamentos: o que ainda vai vencer (gravado e não pago) + as repetições previstas das contas fixas */
+function proximosLancamentos(max){
+  const lim = daysAgo(HOJE,-150);
+  const reais = transacoes.filter(t=>t.tipo!=='transferencia' && t.data>=HOJE && t.data<=lim && t.status!=='pago');
+  return reais.concat(recProjetadas(lim)).sort((a,b)=>a.data.localeCompare(b.data) || (a.tipo===b.tipo?0:(a.tipo==='receita'?-1:1))).slice(0,max||8);
+}
 function renderAgenda(){
   const host = document.getElementById('view-agenda');
   const [y,m] = agendaYm.split('-').map(Number);
@@ -4390,9 +4529,10 @@ function renderAgenda(){
   const saldoIni = saldoInicialMes(agendaYm);
   let running = saldoIni;
   const porDia = {};
+  const previstosMes = recProjetadas(`${y}-${String(m).padStart(2,'0')}-${String(daysInMonth).padStart(2,'0')}`).filter(t=>monthKey(t.data)===agendaYm);
   for(let d=1; d<=daysInMonth; d++){
     const iso = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const movs = transacoes.filter(t=>t.data===iso);
+    const movs = transacoes.filter(t=>t.data===iso).concat(previstosMes.filter(t=>t.data===iso));
     const entradas = movs.filter(t=>t.tipo==='receita').reduce((s,t)=>s+t.valor,0);
     const saidas = movs.filter(t=>t.tipo==='despesa').reduce((s,t)=>s+t.valor,0);
     running += entradas - saidas;
@@ -4402,8 +4542,10 @@ function renderAgenda(){
   const saldoFimMes = porDia[`${y}-${String(m).padStart(2,'0')}-${String(daysInMonth).padStart(2,'0')}`]?.saldo ?? saldoIni;
   const saldos = Object.values(porDia).map(x=>x.saldo);
   const menorSaldo = Math.min(saldoIni, ...saldos);
-  const proximos7 = Array.from({length:7},(_,i)=>daysAgo(HOJE,-i-1)).filter(iso=>monthKey(iso)===agendaYm);
-  const aPagar7 = transacoes.filter(t=>proximos7.includes(t.data) && t.tipo==='despesa' && t.status!=='pago').length;
+  const proximos7 = Array.from({length:7},(_,i)=>daysAgo(HOJE,-i-1));
+  const aPagar7 = transacoes.filter(t=>proximos7.includes(t.data) && t.tipo==='despesa' && t.status!=='pago').length
+    + recProjetadas(proximos7[6]).filter(t=>t.tipo==='despesa' && proximos7.includes(t.data)).length;
+  const proxLanc = proximosLancamentos(8);
   const entradasMes = Object.values(porDia).reduce((s,x)=>s+x.entradas,0);
   const saidasMes = Object.values(porDia).reduce((s,x)=>s+x.saidas,0);
 
@@ -4452,7 +4594,7 @@ function renderAgenda(){
             if(!d) return '<td class="cal-cell empty"></td>';
             const iso = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const info = porDia[iso];
-            const dots = (info?.movs||[]).slice(0,4).map(t=>`<span style="background:${t.tipo==='receita'?'var(--good)':t.tipo==='transferencia'?'#3a82f7':'var(--critical)'}"></span>`).join('');
+            const dots = (info?.movs||[]).slice(0,4).map(t=>{ const cor = t.tipo==='receita'?'var(--good)':t.tipo==='transferencia'?'#3a82f7':'var(--critical)'; return t.projetada ? `<span style="background:transparent; box-shadow:inset 0 0 0 1.5px ${cor};" title="Previsto"></span>` : `<span style="background:${cor}"></span>`; }).join('');
             return `<td class="cal-cell ${iso===agendaSelecionado?'selected':''} ${iso===HOJE?'today':''}" data-cal-day="${iso}">
               <div class="cal-daynum">${d}</div>
               <div class="cal-dots">${dots}</div>
@@ -4475,10 +4617,18 @@ function renderAgenda(){
                 const o=contaById(t.contaOrigemId), d2=contaById(t.contaDestinoId);
                 return `<div class="row-between"><span>${t.desc||'Transferência'} <span class="hint">· ${o?o.banco:'?'}→${d2?d2.banco:'?'}</span></span><span class="mono" style="color:#3a82f7;">${fmtBRL(t.valor)}</span></div>`;
               }
-              return `<div class="row-between"><span>${t.desc} ${t.status!=='pago'?statusPillHtml(t.tipo,t.status):''}</span><span class="mono ${t.tipo==='receita'?'money-pos':'money-neg'}">${t.tipo==='receita'?'+':'-'}${fmtBRL(t.valor).replace('-','')}</span></div>`;
+              return `<div class="row-between"><span>${t.desc} ${t.projetada ? `<span class="pill neutral">Previsto${t.parcelaTotal?' · '+t.parcelaN+'/'+t.parcelaTotal:''}</span>` : (t.status!=='pago'?statusPillHtml(t.tipo,t.status):'')}</span><span class="mono ${t.tipo==='receita'?'money-pos':'money-neg'}">${t.tipo==='receita'?'+':'-'}${fmtBRL(t.valor).replace('-','')}</span></div>`;
             }).join('') : `<div class="empty-state" style="padding:16px 6px;">Nenhum compromisso neste dia.</div>`}
           </div>
           <button class="btn btn-primary btn-block" id="btn-novo-compromisso-dia" style="margin-top:12px;" title="Novo compromisso neste dia" aria-label="Novo compromisso neste dia">${icon('plus')} Novo compromisso</button>
+        </div>
+        <div class="card pad">
+          <div class="card-title-row"><h3>Próximos lançamentos</h3></div>
+          ${proxLanc.length ? `<div class="agenda-prox-lista">${proxLanc.map(t=>`<button type="button" class="agenda-prox" data-agenda-ir="${t.data}" title="Ver este dia na agenda">
+              <span class="agenda-prox-d"><b>${t.data.slice(8)}</b>${MESES_ABREV[Number(t.data.slice(5,7))-1]}</span>
+              <span class="agenda-prox-t">${escHtml(t.desc||'Lançamento')}<small>${t.projetada ? 'Previsto'+(t.parcelaTotal?' · '+t.parcelaN+'/'+t.parcelaTotal:'') : (t.status==='atrasado'?'Em atraso':'Agendado')}${t.recorrenciaId&&!t.projetada?' · conta fixa':''}</small></span>
+              <span class="mono ${t.tipo==='receita'?'money-pos':'money-neg'}">${t.tipo==='receita'?'+':'-'}${fmtBRL(t.valor).replace('-','')}</span>
+            </button>`).join('')}</div>` : `<div class="empty-state" style="padding:14px 6px;">Nada previsto para os próximos meses.</div>`}
         </div>
         <div class="card pad">
           <div class="card-title-row"><h3>Resumo do mês</h3></div>
@@ -4497,6 +4647,7 @@ function renderAgenda(){
   document.getElementById('agenda-next').addEventListener('click', ()=>irParaMes(shiftMonth(agendaYm,1)));
   document.querySelectorAll('[data-agenda-view]').forEach(b=>b.addEventListener('click', ()=>{ agendaView=b.dataset.agendaView; renderAgenda(); }));
   document.querySelectorAll('[data-cal-day]').forEach(td=>td.addEventListener('click', ()=>{ agendaSelecionado=td.dataset.calDay; renderAgenda(); }));
+  document.querySelectorAll('[data-agenda-ir]').forEach(b=>b.addEventListener('click', ()=>{ agendaSelecionado=b.dataset.agendaIr; agendaYm=monthKey(agendaSelecionado); agendaView='calendario'; renderAgenda(); }));
   document.getElementById('btn-novo-compromisso-head').addEventListener('click', ()=>openLancamentoPopup('despesa',{data:agendaSelecionado}));
   document.getElementById('btn-novo-compromisso-dia').addEventListener('click', ()=>openLancamentoPopup('despesa',{data:agendaSelecionado}));
 
@@ -4507,7 +4658,7 @@ function renderAgenda(){
         <div class="hint" style="margin-bottom:4px;">${fmtDateFull(iso)}</div>
         ${porDia[iso].movs.map(t=>t.tipo==='transferencia'
           ? `<div class="row-between" style="padding:4px 0;"><span>${t.desc||'Transferência'}</span><span class="mono" style="color:#3a82f7;">${fmtBRL(t.valor)}</span></div>`
-          : `<div class="row-between" style="padding:4px 0;"><span>${t.desc}</span><span class="mono ${t.tipo==='receita'?'money-pos':'money-neg'}">${t.tipo==='receita'?'+':'-'}${fmtBRL(t.valor).replace('-','')}</span></div>`
+          : `<div class="row-between" style="padding:4px 0;"><span>${t.desc}${t.projetada?` <span class="pill neutral">Previsto${t.parcelaTotal?' · '+t.parcelaN+'/'+t.parcelaTotal:''}</span>`:''}</span><span class="mono ${t.tipo==='receita'?'money-pos':'money-neg'}">${t.tipo==='receita'?'+':'-'}${fmtBRL(t.valor).replace('-','')}</span></div>`
         ).join('')}
       </div>`).join('') : `<div class="empty-state">Nenhuma movimentação neste mês.</div>`;
   }

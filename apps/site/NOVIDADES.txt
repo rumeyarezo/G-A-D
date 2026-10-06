@@ -1,3 +1,5 @@
 # SOMENTE as mudancas do ultimo upload. A cada nova versao: mova estas linhas para NOVIDADES-HISTORICO.txt e escreva so as novas.
 # Uma linha por novidade (todas aparecem no aviso de atualizacao, ate 6). Linhas com # sao ignoradas.
+Categorias que um dos dois usa num lançamento que o outro enxerga agora aparecem sozinhas na lista do parceiro — nada de lançamento com categoria "faltando" na conta dele(a).
 Lançamentos ganhou filtros inteligentes: busca por descrição, categoria, conta, cartão ou valor (ex.: >100), filtro por período e datas personalizadas, situação, ordem, atalhos prontos e "Mais filtros" (forma de pagamento, conta, cartão, faixa de valor…). Dá pra salvar seus filtros favoritos e reabrir com um toque.
+Agenda: agora mostra os próximos lançamentos — as repetições das contas fixas aparecem como "previsto" no calendário, na lista e no saldo projetado, e há um card "Próximos lançamentos". Contas fixas ganharam "Duração": sem data pra acabar, número de parcelas ou até uma data.
