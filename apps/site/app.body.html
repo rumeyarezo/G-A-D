@@ -300,6 +300,60 @@ main{padding:22px; flex:1; min-width:0;}
 /* filters */
 .filter-bar{display:flex; gap:9px; flex-wrap:wrap; align-items:center; margin-bottom:14px;}
 .filter-bar select,.filter-bar input[type=search]{background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:7px 13px; font-size:12.5px;}
+/* lançamentos: filtros inteligentes (Rodada 27) */
+.lf-card{margin-bottom:16px;}
+.lf-top{display:flex; gap:10px; align-items:stretch; margin-bottom:12px;}
+.lf-search{flex:1; min-width:0; display:flex; align-items:center; gap:10px; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:0 16px; transition:border-color .15s, box-shadow .15s;}
+.lf-search:focus-within{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+.lf-search svg{width:17px; height:17px; color:var(--text-muted); flex:none;}
+.lf-search input{border:0; background:transparent; outline:none; padding:12px 0; width:100%; min-width:0; color:var(--text); font-size:14px;}
+.lf-more{border-radius:999px; gap:7px; white-space:nowrap; padding:0 16px;}
+.lf-more svg{width:16px; height:16px;}
+.lf-seg{margin-bottom:12px; flex-wrap:nowrap!important; overflow-x:auto; scrollbar-width:none;}
+.lf-seg::-webkit-scrollbar{display:none;}
+.lf-seg button{flex:1 0 auto; font-size:12.5px; padding:8px 14px;}
+.lf-bar{display:flex; flex-wrap:wrap; gap:9px; margin-bottom:12px;}
+.lf-pill{flex:0 1 auto; min-width:0; max-width:100%;}
+.lf-pill .dd{width:auto; min-width:0; max-width:100%;}
+.lf-pill .dd-btn{width:auto; max-width:100%; justify-content:center; border-radius:999px; min-height:0; padding:9px 16px; font-size:12.8px;}
+.lf-pill .dd-btn svg{display:none;}
+.lf-pill .dd-txt{overflow:visible; text-overflow:clip; white-space:normal; text-align:center;}
+.lf-pill .dd:has(select.lf-on) .dd-btn{background:var(--accent-soft); border-color:var(--accent-ring); color:var(--accent-strong);}
+.lf-sr{position:absolute!important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+.lf-custom{display:flex; flex-wrap:wrap; gap:9px; margin:-2px 0 12px;}
+.lf-date{display:flex; align-items:center; gap:8px; flex:1 1 150px; min-width:0; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:0 14px; font-size:12.5px; font-weight:700; color:var(--text-muted); transition:border-color .15s, box-shadow .15s;}
+.lf-date:focus-within{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+.lf-date span{white-space:nowrap;}
+.lf-date input{border:0; background:transparent; outline:none; padding:10px 0; color:var(--text); font:inherit; font-weight:600; min-width:0; width:100%;}
+.lf-sec{display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:11px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:var(--text-muted); margin:14px 0 8px;}
+.lf-sec .link-btn{display:inline-flex; align-items:center; gap:5px; text-transform:none; letter-spacing:0; font-size:12px;}
+.lf-sec .link-btn svg{width:13px; height:13px;}
+.lf-chips{display:flex; flex-wrap:wrap; gap:8px; padding:2px 1px 4px;}
+.lf-chip{display:inline-flex; align-items:center; gap:6px; flex:none; white-space:nowrap; border:1px solid var(--border); background:var(--surface-2); color:var(--text-secondary); border-radius:999px; padding:6px 12px; font-size:12px; font-weight:600; cursor:pointer; transition:background .15s, border-color .15s, color .15s;}
+.lf-chip svg{width:13px; height:13px;}
+.lf-chip:hover{background:var(--surface-hover);}
+.lf-chip.on{background:var(--accent-soft); border-color:var(--accent-ring); color:var(--accent-strong);}
+.lf-saved{padding:0; gap:0; overflow:hidden; cursor:default;}
+.lf-saved-b{display:inline-flex; align-items:center; gap:6px; border:0; background:transparent; color:inherit; font:inherit; padding:6px 6px 6px 12px; cursor:pointer;}
+.lf-saved-x{border:0; background:transparent; color:inherit; opacity:.55; padding:6px 10px 6px 4px; display:inline-flex; align-items:center; cursor:pointer;}
+.lf-saved-x:hover{opacity:1; color:var(--critical);}
+.lf-vazio{font-size:12.5px; color:var(--text-muted); padding:4px 2px;}
+.lf-ativos{display:flex; flex-wrap:wrap; gap:7px; align-items:center; margin-top:14px; padding-top:12px; border-top:1px dashed var(--border);}
+.lf-tag{display:inline-flex; align-items:center; gap:4px; max-width:100%; background:var(--accent-soft); border:1px solid var(--accent-ring); color:var(--accent-strong); border-radius:999px; padding:4px 6px 4px 11px; font-size:12px; font-weight:700;}
+.lf-tag button{border:0; background:transparent; color:inherit; display:inline-flex; padding:3px; border-radius:50%; cursor:pointer;}
+.lf-tag button:hover{background:var(--accent-ring);}
+.lf-tag svg{width:12px; height:12px;}
+.lf-prev{display:flex; flex-wrap:wrap; gap:7px;}
+.lf-prev .lf-tag{padding:4px 11px;}
+.lf-limpar{font-size:12px; margin-left:4px;}
+.lf-resumo{display:flex; flex-wrap:wrap; align-items:center; gap:6px 16px; font-size:12.5px; color:var(--text-secondary); background:var(--surface-2); border:1px solid var(--border); border-radius:14px; padding:10px 14px; margin-bottom:14px;}
+.lf-res-n b{font-size:14px; color:var(--text);}
+.lf-res b{font-family:var(--font-mono); margin-left:4px;}
+.lf-res.pos b{color:var(--good);} .lf-res.neg b{color:var(--critical);}
+.lf-vals{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.lf-lab{display:block;}
+.lf-ativos[hidden],.lf-resumo[hidden],.lf-more .at-badge[hidden]{display:none!important;}
+@media (max-width:480px){ .lf-more-t{display:none;} .lf-more{padding:0 14px;} .lf-pill .dd-btn{padding:8px 13px; font-size:12.4px;} .lf-seg{display:grid!important; grid-template-columns:1fr 1fr; overflow:visible; border-radius:18px;} .lf-seg button{padding:9px 10px; font-size:12.5px; white-space:nowrap;} }
 
 /* accordion (categorias) */
 .acc-item{border:1px solid var(--border); border-radius:var(--r-md); margin-bottom:9px; overflow:hidden; background:var(--surface);}
@@ -1128,6 +1182,7 @@ const ICONS = {
   chevLeft:'<path d="M15 6l-6 6 6 6"/>',
   sparkle:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/><circle cx="12" cy="12" r="2.2"/>',
   camera:'<path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1-2h7l1 2h2A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5Z"/><circle cx="12" cy="13" r="3.3"/>',
+  bookmark:'<path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1Z"/>',
   bank:'<path d="M4 9.5 12 4l8 5.5"/><path d="M4 9.5h16"/><path d="M5.5 12v6M9.7 12v6M14.3 12v6M18.5 12v6"/><path d="M3.3 19h17.4"/>',
   mail:'<rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/>',
   transfer:'<path d="M4 7.5h13.5"/><path d="M14 4l3.5 3.5L14 11"/><path d="M20 16.5H6.5"/><path d="M10 20l-3.5-3.5L10 13"/>',
@@ -1715,7 +1770,7 @@ function migrarEstado(s){
 }
 function buildStateSnapshot(){
   recalcSaldos();
-  return {_schema:ESTADO_SCHEMA, categorias:categorias.concat(OCULTOS.categorias), contas:contas.concat(OCULTOS.contas), cartoes:cartoes.concat(OCULTOS.cartoes), cofrinhos:cofrinhos.concat(OCULTOS.cofrinhos), investimentos, metas:metas.concat(OCULTOS.metas), transacoes:transacoes.concat(OCULTOS.transacoes), notificacoes, fotos, empresas, atividades, dispositivos, compras};
+  return {_schema:ESTADO_SCHEMA, categorias:categorias.concat(OCULTOS.categorias), contas:contas.concat(OCULTOS.contas), cartoes:cartoes.concat(OCULTOS.cartoes), cofrinhos:cofrinhos.concat(OCULTOS.cofrinhos), investimentos, metas:metas.concat(OCULTOS.metas), transacoes:transacoes.concat(OCULTOS.transacoes), notificacoes, fotos, empresas, atividades, dispositivos, compras, filtrosSalvos};
 }
 /* junta o que já está aqui (ainda não salvo) com o que chegou da nuvem, por id: nada criado neste
    aparelho desaparece só porque outro aparelho salvou por cima antes da gente. Se o MESMO item foi
@@ -1754,6 +1809,10 @@ function applyStateSnapshot(s, mesclarComLocal){
     compras = sanCompras({listas: juntar((compras&&compras.listas)||[], s.compras.listas), itens: juntar((compras&&compras.itens)||[], s.compras.itens)});
   }
   if(s.empresas && typeof s.empresas==='object') empresas = {caio:sanEmpresa(s.empresas.caio), marina:sanEmpresa(s.empresas.marina)};
+  if(s.filtrosSalvos && typeof s.filtrosSalvos==='object'){
+    const nuvem = sanFiltrosSalvos(s.filtrosSalvos);
+    ['caio','marina'].forEach(k=>{ filtrosSalvos[k] = (k===state.user) ? juntar(filtrosSalvos[k]||[], nuvem[k]).slice(0, LF_MAX_SALVOS) : nuvem[k]; });
+  }
   return recuperou;
 }
 /* ============ ATIVIDADES (histórico do que mudou) ============ */
@@ -2112,6 +2171,7 @@ function avatarInterno(k){ const u = USERS[k]; const f = fotos[k]; return fotoVa
 let empresas = {caio:null, marina:null};
 let atividades = [];
 let compras = {listas:[], itens:[]};
+let filtrosSalvos = {caio:[], marina:[]};   /* filtros salvos da tela Lançamentos, por pessoa (Rodada 27) */
 let dispositivos = {caio:[], marina:[]};
 const txt_ = (v,n)=>typeof v==='string' ? v.slice(0,n) : '';
 const imgOk = f => typeof f==='string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(f) && f.length < 450000;
@@ -3255,8 +3315,165 @@ function subOptions(catId,selected){
   return c.subs.map(s=>`<option value="${s}" ${s===selected?'selected':''}>${s}</option>`).join('');
 }
 
+/* ============ LANÇAMENTOS: filtros inteligentes (Rodada 27) ============
+   Tudo passa por um único objeto (lancF). A barra mostra o que se usa o tempo todo (busca, tipo, período, situação,
+   categoria, pessoa, ordem); "Mais filtros" abre o resto (subcategoria, forma, conta, cartão, valor, compartilhado,
+   recorrente, custo). Atalhos prontos somam-se ao que já está filtrado; "Meus filtros" guardam o conjunto na conta
+   de quem salvou (aparecem em qualquer aparelho, só pra essa pessoa). */
+const LF_PERIODOS = [['todos','Todo o período'],['hoje','Hoje'],['7d','Últimos 7 dias'],['mes','Este mês'],['mes_ant','Mês passado'],['30d','Últimos 30 dias'],['90d','Últimos 90 dias'],['ano','Este ano'],['custom','Período personalizado…']];
+const LF_STATUS = [['todos','Qualquer situação'],['pago','Pagos / recebidos'],['aberto','Em aberto (a pagar / receber)'],['atrasado','Só os em atraso']];
+const LF_ORDENS = [['data_desc','Mais recentes primeiro'],['data_asc','Mais antigos primeiro'],['valor_desc','Maior valor primeiro'],['valor_asc','Menor valor primeiro'],['desc_az','Descrição (A a Z)']];
+const LF_TIPOS = [['todas','Todos'],['despesa','Despesas'],['receita','Receitas'],['transferencia','Transferências']];
+const LF_CUSTOS = [['essencial','Essencial'],['ajustavel','Ajustável'],['fora','Fora do fixo'],['confirmar','A confirmar']];
+const LF_FORMAS = ['Pix','Débito','Crédito','Dinheiro'];
+const LF_MODAL_KEYS = ['sub','forma','contaId','cartaoId','vmin','vmax','comp','rec','custo'];
+const LF_PASSO = 150, LF_MAX_SALVOS = 12;
+const lfPadrao = ()=>({q:'', tipo:'todas', periodo:'todos', de:'', ate:'', status:'todos', pessoa:'todas', catId:'todas', sub:'', forma:'todas', contaId:'todas', cartaoId:'todas', vmin:'', vmax:'', comp:'todos', rec:'todos', custo:'todos', ordem:'data_desc'});
+let lancF = lfPadrao(), lfLimite = LF_PASSO;
+
+const lfEnum = (v, lista, pad)=> lista.some(x=>(Array.isArray(x)?x[0]:x)===v) ? v : pad;
+function sanFiltroLanc(f){
+  const p = lfPadrao(), o = {};
+  Object.keys(p).forEach(k=>{ o[k] = (f && typeof f[k]==='string') ? f[k].slice(0,80) : p[k]; });
+  o.tipo = lfEnum(o.tipo, LF_TIPOS, 'todas'); o.periodo = lfEnum(o.periodo, LF_PERIODOS, 'todos');
+  o.status = lfEnum(o.status, LF_STATUS, 'todos'); o.ordem = lfEnum(o.ordem, LF_ORDENS, 'data_desc');
+  o.comp = lfEnum(o.comp, [['todos'],['sim'],['nao']], 'todos'); o.rec = lfEnum(o.rec, [['todos'],['sim'],['nao']], 'todos');
+  return o;
+}
+function sanFiltrosSalvos(obj){
+  const out = {caio:[], marina:[]};
+  ['caio','marina'].forEach(k=>{
+    const arr = obj && Array.isArray(obj[k]) ? obj[k] : [];
+    out[k] = arr.filter(x=>x && x.id && x.f && typeof x.f==='object').slice(0, LF_MAX_SALVOS).map(x=>({id:txt_(x.id,40), nome:txt_(x.nome,30).trim()||'Filtro', f:sanFiltroLanc(x.f)}));
+  });
+  return out;
+}
+const lfMeusSalvos = ()=> filtrosSalvos[state.user] || (filtrosSalvos[state.user] = []);
+
+const lfNum = s=>{
+  if(s===''||s==null) return null;
+  const t = String(s).trim().replace(/\s/g,'').replace(/^R\$/i,'');
+  if(!t) return null;
+  const n = t.includes(',') ? parseFloat(t.replace(/\./g,'').replace(',','.')) : parseFloat(t);
+  return Number.isFinite(n) ? n : null;
+};
+const lfD = iso => iso ? iso.split('-').reverse().join('/') : '';
+function lfDatas(f){
+  const iso = d=>d.toLocaleDateString('en-CA');
+  const base = new Date(HOJE+'T12:00:00');
+  const soma = n=>{ const d = new Date(base); d.setDate(d.getDate()+n); return iso(d); };
+  const ultimo = ym=>{ const [y,m] = ym.split('-').map(Number); return iso(new Date(y, m, 0, 12)); };
+  switch(f.periodo){
+    case 'hoje': return {de:HOJE, ate:HOJE};
+    case '7d': return {de:soma(-6), ate:HOJE};
+    case '30d': return {de:soma(-29), ate:HOJE};
+    case '90d': return {de:soma(-89), ate:HOJE};
+    case 'mes': return {de:YM_ATUAL+'-01', ate:ultimo(YM_ATUAL)};
+    case 'mes_ant': { const ym = ymShift(YM_ATUAL,-1); return {de:ym+'-01', ate:ultimo(ym)}; }
+    case 'ano': return {de:HOJE.slice(0,4)+'-01-01', ate:HOJE.slice(0,4)+'-12-31'};
+    case 'custom': return {de:f.de||'', ate:f.ate||''};
+    default: return {de:'', ate:''};
+  }
+}
+/* tudo o que dá pra achar escrevendo: descrição, fornecedor, categoria, sub, forma, conta, cartão, pessoa, situação, valor e data */
+function lfTexto(t){
+  const cat = t.catId ? catById(t.catId) : null;
+  const co = contaById(t.contaId), ck = cardById(t.cartaoId), orig = contaById(t.contaOrigemId), dest = contaById(t.contaDestinoId);
+  const pes = t.pessoa && USERS[t.pessoa] ? USERS[t.pessoa].nome : '';
+  const v = Number(t.valor)||0;
+  return norm([t.desc, t.fornecedor, cat&&cat.nome, t.sub, t.forma, pes,
+    t.tipo==='transferencia' ? 'transferencia' : statusInfo(t.tipo, t.status||'pago').label, t.tipo,
+    co&&(co.banco+' '+co.apelido), ck&&ck.nome, orig&&orig.banco, dest&&dest.banco,
+    fmtBRL(v), v.toFixed(2).replace('.',','), lfD(t.data), t.data&&fmtDateShort(t.data)].filter(Boolean).join(' | '));
+}
+function lfFiltrar(lista, f){
+  const {de, ate} = lfDatas(f);
+  const vmin = lfNum(f.vmin), vmax = lfNum(f.vmax);
+  const tokens = norm(f.q).replace(/([<>]=?)\s+(?=\d)/g,'$1').split(/\s+/).filter(Boolean);   /* "> 100" vale como ">100" */
+  const out = lista.filter(t=>{
+    const v = Number(t.valor)||0, st = t.status||'pago';
+    if(f.tipo!=='todas' && t.tipo!==f.tipo) return false;
+    if(de && t.data<de) return false;
+    if(ate && t.data>ate) return false;
+    if(f.status==='pago' && st!=='pago') return false;
+    if(f.status==='aberto' && st!=='pendente' && st!=='atrasado') return false;
+    if(f.status==='atrasado' && st!=='atrasado') return false;
+    if(f.pessoa!=='todas' && t.pessoa!==f.pessoa) return false;
+    if(f.catId!=='todas' && t.catId!==f.catId) return false;
+    if(f.sub && t.sub!==f.sub) return false;
+    if(f.forma!=='todas' && t.forma!==f.forma) return false;
+    if(f.contaId!=='todas' && t.contaId!==f.contaId && t.contaOrigemId!==f.contaId && t.contaDestinoId!==f.contaId) return false;
+    if(f.cartaoId!=='todas' && t.cartaoId!==f.cartaoId) return false;
+    if(vmin!=null && v<vmin-0.004) return false;
+    if(vmax!=null && v>vmax+0.004) return false;
+    if(f.comp==='sim' && t.compartilhada!==true) return false;
+    if(f.comp==='nao' && t.compartilhada===true) return false;
+    const rec = !!(t.recorrenciaId || t.recorrente);
+    if(f.rec==='sim' && !rec) return false;
+    if(f.rec==='nao' && rec) return false;
+    if(f.custo!=='todos' && t.classificacaoCusto!==f.custo) return false;
+    if(tokens.length){
+      const tx = lfTexto(t);
+      for(const k of tokens){
+        const op = k.match(/^([<>]=?)(\d+(?:[.,]\d+)?)$/);
+        if(op){ const n = lfNum(op[2]); const ok = op[1]==='>' ? v>n : op[1]==='>=' ? v>=n : op[1]==='<' ? v<n : v<=n; if(!ok) return false; continue; }
+        if(/^\d+(?:[.,]\d+)?$/.test(k) && Math.abs(v-lfNum(k))<0.005) continue;   /* "172" acha o valor exato 172,00 */
+        if(!tx.includes(k)) return false;
+      }
+    }
+    return true;
+  });
+  const ord = {
+    data_desc:(a,b)=>b.data.localeCompare(a.data), data_asc:(a,b)=>a.data.localeCompare(b.data),
+    valor_desc:(a,b)=>(Number(b.valor)||0)-(Number(a.valor)||0), valor_asc:(a,b)=>(Number(a.valor)||0)-(Number(b.valor)||0),
+    desc_az:(a,b)=>String(a.desc||'').localeCompare(String(b.desc||''),'pt-BR')
+  }[f.ordem] || ((a,b)=>b.data.localeCompare(a.data));
+  return out.sort(ord);
+}
+
+/* descritores do que está ligado: cada um sabe quais campos zerar quando a pessoa toca no "x" */
+function lfAtivos(f){
+  const p = lfPadrao(), out = [];
+  const rot = (lista,v)=>(lista.find(x=>x[0]===v)||[])[1]||v;
+  if(f.q.trim()) out.push({ks:['q'], txt:`“${f.q.trim()}”`});
+  if(f.tipo!==p.tipo) out.push({ks:['tipo'], txt:rot(LF_TIPOS,f.tipo)});
+  if(f.periodo==='custom'){
+    if(f.de||f.ate) out.push({ks:['periodo','de','ate'], txt: f.de&&f.ate ? `${lfD(f.de)} a ${lfD(f.ate)}` : (f.de ? `A partir de ${lfD(f.de)}` : `Até ${lfD(f.ate)}`)});
+  } else if(f.periodo!==p.periodo) out.push({ks:['periodo'], txt:rot(LF_PERIODOS,f.periodo)});
+  if(f.status!==p.status) out.push({ks:['status'], txt:rot(LF_STATUS,f.status).replace(' (a pagar / receber)','')});
+  if(f.pessoa!==p.pessoa){ const u = USERS[f.pessoa]; out.push({ks:['pessoa'], txt:u?u.nome.split(' ')[0]:'Pessoa'}); }
+  if(f.catId!==p.catId){ const c = catById(f.catId); out.push({ks:['catId','sub'], txt:'Categoria: '+(c?c.nome:'(removida)')}); }
+  if(f.sub) out.push({ks:['sub'], txt:'Sub: '+f.sub});
+  if(f.forma!==p.forma) out.push({ks:['forma'], txt:f.forma});
+  if(f.contaId!==p.contaId){ const c = contaById(f.contaId); out.push({ks:['contaId'], txt:'Conta: '+(c?c.banco+(c.apelido?' · '+c.apelido:''):'(removida)')}); }
+  if(f.cartaoId!==p.cartaoId){ const c = cardById(f.cartaoId); out.push({ks:['cartaoId'], txt:'Cartão: '+(c?c.nome:'(removido)')}); }
+  const a = lfNum(f.vmin), b = lfNum(f.vmax);
+  if(a!=null || b!=null) out.push({ks:['vmin','vmax'], txt: a!=null&&b!=null ? `${fmtBRL(a)} a ${fmtBRL(b)}` : (a!=null ? `Valor a partir de ${fmtBRL(a)}` : `Valor até ${fmtBRL(b)}`)});
+  if(f.comp!==p.comp) out.push({ks:['comp'], txt:f.comp==='sim'?'Compartilhados':'Só meus'});
+  if(f.rec!==p.rec) out.push({ks:['rec'], txt:f.rec==='sim'?'Recorrentes':'Avulsos'});
+  if(f.custo!==p.custo) out.push({ks:['custo'], txt:rot(LF_CUSTOS,f.custo)});
+  if(f.ordem!==p.ordem) out.push({ks:['ordem'], txt:'Ordem: '+rot(LF_ORDENS,f.ordem).toLowerCase()});
+  return out;
+}
+const lfIgual = (f, parcial)=> Object.keys(parcial).every(k=>String(f[k])===String(parcial[k]));
+const lfNormalizado = f=>JSON.stringify(sanFiltroLanc(f));
+
+const LF_ATALHOS = [
+  {id:'aberto', ic:'clock', nome:'Em aberto', f:{status:'aberto'}},
+  {id:'atrasado', ic:'bolt', nome:'Atrasados', f:{status:'atrasado'}},
+  {id:'mes', ic:'calendar', nome:'Este mês', f:{periodo:'mes'}},
+  {id:'comp', ic:'users', nome:'Compartilhados', f:{comp:'sim'}, soParceiro:true},
+  {id:'rec', ic:'repeat', nome:'Recorrentes', f:{rec:'sim'}},
+  {id:'grandes', ic:'trend', nome:'Maiores gastos do mês', f:{tipo:'despesa', periodo:'mes', ordem:'valor_desc'}},
+];
+
 function renderTransacoes(){
   const host = document.getElementById('view-transacoes');
+  const opts = (lista, atual)=>lista.map(([v,l])=>`<option value="${v}" ${v===atual?'selected':''}>${l}</option>`).join('');
+  const catOpts = ['despesa','receita'].map(tp=>{
+    const cs = categorias.filter(c=>c.tipo===tp);
+    return cs.length ? `<optgroup label="${tp==='despesa'?'Despesas':'Receitas'}">${cs.map(c=>`<option value="${c.id}" ${c.id===lancF.catId?'selected':''}>${escHtml(c.nome)}${c.arquivada?' (arquivada)':''}</option>`).join('')}</optgroup>` : '';
+  }).join('');
   host.innerHTML = `
     <div class="view-head"><div><h2>Lançamentos</h2><div class="view-sub">${parceiroAtivo()?'Seus lançamentos e os compartilhados com '+nomeParceiro():'Despesas, receitas e transferências'}</div></div></div>
 
@@ -3269,17 +3486,32 @@ function renderTransacoes(){
       </div>
     </div>
 
-    <div class="card pad">
-      <div class="filter-bar">
-        <div class="seg" style="width:220px;">
-          <button type="button" data-f-tipo="todas" class="active">Todas</button>
-          <button type="button" data-f-tipo="despesa">Despesas</button>
-          <button type="button" data-f-tipo="receita">Receitas</button>
-        </div>
-        <select id="filtro-pessoa"><option value="todas">Todos</option>${activeMembers().map(u=>`<option value="${u.id}">${u.nome}</option>`).join('')}</select>
-        <select id="filtro-categoria"><option value="todas">Todas as categorias</option>${categorias.map(c=>`<option value="${c.id}">${c.nome}</option>`).join('')}</select>
-        <input type="search" id="filtro-busca" placeholder="Buscar lançamento...">
+    <div class="card pad lf-card">
+      <div class="lf-top">
+        <label class="lf-search" for="lf-q">${icon('search')}<input id="lf-q" type="search" placeholder="Buscar lançamento…" title="Busque por descrição, categoria, conta, cartão ou valor (ex.: mercado, 172, >100, <=50)" autocomplete="off" value="${escHtml(lancF.q)}"></label>
+        <button type="button" class="btn btn-ghost lf-more" id="lf-mais" aria-label="Mais filtros">${icon('sliders')}<span class="lf-more-t">Mais filtros</span><span class="at-badge" id="lf-badge" hidden></span></button>
       </div>
+      <div class="seg lf-seg" id="lf-tipos" role="tablist">${LF_TIPOS.map(([v,l])=>`<button type="button" role="tab" data-lf-tipo="${v}" class="${lancF.tipo===v?'active':''}">${l}</button>`).join('')}</div>
+      <div class="lf-bar">
+        <div class="lf-pill"><label class="lf-sr" for="lf-periodo">Período</label><select id="lf-periodo">${opts(LF_PERIODOS, lancF.periodo)}</select></div>
+        <div class="lf-pill"><label class="lf-sr" for="lf-status">Situação</label><select id="lf-status">${opts(LF_STATUS, lancF.status)}</select></div>
+        <div class="lf-pill"><label class="lf-sr" for="lf-cat">Categoria</label><select id="lf-cat"><option value="todas">Todas as categorias</option>${catOpts}</select></div>
+        ${activeMembers().length>1 ? `<div class="lf-pill"><label class="lf-sr" for="lf-pessoa">Pessoa</label><select id="lf-pessoa"><option value="todas">Todas as pessoas</option>${activeMembers().map(u=>`<option value="${u.id}" ${u.id===lancF.pessoa?'selected':''}>${escHtml(u.nome)}${u.id===state.user?' (você)':''}</option>`).join('')}</select></div>` : ''}
+        <div class="lf-pill"><label class="lf-sr" for="lf-ordem">Ordenar por</label><select id="lf-ordem">${opts(LF_ORDENS, lancF.ordem)}</select></div>
+      </div>
+      <div class="lf-custom hidden-el" id="lf-custom">
+        <label class="lf-date"><span>De</span><input type="date" id="lf-de" value="${lancF.de}"></label>
+        <label class="lf-date"><span>Até</span><input type="date" id="lf-ate" value="${lancF.ate}"></label>
+      </div>
+      <div class="lf-sec"><span>Atalhos</span></div>
+      <div class="lf-chips" id="lf-atalhos"></div>
+      <div class="lf-sec"><span>Meus filtros</span><button type="button" class="link-btn" id="lf-salvar">${icon('bookmark')} Salvar filtro atual</button></div>
+      <div class="lf-chips" id="lf-salvos"></div>
+      <div class="lf-ativos" id="lf-ativos" hidden></div>
+    </div>
+
+    <div class="card pad">
+      <div class="lf-resumo" id="lf-resumo" hidden></div>
       <div id="ledger-container"></div>
     </div>`;
 
@@ -3287,79 +3519,211 @@ function renderTransacoes(){
   document.getElementById('btn-nova-receita').addEventListener('click', ()=>openLancamentoPopup('receita'));
   document.getElementById('btn-nova-transferencia').addEventListener('click', ()=>openLancamentoPopup('transferencia'));
 
-  ['filtro-pessoa','filtro-categoria','filtro-busca'].forEach(id=>document.getElementById(id).addEventListener('input', renderLedger));
-  document.querySelectorAll('[data-f-tipo]').forEach(b=>b.addEventListener('click',()=>{
-    document.querySelectorAll('[data-f-tipo]').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active'); renderLedger();
-  }));
-  renderLedger();
+  const q = document.getElementById('lf-q'); let tq = null;
+  q.addEventListener('input', ()=>{ clearTimeout(tq); tq = setTimeout(()=>{ lancF.q = q.value; lfAtualizar(true); }, 140); });
+  [['lf-periodo','periodo'],['lf-status','status'],['lf-cat','catId'],['lf-pessoa','pessoa'],['lf-ordem','ordem']].forEach(([id,k])=>{
+    const el = document.getElementById(id); if(!el) return;
+    el.addEventListener('change', ()=>{ lancF[k] = el.value; if(k==='catId') lancF.sub = ''; lfAtualizar(true); });
+  });
+  document.getElementById('lf-de').addEventListener('change', e=>{ lancF.de = e.target.value; lfAtualizar(true); });
+  document.getElementById('lf-ate').addEventListener('change', e=>{ lancF.ate = e.target.value; lfAtualizar(true); });
+  document.getElementById('lf-tipos').addEventListener('click', e=>{ const b = e.target.closest('[data-lf-tipo]'); if(!b) return; lancF.tipo = b.dataset.lfTipo; lfAtualizar(true); });
+  document.getElementById('lf-mais').addEventListener('click', abrirFiltrosLanc);
+  document.getElementById('lf-salvar').addEventListener('click', salvarFiltroLanc);
+  document.getElementById('lf-atalhos').addEventListener('click', e=>{
+    const b = e.target.closest('[data-lf-atalho]'); if(!b) return;
+    const a = LF_ATALHOS.find(x=>x.id===b.dataset.lfAtalho); if(!a) return;
+    if(lfIgual(lancF, a.f)){ const p = lfPadrao(); Object.keys(a.f).forEach(k=>lancF[k] = p[k]); }
+    else Object.assign(lancF, a.f);
+    lfAtualizar(true);
+  });
+  document.getElementById('lf-salvos').addEventListener('click', e=>{
+    const x = e.target.closest('[data-lf-del]');
+    if(x){ lfRemoverSalvo(x.dataset.lfDel); return; }
+    const b = e.target.closest('[data-lf-salvo]'); if(!b) return;
+    const s = lfMeusSalvos().find(y=>y.id===b.dataset.lfSalvo); if(!s) return;
+    lancF = Object.assign(lfPadrao(), s.f); lfAtualizar(true);
+  });
+  document.getElementById('lf-ativos').addEventListener('click', e=>{
+    if(e.target.closest('[data-lf-limpar]')){ lancF = lfPadrao(); lfAtualizar(true); return; }
+    const b = e.target.closest('[data-lf-rm]'); if(!b) return;
+    const item = lfAtivos(lancF)[Number(b.dataset.lfRm)]; if(!item) return;
+    const p = lfPadrao(); item.ks.forEach(k=>lancF[k] = p[k]); lfAtualizar(true);
+  });
+  lfAtualizar(true);
 }
 
-function renderLedger(){
-  const fTipo = document.querySelector('[data-f-tipo].active')?.dataset.fTipo || 'todas';
-  const fPessoa = document.getElementById('filtro-pessoa').value;
-  const fCat = document.getElementById('filtro-categoria').value;
-  const fBusca = document.getElementById('filtro-busca').value.toLowerCase();
+/* repinta a seção de filtros (sem recriar a caixa de busca) e a lista */
+function lfAtualizar(reiniciaLimite){
+  if(reiniciaLimite) lfLimite = LF_PASSO;
+  if(!document.querySelector('.lf-card')) return;
+  const $ = id=>document.getElementById(id);
+  const ativos = lfAtivos(lancF), p = lfPadrao();
+  /* controles da barra acompanham o estado (vale também quando um atalho ou filtro salvo é aplicado) */
+  [['lf-periodo','periodo'],['lf-status','status'],['lf-cat','catId'],['lf-pessoa','pessoa'],['lf-ordem','ordem']].forEach(([id,k])=>{
+    const el = $(id); if(!el) return;
+    if(el.value!==lancF[k]) el.value = lancF[k];
+    el.classList.toggle('lf-on', lancF[k]!==p[k]);
+  });
+  const q = $('lf-q'); if(q && q.value!==lancF.q && document.activeElement!==q) q.value = lancF.q;
+  const cu = $('lf-custom'); cu.classList.toggle('hidden-el', lancF.periodo!=='custom');
+  if($('lf-de').value!==lancF.de) $('lf-de').value = lancF.de; if($('lf-ate').value!==lancF.ate) $('lf-ate').value = lancF.ate;
+  document.querySelectorAll('[data-lf-tipo]').forEach(b=>{ const on = b.dataset.lfTipo===lancF.tipo; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
+  $('lf-atalhos').innerHTML = LF_ATALHOS.filter(a=>!a.soParceiro || parceiroAtivo()).map(a=>`<button type="button" class="lf-chip ${lfIgual(lancF,a.f)?'on':''}" data-lf-atalho="${a.id}">${icon(a.ic)}${a.nome}</button>`).join('');
+  const salvos = lfMeusSalvos(), atual = lfNormalizado(lancF);
+  $('lf-salvos').innerHTML = salvos.length ? salvos.map(s=>`<span class="lf-chip lf-saved ${lfNormalizado(Object.assign(lfPadrao(),s.f))===atual?'on':''}"><button type="button" class="lf-saved-b" data-lf-salvo="${escHtml(s.id)}" title="Aplicar “${escHtml(s.nome)}”">${icon('bookmark')}${escHtml(s.nome)}</button><button type="button" class="lf-saved-x" data-lf-del="${escHtml(s.id)}" aria-label="Remover filtro ${escHtml(s.nome)}" title="Remover">${icon('x')}</button></span>`).join('')
+    : `<span class="lf-vazio">Monte um filtro e toque em “Salvar filtro atual” pra guardar aqui.</span>`;
+  const av = $('lf-ativos');
+  av.hidden = !ativos.length;
+  av.innerHTML = ativos.length ? ativos.map((a,i)=>`<span class="lf-tag">${escHtml(a.txt)}<button type="button" data-lf-rm="${i}" aria-label="Remover filtro ${escHtml(a.txt)}">${icon('x')}</button></span>`).join('') + `<button type="button" class="link-btn lf-limpar" data-lf-limpar>Limpar tudo</button>` : '';
+  const nm = ativos.filter(a=>a.ks.some(k=>LF_MODAL_KEYS.includes(k))).length, bd = $('lf-badge');
+  bd.hidden = !nm; bd.textContent = nm;
+  lfLedger(ativos.length>0);
+}
 
-  let list = transacoes.filter(t=>
-    (fTipo==='todas'||t.tipo===fTipo) &&
-    (fPessoa==='todas'||t.pessoa===fPessoa) &&
-    (fCat==='todas'||t.catId===fCat) &&
-    (!fBusca || t.desc.toLowerCase().includes(fBusca)));
-  list.sort((a,b)=>b.data.localeCompare(a.data));
+function lfLinhaHtml(t){
+  if(t.tipo==='transferencia'){
+    const origem = contaById(t.contaOrigemId), destino = contaById(t.contaDestinoId);
+    return `<div class="txn-row">
+      <div class="txn-cat-dot" style="background:#3a82f7;">${icon('transfer','')}</div>
+      <div class="txn-mid">
+        <div class="txn-desc">${t.desc||'Transferência'}</div>
+        <div class="txn-meta">${origem?origem.banco:'?'} → ${destino?destino.banco:'?'} · ${fmtDateShort(t.data)}</div>
+      </div>
+      <div class="txn-amt mono" style="color:#3a82f7;">${fmtBRL(t.valor)}</div>
+      <div class="item-actions">
+        <button class="btn-icon btn-sm" data-edit-txn="${t.id}" title="Editar transferência" aria-label="Editar transferência">${icon('edit')}</button>
+        <button class="btn-icon btn-sm" data-del-txn="${t.id}" title="Excluir transferência" aria-label="Excluir transferência">${icon('trash')}</button>
+      </div>
+    </div>`;
+  }
+  const idx = catIndex(t.catId,t.tipo);
+  const color = catColorVar(t.tipo,idx);
+  const statusPill = statusPillHtml(t.tipo, t.status);
+  const cat = catById(t.catId) || {nome:'Sem categoria'};
+  return `<div class="txn-row">
+    <div class="txn-cat-dot" style="background:${color}">${initials(cat.nome)}</div>
+    <div class="txn-mid">
+      <div class="txn-desc">${t.desc} ${seloCompartilhado(t)} ${t.recorrenciaId?`<span class="shared-tag">${icon('repeat')}</span>`:''}</div>
+      <div class="txn-meta">
+        <span class="avatar" style="width:16px;height:16px;font-size:8px;">${avatarInterno(t.pessoa)}</span>
+        ${cat.nome}${t.sub?` · ${t.sub}`:''} · ${fmtDateShort(t.data)}${t.pagoEm&&t.pagoEm!==t.data?` · ${t.tipo==='receita'?'recebido':'pago'} em ${fmtDateShort(t.pagoEm)}`:''}${t.forma?` · ${t.forma}`:''}
+      </div>
+    </div>
+    ${statusPill}
+    <div class="txn-amt ${t.tipo==='receita'?'money-pos':'money-neg'}">${t.tipo==='receita'?'+':'-'}${fmtBRL(t.valor).replace('-','')}</div>
+    <div class="item-actions">
+      ${t.status!=='pago'?botaoBaixaHtml(`data-baixa-txn="${t.id}"`, t.tipo):''}
+      <button class="btn-icon btn-sm" data-edit-txn="${t.id}" title="Editar lançamento" aria-label="Editar lançamento">${icon('edit')}</button>
+      <button class="btn-icon btn-sm" data-del-txn="${t.id}" title="Excluir lançamento" aria-label="Excluir lançamento">${icon('trash')}</button>
+    </div>
+  </div>`;
+}
 
-  const groups = {};
-  list.forEach(t=>{ (groups[monthKey(t.data)] = groups[monthKey(t.data)]||[]).push(t); });
-  const months = Object.keys(groups).sort().reverse();
-
-  const el = document.getElementById('ledger-container');
-  if(!months.length){ el.innerHTML = `<div class="empty-state">Nenhum lançamento encontrado com esses filtros.</div>`; return; }
-
-  el.innerHTML = months.map(m=>`
-    <div class="month-group">
-      <div class="month-label">${monthLabel(m+'-01')}</div>
-      ${groups[m].map(t=>{
-        if(t.tipo==='transferencia'){
-          const origem = contaById(t.contaOrigemId), destino = contaById(t.contaDestinoId);
-          return `<div class="txn-row">
-            <div class="txn-cat-dot" style="background:#3a82f7;">${icon('transfer','')}</div>
-            <div class="txn-mid">
-              <div class="txn-desc">${t.desc||'Transferência'}</div>
-              <div class="txn-meta">${origem?origem.banco:'?'} → ${destino?destino.banco:'?'} · ${fmtDateShort(t.data)}</div>
-            </div>
-            <div class="txn-amt mono" style="color:#3a82f7;">${fmtBRL(t.valor)}</div>
-            <div class="item-actions">
-              <button class="btn-icon btn-sm" data-edit-txn="${t.id}" title="Editar transferência" aria-label="Editar transferência">${icon('edit')}</button>
-              <button class="btn-icon btn-sm" data-del-txn="${t.id}" title="Excluir transferência" aria-label="Excluir transferência">${icon('trash')}</button>
-            </div>
-          </div>`;
-        }
-        const idx = catIndex(t.catId,t.tipo);
-        const color = catColorVar(t.tipo,idx);
-        const statusPill = statusPillHtml(t.tipo, t.status);
-        return `<div class="txn-row">
-          <div class="txn-cat-dot" style="background:${color}">${initials(catById(t.catId).nome)}</div>
-          <div class="txn-mid">
-            <div class="txn-desc">${t.desc} ${seloCompartilhado(t)} ${t.recorrenciaId?`<span class="shared-tag">${icon('repeat')}</span>`:''}</div>
-            <div class="txn-meta">
-              <span class="avatar" style="width:16px;height:16px;font-size:8px;">${avatarInterno(t.pessoa)}</span>
-              ${catById(t.catId).nome} · ${t.sub||''} · ${fmtDateShort(t.data)}${t.pagoEm&&t.pagoEm!==t.data?` · ${t.tipo==='receita'?'recebido':'pago'} em ${fmtDateShort(t.pagoEm)}`:''} · ${t.forma}
-            </div>
-          </div>
-          ${statusPill}
-          <div class="txn-amt ${t.tipo==='receita'?'money-pos':'money-neg'}">${t.tipo==='receita'?'+':'-'}${fmtBRL(t.valor).replace('-','')}</div>
-          <div class="item-actions">
-            ${t.status!=='pago'?botaoBaixaHtml(`data-baixa-txn="${t.id}"`, t.tipo):''}
-            <button class="btn-icon btn-sm" data-edit-txn="${t.id}" title="Editar lançamento" aria-label="Editar lançamento">${icon('edit')}</button>
-            <button class="btn-icon btn-sm" data-del-txn="${t.id}" title="Excluir lançamento" aria-label="Excluir lançamento">${icon('trash')}</button>
-          </div>
-        </div>`;
-      }).join('')}
-    </div>`).join('');
+function lfLedger(filtrando){
+  const el = document.getElementById('ledger-container'); if(!el) return;
+  const lista = lfFiltrar(transacoes, lancF), total = lista.length;
+  const res = document.getElementById('lf-resumo');
+  if(res){
+    const rec = lista.filter(t=>t.tipo==='receita').reduce((s,t)=>s+(Number(t.valor)||0),0);
+    const desp = lista.filter(t=>t.tipo==='despesa').reduce((s,t)=>s+(Number(t.valor)||0),0);
+    res.hidden = !filtrando;
+    res.innerHTML = filtrando ? `<span class="lf-res-n"><b>${total}</b> ${total===1?'lançamento':'lançamentos'}</span>
+      <span class="lf-res pos">Receitas <b>${fmtBRL(rec)}</b></span><span class="lf-res neg">Despesas <b>${fmtBRL(desp)}</b></span>
+      <span class="lf-res ${rec-desp>=0?'pos':'neg'}">Resultado <b>${fmtBRL(rec-desp)}</b></span>` : '';
+  }
+  if(!total){
+    el.innerHTML = `<div class="empty-state">${filtrando ? 'Nenhum lançamento encontrado com esses filtros.<br><button type="button" class="btn btn-ghost btn-sm" id="lf-vazio-limpar" style="margin-top:12px;">Limpar filtros</button>' : 'Nenhum lançamento por aqui ainda.'}</div>`;
+    const lb = document.getElementById('lf-vazio-limpar'); if(lb) lb.addEventListener('click', ()=>{ lancF = lfPadrao(); lfAtualizar(true); });
+    return;
+  }
+  const vis = lista.slice(0, lfLimite);
+  const porData = lancF.ordem==='data_desc' || lancF.ordem==='data_asc';
+  let html;
+  if(porData){
+    const groups = {}; vis.forEach(t=>{ (groups[monthKey(t.data)] = groups[monthKey(t.data)]||[]).push(t); });
+    const months = Object.keys(groups).sort(); if(lancF.ordem==='data_desc') months.reverse();
+    html = months.map(m=>`<div class="month-group"><div class="month-label">${monthLabel(m+'-01')}</div>${groups[m].map(lfLinhaHtml).join('')}</div>`).join('');
+  } else {
+    html = `<div class="month-group"><div class="month-label">${(LF_ORDENS.find(o=>o[0]===lancF.ordem)||[])[1]||''}</div>${vis.map(lfLinhaHtml).join('')}</div>`;
+  }
+  if(total>vis.length) html += `<div style="text-align:center; margin-top:6px;"><button type="button" class="btn btn-ghost btn-sm" id="lf-mais-itens">Mostrar mais (${total-vis.length} restantes)</button></div>`;
+  el.innerHTML = html;
+  const mi = document.getElementById('lf-mais-itens'); if(mi) mi.addEventListener('click', ()=>{ lfLimite += LF_PASSO; lfLedger(filtrando); });
 
   document.querySelectorAll('[data-edit-txn]').forEach(b=>b.addEventListener('click', ()=>editTransacao(b.dataset.editTxn)));
   document.querySelectorAll('[data-del-txn]').forEach(b=>b.addEventListener('click', ()=>deleteTransacao(b.dataset.delTxn)));
   document.querySelectorAll('[data-baixa-txn]').forEach(b=>b.addEventListener('click', ()=>darBaixaTransacao(b.dataset.baixaTxn)));
+}
+
+/* "Mais filtros": o que não cabe na barra */
+function abrirFiltrosLanc(){
+  const f = Object.assign({}, lancF);
+  const cat = f.catId!=='todas' ? catById(f.catId) : null;
+  const chips = (lista, chave)=>lista.map(([v,l])=>`<button type="button" class="resumo-chip ${String(f[chave])===String(v)?'active':''}" data-f="${chave}" data-v="${v}">${l}</button>`).join('');
+  const contasOps = `<option value="todas">Todas as contas</option>${contas.map(c=>`<option value="${c.id}" ${c.id===f.contaId?'selected':''}>${escHtml(c.banco)}${c.apelido?' · '+escHtml(c.apelido):''}</option>`).join('')}`;
+  const cartOps = `<option value="todas">Todos os cartões</option>${cartoes.map(c=>`<option value="${c.id}" ${c.id===f.cartaoId?'selected':''}>${escHtml(c.nome)}</option>`).join('')}`;
+  const subOps = cat && cat.subs && cat.subs.length ? `<option value="">Todas as subcategorias</option>${cat.subs.map(s=>`<option value="${escHtml(s)}" ${s===f.sub?'selected':''}>${escHtml(s)}</option>`).join('')}` : '';
+  const {w, fechar} = abrirMini({ic:'sliders', titulo:'Mais filtros', sub:'Combine à vontade com os filtros da barra',
+    corpo:`${subOps ? `<label class="ft-sec lf-lab" for="lfm-sub">Subcategoria de ${escHtml(cat.nome)}</label><select id="lfm-sub">${subOps}</select>` : `<div class="ft-sec">Subcategoria</div><div class="hint">Escolha uma categoria na barra pra filtrar também pela subcategoria.</div>`}
+      <div class="ft-sec">Forma de pagamento</div><div class="ft-chips">${chips([['todas','Todas']].concat(LF_FORMAS.map(x=>[x,x])),'forma')}</div>
+      <label class="ft-sec lf-lab" for="lfm-conta">Conta</label><select id="lfm-conta">${contasOps}</select>
+      <label class="ft-sec lf-lab" for="lfm-cartao">Cartão</label><select id="lfm-cartao">${cartOps}</select>
+      <div class="ft-sec">Valor</div>
+      <div class="lf-vals"><label class="lf-date"><span>De R$</span><input id="lfm-vmin" type="text" inputmode="decimal" placeholder="0,00" value="${escHtml(f.vmin)}"></label><label class="lf-date"><span>Até R$</span><input id="lfm-vmax" type="text" inputmode="decimal" placeholder="sem limite" value="${escHtml(f.vmax)}"></label></div>
+      ${parceiroAtivo() ? `<div class="ft-sec">Compartilhamento</div><div class="ft-chips">${chips([['todos','Todos'],['sim','Compartilhados'],['nao','Só meus']],'comp')}</div>` : ''}
+      <div class="ft-sec">Recorrência</div><div class="ft-chips">${chips([['todos','Todos'],['sim','Recorrentes'],['nao','Avulsos']],'rec')}</div>
+      <div class="ft-sec">Tipo de custo</div><div class="ft-chips">${chips([['todos','Todos']].concat(LF_CUSTOS),'custo')}</div>`,
+    rodape:`<button type="button" class="btn btn-ghost" id="lfm-limpar">Limpar estes</button><button type="button" class="btn btn-primary" id="lfm-ver">Ver resultados</button>`});
+  const $ = id=>w.querySelector('#'+id);
+  const pinta = ()=>{
+    w.querySelectorAll('[data-f]').forEach(b=>b.classList.toggle('active', String(f[b.dataset.f])===b.dataset.v));
+    const n = lfFiltrar(transacoes, Object.assign({}, lancF, f)).length;
+    $('lfm-ver').textContent = `Ver ${n} resultado${n===1?'':'s'}`;
+  };
+  w.querySelectorAll('[data-f]').forEach(b=>b.addEventListener('click', ()=>{ f[b.dataset.f] = b.dataset.v; pinta(); }));
+  [['lfm-sub','sub'],['lfm-conta','contaId'],['lfm-cartao','cartaoId']].forEach(([id,k])=>{ const el = $(id); if(el) el.addEventListener('change', ()=>{ f[k] = el.value; pinta(); }); });
+  [['lfm-vmin','vmin'],['lfm-vmax','vmax']].forEach(([id,k])=>$(id).addEventListener('input', e=>{ f[k] = e.target.value; pinta(); }));
+  $('lfm-limpar').addEventListener('click', ()=>{
+    const p = lfPadrao(); LF_MODAL_KEYS.forEach(k=>f[k] = p[k]);
+    ['lfm-sub','lfm-conta','lfm-cartao'].forEach(id=>{ const el = $(id); if(el) el.value = el.options[0].value; });
+    $('lfm-vmin').value = ''; $('lfm-vmax').value = ''; pinta();
+  });
+  $('lfm-ver').addEventListener('click', ()=>{ LF_MODAL_KEYS.forEach(k=>lancF[k] = f[k]); fechar(); lfAtualizar(true); });
+  pinta();
+}
+
+/* salvar o filtro atual com um nome (fica na conta de quem salvou) */
+function salvarFiltroLanc(){
+  const ativos = lfAtivos(lancF).filter(a=>a.ks[0]!=='ordem');
+  if(!ativos.length){ toast('Monte um filtro (busca, período, categoria…) antes de salvar','bad'); return; }
+  const sugestao = ativos.slice(0,3).map(a=>a.txt.replace(/^Categoria: |^Conta: |^Cartão: /,'')).join(' · ').slice(0,30);
+  const {w, fechar} = abrirMini({ic:'bookmark', titulo:'Salvar filtro', sub:'Dê um nome pra achar rápido depois — fica só na sua conta',
+    corpo:`<div class="field"><label for="lfs-nome">Nome do filtro</label><input id="lfs-nome" type="text" maxlength="30" value="${escHtml(sugestao)}" autocomplete="off"></div>
+      <div class="ft-sec">O que será guardado</div><div class="lf-prev">${lfAtivos(lancF).map(a=>`<span class="lf-tag">${escHtml(a.txt)}</span>`).join('')}</div>
+      <div class="hint" style="margin-top:10px;">Períodos como “Este mês” continuam valendo no mês em que você abrir o filtro, não só hoje.</div>`,
+    rodape:`<button type="button" class="btn btn-ghost" id="lfs-cancelar">Cancelar</button><button type="button" class="btn btn-primary" id="lfs-ok">${icon('check')} Salvar</button>`});
+  const inp = w.querySelector('#lfs-nome'); inp.focus(); inp.select();
+  const ok = ()=>{
+    const nome = inp.value.trim().slice(0,30); if(!nome){ toast('Dê um nome ao filtro','bad'); inp.focus(); return; }
+    const lista = lfMeusSalvos(), ja = lista.find(s=>s.nome.toLowerCase()===nome.toLowerCase());
+    const f = sanFiltroLanc(lancF);
+    if(ja){ ja.f = f; ja.nome = nome; }
+    else {
+      if(lista.length>=LF_MAX_SALVOS){ toast(`Limite de ${LF_MAX_SALVOS} filtros salvos: remova algum antes`,'bad'); return; }
+      lista.push({id:uid('fl'), nome, f});
+    }
+    schedulePersist(); fechar(); lfAtualizar(false);
+    toast(ja ? `Filtro “${nome}” atualizado` : `Filtro “${nome}” salvo`, 'good');
+  };
+  w.querySelector('#lfs-ok').addEventListener('click', ok);
+  w.querySelector('#lfs-cancelar').addEventListener('click', fechar);
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); ok(); } });
+}
+function lfRemoverSalvo(id){
+  const lista = lfMeusSalvos(), i = lista.findIndex(s=>s.id===id); if(i<0) return;
+  const nome = lista[i].nome; lista.splice(i,1);
+  lfAtualizar(false); schedulePersist(); checarMudanca(`Filtro “${nome}” removido`);
 }
 /* Quem paga escolhe a conta. O saldo muda SÓ nessa conta; a conta individual do outro nunca é tocada. */
 function contaParaBaixa(t, preferida){
