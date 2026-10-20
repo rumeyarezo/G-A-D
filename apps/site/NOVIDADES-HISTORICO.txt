@@ -1,4 +1,7 @@
 # Historico (nao vai para o app). Novidades de rodadas anteriores.
+Categorias que um dos dois usa num lançamento que o outro enxerga agora aparecem sozinhas na lista do parceiro — nada de lançamento com categoria "faltando" na conta dele(a).
+Lançamentos ganhou filtros inteligentes: busca por descrição, categoria, conta, cartão ou valor (ex.: >100), filtro por período e datas personalizadas, situação, ordem, atalhos prontos e "Mais filtros" (forma de pagamento, conta, cartão, faixa de valor…). Dá pra salvar seus filtros favoritos e reabrir com um toque.
+Agenda: agora mostra os próximos lançamentos — as repetições das contas fixas aparecem como "previsto" no calendário, na lista e no saldo projetado, e há um card "Próximos lançamentos". Contas fixas ganharam "Duração": sem data pra acabar, número de parcelas ou até uma data.
 Novo no botão +: "Ler comprovante" tira uma foto (ou escolhe da galeria) e o app já lê o valor, a data e o estabelecimento, abrindo a despesa pronta pra conferir e salvar.
 Lembretes de lançar gastos agora vêm com botões "+ Despesa" e "+ Receita" direto na notificação, e ficam na tela até você tocar em algo (não somem sozinhos).
 Listas de compras: o botão "Adicionar item" virou "Adicionar vários itens" — a tela limpa depois de cada item salvo, pronta pra cadastrar o próximo sem fechar.

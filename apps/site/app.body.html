@@ -7788,3 +7788,22 @@ function iniciarApp(){
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', iniciarApp); else iniciarApp();
 </script>
+<!-- Rumëyart · sinal do Painel de controle (Grana a Dois) -->
+<script>
+(function (APP, CHAVE, VERSAO) {
+  var U = 'https://uotxnchfvrgpxwimmefd.supabase.co/rest/v1/rpc/rumeyart_sinal', K = 'sb_publishable_wopZQEqU4NERsq2wqCJMXQ_hg53O5VA', id = '';
+  try { id = localStorage.getItem('rmy-sinal') || ''; } catch (e) {}
+  if (!id) {
+    id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now().toString(36);
+    try { localStorage.setItem('rmy-sinal', id); } catch (e) {}
+  }
+  function enviar() {
+    if (document.visibilityState !== 'visible') return;
+    try {
+      fetch(U, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json', apikey: K },
+        body: JSON.stringify({ p_app: APP, p_chave: CHAVE, p_dispositivo: id, p_versao: VERSAO, p_usuario: window.RMY_USUARIO || null }) }).catch(function () {});
+    } catch (e) {}
+  }
+  enviar(); setInterval(enviar, 60000); document.addEventListener('visibilitychange', enviar);
+})('grana-a-dois', 'cb465783f62044a6b2cad40b2243fab4', (window.GRANA_BUILD && window.GRANA_BUILD.v) || '1.0.0');
+</script>
