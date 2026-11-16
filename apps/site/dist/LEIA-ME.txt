@@ -1,11 +1,24 @@
 GRANA A DOIS — site instalável (usa o projeto Supabase "grana-a-dois", separado do Acervo dos Rezos)
 
-ATUALIZAR O SITE NO NETLIFY (mantém o mesmo endereço)
-  app.netlify.com -> clique no site -> aba "Deploys" -> arraste ESTA pasta inteira na área "Drag and drop".
+PUBLICAR (Cloudflare Workers, desde a Rodada 17)
+  O site saiu do Netlify: agora mora em https://g-a-d.grana-a-dois.workers.dev, publicado
+  automaticamente a cada push no branch main do repositório GitHub rumeyarezo/G-A-D (Workers Builds).
+  Passo a passo pra publicar uma mudança:
+  1. Edite apps/site/app.body.html (o código-fonte de verdade).
+  2. Rode `python3 build.py` DENTRO de apps/site — isso gera dist/index.html, dist/versao.json e
+     dist/sw.js, todos com o MESMO hash novo. NUNCA edite dist/index.html na mão nem faça um patch
+     de texto direto nele: isso já causou um bug sério (Rodada 17) em que o app ficava avisando de
+     uma "versão nova" pra sempre, porque a marca de versão embutida no HTML publicado ficou
+     desatualizada enquanto o versao.json era trocado à parte.
+  3. Publique os três arquivos do dist/ (e o app.body.html, se mudou) no GitHub, branch main.
+  4. Rode `python3 verificar_deploy.py` (dentro de apps/site) e só avise que "está no ar" depois
+     que ele disser OK — ele confere o versao.json E a marca de versão dentro do index.html ao vivo
+     contra o build local, com novas tentativas, porque a Cloudflare pode levar alguns segundos pra
+     propagar pra todas as suas bordas.
 
 CONFIGURAR O SUPABASE (uma vez só)
   supabase.com/dashboard -> projeto "grana-a-dois" -> Authentication -> URL Configuration
-  - Site URL: https://grana-a-dois-beta.netlify.app   (sem barra no final)
+  - Site URL: https://g-a-d.grana-a-dois.workers.dev   (sem barra no final)
   - Redirect URLs -> Add URL: o mesmo endereço -> Save changes.
 
 PRIMEIRO USO
@@ -70,3 +83,7 @@ RODADA 13 - Listas de compra ganharam botao Compartilhar (WhatsApp, compartilhar
 RODADA 14 - Listas de compra: buscar um item que nao existe oferece cadastra-lo na hora; itens ja marcados vao para uma secao "Comprados" ao final e ha um filtro rapido "Todos / Falta pegar / No carrinho"; itens do Mercado ganharam campo de estoque em casa. Barra de lancamento ganhou o comando "Compra no Pix".
 
 RODADA 15 - Correcao de bug serio de perda de dados: se voce criasse algo (uma lista de compras, um lancamento etc.) bem na hora em que outro aparelho salvava qualquer outra coisa, o que voce tinha acabado de criar podia sumir sem nenhum aviso de erro. Isso foi corrigido: agora um item recem-criado nunca e descartado antes de ser salvo.
+
+RODADA 16 - Botao "Registrar lancamento" agora e preenchido de vermelho solido (despesa) ou verde solido (receita), em vez de um tom clarinho. Biometria/PIN: agora e pedida SEMPRE que voce fecha e abre o app de novo (carga nova da pagina), nao importa o tempo configurado em "pedir de novo depois de". Essa opcao de tempo continua valendo so para quando o app fica em segundo plano com a pagina ainda aberta (trocar de aba, minimizar).
+
+RODADA 29 - CATALOGO PADRAO + MODO MERCADO: o catalogo (CATALOGO_TXT no app.body.html) e uma constante do codigo, igual para todos, e NAO vai para o estado do casal; um item do catalogo so vira cadastro (compras.itens) quando alguem toca nele. Itens ja cadastrados nunca sao duplicados nem renomeados (comparacao pelo nome sem acento/maiusculas/plural, chaveNome). Secoes = COMPRA_SECOES: os 5 valores antigos de categoria continuam valendo (Frutas e Legumes = Hortifruti, Comida = Mercearia, Snack = Snacks e doces, Utensilio = Utensilios e casa) e so mudou o nome mostrado. Itens ganharam "usos" (vezes que entraram na lista) para o "Mais usados". Modo mercado mantem a tela acesa com a Wake Lock API; sem ela, toca um video mudo de 2 s em loop (alternativa); se nada funcionar o botao avisa "Tela pode apagar".

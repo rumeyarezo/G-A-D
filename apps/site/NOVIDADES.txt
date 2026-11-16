@@ -1,2 +1,4 @@
 # SOMENTE as mudancas do ultimo upload. A cada nova versao: mova estas linhas para NOVIDADES-HISTORICO.txt e escreva so as novas.
 # Uma linha por novidade (todas aparecem no aviso de atualizacao, ate 6). Linhas com # sao ignoradas.
+Mercado: novo botão "Adicionar do catálogo" com mais de 400 itens comuns de supermercado por seção (hortifruti, padaria, açougue, frios, mercearia, bebidas, limpeza, higiene…). Um toque põe na lista, outro soma 1, com "Desfazer"; os mais usados aparecem no topo e a busca ignora acentos.
+Novo "Modo mercado": letras e botões grandes, itens por seção, toque risca e manda pro fim, contador "12 de 30" e tela que não apaga enquanto você compra.

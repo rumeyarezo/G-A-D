@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Grana a Dois">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<script>window.GRANA_BUILD={"v": "47b2c781a3", "notas": []};</script>
+<script>window.GRANA_BUILD={"v": "ec908c724a", "notas": ["Mercado: novo botão \"Adicionar do catálogo\" com mais de 400 itens comuns de supermercado por seção (hortifruti, padaria, açougue, frios, mercearia, bebidas, limpeza, higiene…). Um toque põe na lista, outro soma 1, com \"Desfazer\"; os mais usados aparecem no topo e a busca ignora acentos.", "Novo \"Modo mercado\": letras e botões grandes, itens por seção, toque risca e manda pro fim, contador \"12 de 30\" e tela que não apaga enquanto você compra."]};</script>
 <style>html,body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -877,7 +877,7 @@ html,body{overscroll-behavior-x:none;}
 .ls-tabs button.ativo{background:var(--surface); color:var(--text); box-shadow:var(--shadow-sm);}
 .ls-resumo{display:flex; gap:22px; align-items:center; flex-wrap:wrap; padding:14px 18px; margin-bottom:14px;}
 .ls-resumo div span{display:block; font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted);} .ls-resumo div b{font-family:var(--font-mono); font-size:17px; font-weight:700;}
-.ls-resumo .btn{margin-left:auto;}
+.ls-resumo > .btn{margin-left:auto;}
 .ls-grupo{background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); box-shadow:var(--shadow-card); margin-bottom:14px; overflow:hidden;}
 .ls-grupo-t{display:flex; justify-content:space-between; padding:10px 18px; background:var(--surface-2); font-size:11px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:var(--text-secondary);} .ls-grupo-t span{font-weight:700; color:var(--text-muted);}
 .ls-row{display:grid; grid-template-columns:auto minmax(0,1.05fr) minmax(0,1.95fr) auto; gap:14px; align-items:center; padding:9px 18px; border-top:1px solid var(--border);} .ls-grupo-t + .ls-row{border-top:0;}
@@ -918,6 +918,68 @@ html,body{overscroll-behavior-x:none;}
 .ls-total b{color:var(--accent-strong); font-size:19px;}
 .bx-resumo{margin-top:12px; padding:10px 12px; border-radius:var(--r-sm); background:var(--surface-2); font-size:12.5px; color:var(--text-secondary);} .bx-resumo b{font-family:var(--font-mono); color:var(--text);}
 .sh-acts{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;} .sh-acts .btn{text-decoration:none;}
+
+/* ===== Rodada 29: catálogo padrão + modo mercado ===== */
+html.sem-rolar, html.sem-rolar body{overflow:hidden;}
+/* com as telas cheias abertas, os avisos descem para o rodapé (no catálogo, acima da barra de desfazer) */
+html.mm-aberto #toast-wrap{bottom:calc(12px + env(safe-area-inset-bottom,0px));} html.cat-aberto #toast-wrap{bottom:calc(76px + env(safe-area-inset-bottom,0px));}
+.ls-resumo-acts{display:flex; gap:8px; flex-wrap:wrap; margin-left:auto;}
+.cat-wrap{position:fixed; inset:0; z-index:160; display:flex; align-items:center; justify-content:center; background:rgba(6,6,5,.6); padding:16px; overscroll-behavior:contain;}
+.cat-sheet{position:relative; display:flex; flex-direction:column; width:100%; max-width:640px; height:min(88vh, 860px); background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); box-shadow:var(--shadow-pop); overflow:hidden;}
+.cat-head{display:flex; align-items:center; gap:12px; padding:16px 18px 10px;}
+.cat-head-t{flex:1; min-width:0;} .cat-head h3{font-size:18px;} .cat-head p{font-size:12.5px; color:var(--text-muted); margin-top:2px;}
+.cat-head .btn{flex:none; white-space:nowrap;} .cat-n{font-family:var(--font-mono); background:rgba(0,0,0,.18); border-radius:999px; padding:1px 8px; margin-left:2px;}
+.cat-busca{position:relative; display:flex; align-items:center; margin:0 18px 10px;}
+.cat-busca span{position:absolute; left:14px; color:var(--text-muted); display:flex; pointer-events:none;} .cat-busca svg{width:18px; height:18px;}
+.cat-busca input{width:100%; min-height:48px; padding:10px 14px 10px 44px; border:1.5px solid var(--border-strong); border-radius:var(--r-md); background:var(--surface-2); font-size:16px;}
+.cat-busca input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+.cat-secs{display:flex; gap:6px; overflow-x:auto; padding:0 18px 10px; scrollbar-width:none; -webkit-overflow-scrolling:touch; flex:none;} .cat-secs::-webkit-scrollbar{display:none;}
+.cat-sec{flex:none; padding:8px 13px; min-height:36px; border-radius:999px; border:1px solid var(--border); background:var(--surface-2); font-weight:700; font-size:12.5px; color:var(--text-secondary); white-space:nowrap;}
+.cat-sec:hover{border-color:var(--accent); color:var(--text);}
+.cat-lista{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:0 12px 84px; border-top:1px solid var(--border); -webkit-overflow-scrolling:touch;}
+.cat-grupo-t{position:sticky; top:0; z-index:1; display:flex; justify-content:space-between; padding:12px 8px 6px; background:var(--surface); font-size:11.5px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:var(--text-secondary);} .cat-grupo-t span{color:var(--text-muted);}
+.cat-row{display:flex; align-items:stretch; gap:6px; border-bottom:1px solid var(--border);}
+.cat-add{flex:1; min-width:0; display:flex; align-items:center; gap:10px; min-height:54px; padding:8px 8px; background:none; border:0; text-align:left; border-radius:var(--r-sm);}
+.cat-add:hover{background:var(--surface-hover);} .cat-add:active{background:var(--accent-soft);}
+.cat-nome{flex:1; min-width:0; font-size:15.5px; font-weight:600; overflow-wrap:anywhere; color:var(--text);} .cat-nome small{display:block; font-size:11.5px; font-weight:600; color:var(--text-muted); margin-top:1px;}
+.cat-qtd{flex:none; font-family:var(--font-mono); font-weight:800; font-size:13.5px; color:var(--on-accent); background:var(--accent); border-radius:999px; padding:3px 10px; white-space:nowrap;}
+.cat-mais{flex:none; display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; border:1.5px solid var(--border-strong); color:var(--text-secondary);} .cat-mais svg{width:18px; height:18px;}
+.cat-row.on .cat-nome{font-weight:800;} .cat-row.on .cat-mais{border-color:var(--accent); color:var(--accent-strong); background:var(--accent-soft);}
+.cat-row.on{background:linear-gradient(90deg, var(--accent-soft), transparent 70%);}
+.cat-menos{flex:none; width:48px; display:flex; align-items:center; justify-content:center; background:none; border:0; border-left:1px solid var(--border); color:var(--text-secondary);} .cat-menos svg{width:20px; height:20px;} .cat-menos:hover{color:var(--critical);}
+.cat-vazio{padding:28px 10px 10px; text-align:center; color:var(--text-muted);}
+.cat-novo{display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:52px; margin-top:12px; border:1.5px dashed var(--accent); border-radius:var(--r-md); background:var(--accent-soft); color:var(--accent-strong); font-weight:800; font-size:14.5px; padding:10px; overflow-wrap:anywhere;} .cat-novo svg{width:18px; height:18px; flex:none;}
+.cat-undo{position:absolute; left:12px; right:12px; bottom:calc(12px + env(safe-area-inset-bottom,0px)); display:flex; align-items:center; gap:12px; padding:10px 10px 10px 16px; border-radius:var(--r-md); background:var(--text); color:var(--bg-plane); box-shadow:var(--shadow-pop); font-weight:600; font-size:14px;}
+.cat-undo span{flex:1; min-width:0; overflow-wrap:anywhere;} .cat-undo button{flex:none; min-height:40px; padding:6px 14px; border-radius:var(--r-sm); border:0; background:var(--accent); color:var(--on-accent); font-weight:800;}
+@media (max-width:640px){
+  .cat-wrap{padding:0;}
+  .cat-sheet{max-width:none; height:100%; border-radius:0; border:0; padding-top:env(safe-area-inset-top,0px);}
+  .cat-head{padding:12px 14px 8px;} .cat-busca{margin:0 14px 8px;} .cat-secs{padding:0 14px 8px;} .cat-lista{padding:0 6px 84px;}
+}
+/* modo mercado */
+.mm-wrap{position:fixed; inset:0; z-index:160; display:flex; flex-direction:column; background:var(--bg-plane); color:var(--text); padding-top:env(safe-area-inset-top,0px); overscroll-behavior:contain;}
+.mm-top{display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:8px; padding:10px 12px; background:var(--surface); border-bottom:1px solid var(--border-strong);}
+.mm-sair,.mm-tela{display:inline-flex; align-items:center; gap:6px; min-height:48px; padding:8px 12px; border-radius:var(--r-md); border:1.5px solid var(--border-strong); background:var(--surface-2); color:var(--text); font-weight:800; font-size:15px; white-space:nowrap;}
+.mm-sair svg,.mm-tela svg{width:20px; height:20px; flex:none;}
+.mm-tela{font-size:13px;} .mm-tela.on{border-color:var(--good); color:var(--good);} .mm-tela.falhou{border-color:var(--warn); color:var(--warn);}
+.mm-cont{text-align:center; font-family:var(--font-mono); font-size:24px; font-weight:800; line-height:1.1; min-width:0;} .mm-cont b{font-weight:800;} .mm-cont small{display:block; font-family:var(--font-body); font-size:11.5px; font-weight:700; color:var(--text-secondary); letter-spacing:.04em; text-transform:uppercase;}
+.mm-prog{height:6px; background:var(--surface-2); flex:none;} .mm-prog span{display:block; height:100%; background:var(--good); transition:width .25s ease;}
+.mm-lista{flex:1; min-height:0; overflow-y:auto; overflow-x:hidden; padding:6px 12px calc(28px + env(safe-area-inset-bottom,0px)); -webkit-overflow-scrolling:touch;}
+.mm-grupo h4{display:flex; justify-content:space-between; align-items:baseline; margin:16px 4px 8px; font-family:var(--font-body); font-size:13.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--text);} .mm-grupo h4 span{font-family:var(--font-mono); color:var(--text-secondary);}
+.mm-item{display:grid; grid-template-columns:40px minmax(0,1fr) auto; align-items:center; gap:12px; width:100%; min-height:68px; margin-bottom:8px; padding:10px 14px; border-radius:var(--r-md); border:2px solid var(--border-strong); background:var(--surface); color:var(--text); text-align:left; -webkit-tap-highlight-color:transparent;}
+.mm-item:active{transform:scale(.985);}
+.mm-chk{display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:10px; border:2.5px solid var(--text-secondary); color:transparent;} .mm-chk svg{width:24px; height:24px; stroke-width:2.6;}
+.mm-txt{min-width:0;} .mm-nome{display:block; font-size:20px; font-weight:800; line-height:1.2; overflow-wrap:anywhere;} .mm-obs{display:block; font-size:14px; font-weight:600; color:var(--text-secondary); margin-top:2px; overflow-wrap:anywhere;}
+.mm-qtd{font-family:var(--font-mono); font-size:19px; font-weight:800; white-space:nowrap;} .mm-qtd small{font-size:13px; font-weight:700; color:var(--text-secondary);}
+.mm-item.feito{background:transparent; border-style:dashed; border-color:var(--border-strong);}
+.mm-item.feito .mm-nome{text-decoration:line-through; text-decoration-thickness:2px; color:var(--text-muted);} .mm-item.feito .mm-qtd{color:var(--text-muted);}
+.mm-item.feito .mm-chk{background:var(--good); border-color:var(--good); color:#06240f;}
+.mm-feitos h4{color:var(--text-secondary);}
+.mm-vazio,.mm-fim{display:flex; flex-direction:column; align-items:center; gap:14px; padding:40px 10px 20px; text-align:center; font-size:18px; font-weight:700;}
+.mm-fim-t{font-size:24px; font-weight:800; color:var(--good);} .mm-vazio .btn,.mm-fim .btn{min-height:52px; font-size:16px; padding:12px 22px;}
+.tela-acesa-v{position:fixed; width:1px; height:1px; opacity:0; pointer-events:none; left:0; bottom:0;}
+@media (max-width:400px){ .mm-sair span{display:none;} .mm-sair{padding:8px 10px;} .mm-tela{padding:8px 9px; font-size:12px;} .mm-cont{font-size:21px;} .mm-nome{font-size:19px;} .mm-item{grid-template-columns:36px minmax(0,1fr) auto; gap:10px; padding:10px 12px;} }
+@media (max-width:820px){ .ls-resumo-acts{margin-left:0; width:100%;} .ls-resumo-acts .btn{flex:1; width:auto; justify-content:center; min-height:44px;} }
 </style>
 
 <div id="toast-wrap"></div>
@@ -2273,7 +2335,33 @@ function cardLimiteInfo(card){
 
 
 /* ============ LISTAS DE COMPRA ============ */
-const COMPRA_CATS = ['Frutas e Legumes','Comida','Snack','Limpeza','Utensílio'];
+/* Seções do mercado, na ordem de um corredor típico. O 1º valor é o que fica gravado no item (os 5 antigos
+   continuam valendo, então nada já cadastrado muda); o 2º é o nome mostrado na tela. */
+const COMPRA_SECOES = [
+  ['Frutas e Legumes','Hortifruti'], ['Padaria','Padaria'], ['Açougue e peixaria','Açougue e peixaria'],
+  ['Frios e laticínios','Frios e laticínios'], ['Comida','Mercearia'], ['Snack','Snacks e doces'], ['Bebidas','Bebidas'],
+  ['Congelados','Congelados'], ['Limpeza','Limpeza'], ['Higiene','Higiene e beleza'], ['Bebê e pet','Bebê e pet'],
+  ['Utensílio','Utensílios e casa'], ['Outros','Outros']];
+const COMPRA_CATS = COMPRA_SECOES.map(s=>s[0]);
+const COMPRA_CAT_LABEL = Object.fromEntries(COMPRA_SECOES);
+const catLabel = c => c ? (COMPRA_CAT_LABEL[c]||c) : 'Sem categoria';
+/* Catálogo padrão do sistema: constante do código, NUNCA gravada no estado do casal. Um item daqui só vira
+   cadastro (compras.itens) quando alguém o coloca na lista. " @kg" etc. = unidade de cobrança padrão. */
+const CATALOGO_TXT = {
+  'Frutas e Legumes': 'Alho @kg|Banana @kg|Batata @kg|Cebola @kg|Fruta|Limão @kg|Manga|Pepino @kg|Pimentão @kg|Uva @kg|Abacate|Abacaxi|Abóbora @kg|Abobrinha @kg|Acelga|Agrião|Alface|Alho-poró|Ameixa @kg|Banana-da-terra @kg|Batata-doce @kg|Berinjela @kg|Beterraba @kg|Brócolis|Caqui @kg|Cebolinha|Cenoura @kg|Chuchu @kg|Coco seco|Coentro|Couve|Couve-flor|Espinafre|Gengibre @kg|Goiaba @kg|Hortelã|Inhame @kg|Jiló @kg|Kiwi @kg|Laranja @kg|Laranja-lima @kg|Mandioca @kg|Mandioquinha @kg|Mamão|Mamão formosa @kg|Maracujá @kg|Maçã @kg|Melancia|Melão|Mexerica @kg|Milho verde|Morango @cx|Nabo @kg|Pera @kg|Pêssego @kg|Quiabo @kg|Rabanete|Repolho|Rúcula|Salsinha|Salsão|Tomate @kg|Tomate-cereja @cx|Vagem @kg|Cogumelo @cx|Cheiro-verde|Manjericão|Batata bolinha @kg|Ervilha torta @kg',
+  'Padaria': 'Pão de Forma|Pão Francês @kg|Pão de queijo @kg|Pão integral|Pão de hambúrguer @pct|Pão de hot dog @pct|Pão sírio @pct|Pão doce|Bisnaguinha @pct|Baguete|Torrada @pct|Bolo|Bolo pronto|Croissant|Sonho|Rosca|Broa de milho|Wrap / tortilha @pct|Farinha de rosca',
+  'Açougue e peixaria': 'Bife - Cx Mole @kg|Bife - Patinho @kg|Peito de frango C osso @kg|Peito de frango S osso @kg|Acém @kg|Alcatra @kg|Contrafilé @kg|Coxão duro @kg|Costela bovina @kg|Cupim @kg|Fraldinha @kg|Filé mignon @kg|Lagarto @kg|Maminha @kg|Músculo @kg|Picanha @kg|Carne moída @kg|Carne para strogonoff @kg|Coxa e sobrecoxa @kg|Coxinha da asa @kg|Asa de frango @kg|Frango inteiro @kg|Filé de frango @kg|Coração de frango @kg|Fígado @kg|Linguiça toscana @kg|Linguiça calabresa @kg|Bisteca suína @kg|Lombo suíno @kg|Costelinha suína @kg|Pernil @kg|Bacon @kg|Filé de tilápia @kg|Salmão @kg|Merluza @kg|Sardinha fresca @kg|Camarão @kg|Carne seca @kg|Hambúrguer @cx',
+  'Frios e laticínios': 'Chamyto|Danone 1,5L|Leite|Leite Condensado|Manteiga|Margarina|Ovo @dz|Tigote Bob Sponja|Leite desnatado|Leite semidesnatado|Leite sem lactose|Iogurte natural|Iogurte grego|Iogurte de morango|Bebida láctea|Petit suisse|Requeijão|Cream cheese|Creme de leite|Queijo muçarela @kg|Queijo prato @kg|Queijo minas frescal|Queijo parmesão|Queijo ralado|Queijo coalho|Ricota|Presunto @kg|Peito de peru @kg|Mortadela @kg|Salame @kg|Salsicha @kg|Nata|Coalhada|Massa de pastel|Massa de pizza|Massa de lasanha fresca|Fermento biológico fresco',
+  'Comida': 'Macarrão @pct|Toddy 1,8kg|Arroz @pct|Arroz integral @pct|Feijão carioca @pct|Feijão preto @pct|Lentilha @pct|Grão-de-bico @pct|Açúcar @pct|Açúcar mascavo @pct|Adoçante|Sal @pct|Óleo de soja|Azeite|Vinagre|Farinha de trigo @pct|Farinha de mandioca @pct|Farofa pronta @pct|Fubá @pct|Amido de milho|Polvilho @pct|Aveia|Granola @pct|Cereal matinal @cx|Café @pct|Café solúvel|Chá @cx|Achocolatado|Leite em pó|Macarrão instantâneo @pct|Espaguete @pct|Parafuso @pct|Lasanha (massa) @pct|Molho de tomate|Extrato de tomate|Atum (lata)|Sardinha (lata)|Milho (lata)|Ervilha (lata)|Seleta de legumes|Azeitona|Palmito|Maionese|Ketchup|Mostarda|Shoyu|Tempero pronto|Caldo de carne @cx|Caldo de galinha @cx|Pimenta-do-reino|Orégano|Colorau / páprica|Cominho|Canela|Fermento em pó|Gelatina @cx|Pudim / sobremesa @cx|Mistura para bolo @cx|Leite de coco|Coco ralado @pct|Doce de leite|Geleia|Mel|Pasta de amendoim|Creme de avelã|Tapioca (goma) @pct|Cuscuz (flocão) @pct|Pipoca de micro-ondas @pct|Milho de pipoca @pct|Purê de batata @pct|Sopa instantânea @pct|Batata palha @pct|Granulado @pct',
+  'Snack': 'Biscoito recheado @pct|Biscoito água e sal @pct|Biscoito cream cracker @pct|Biscoito maisena @pct|Biscoito de polvilho @pct|Bolacha wafer @pct|Salgadinho @pct|Batata chips @pct|Amendoim @pct|Castanha de caju @pct|Mix de castanhas @pct|Barra de cereal|Chocolate|Chocolate em barra|Bombom @cx|Bala @pct|Chiclete|Pirulito @pct|Paçoca @pct|Torrada temperada @pct|Pipoca pronta @pct|Sorvete de palito|Cookies @pct|Rosquinha @pct|Goiabada|Uva-passa @pct|Frutas secas @pct',
+  'Bebidas': 'Refrigerante 2L|Refrigerante lata|Refrigerante zero 2L|Água mineral|Água mineral 5L|Água com gás|Suco de caixinha|Suco integral 1L|Suco em pó|Suco concentrado|Chá gelado|Água de coco|Energético|Isotônico|Cerveja lata|Cerveja long neck|Cerveja garrafa|Vinho tinto|Vinho branco|Espumante|Cachaça|Vodka|Whisky|Gin|Bebida vegetal (aveia / amêndoa)|Gelo @pct|Kombucha|Guaraná natural',
+  'Congelados': 'Batata frita congelada @pct|Pizza congelada|Lasanha congelada|Hambúrguer congelado @cx|Nuggets @pct|Empanado de frango @pct|Pão de queijo congelado @pct|Polpa de fruta @pct|Açaí|Sorvete 2L|Vegetais congelados @pct|Ervilha congelada @pct|Brócolis congelado @pct|Peixe congelado @pct|Camarão congelado @pct|Frango congelado @kg|Coxinha congelada @pct|Esfiha congelada @pct|Pastel congelado @pct|Lanche congelado|Picolé @cx|Gelo de coco',
+  'Limpeza': 'Amaciante|Cândida|Desinfetante|Detergente|Papel Toalha @pct|Sabão em pó|Sabão líquido|Sabão em barra @pct|Água sanitária|Álcool 70%|Álcool líquido|Limpador multiuso|Limpa-vidros|Lustra-móveis|Tira-manchas|Limpador de banheiro|Pedra sanitária|Desengordurante|Saponáceo|Esponja de louça @pct|Esponja de aço @pct|Pano de chão|Pano multiuso @pct|Flanela|Saco de lixo @pct|Saco de lixo 100L @pct|Luva de limpeza|Vassoura|Rodo|Balde|Pá de lixo|Inseticida|Repelente|Odorizador de ambiente|Sabão para lava-louças|Secante lava-louças|Cloro|Removedor|Cera para piso|Lenço desinfetante',
+  'Higiene': 'Papel higiênico @pct|Sabonetes|Shampoo Caio|Shampoo|Condicionador|Creme de pentear|Sabonete líquido|Creme dental|Escova de dente|Fio dental|Enxaguante bucal|Desodorante|Desodorante aerossol|Aparelho de barbear|Espuma de barbear|Absorvente @pct|Protetor diário @pct|Hastes flexíveis|Algodão|Lenço de papel @cx|Hidratante corporal|Protetor solar|Removedor de esmalte|Esmalte|Lâmina de barbear|Curativo / band-aid @cx|Antisséptico|Gel de cabelo|Perfume|Máscara de cabelo|Lenço demaquilante|Talco|Sabonete íntimo|Preservativo @cx',
+  'Bebê e pet': 'Fralda @pct|Fralda geriátrica @pct|Lenço umedecido @pct|Pomada para assaduras|Shampoo infantil|Sabonete infantil|Leite infantil (fórmula)|Papinha|Cotonete infantil|Ração para cachorro @kg|Ração para gato @kg|Sachê para gato|Petisco para cachorro|Areia sanitária @pct|Tapete higiênico @pct|Shampoo pet|Brinquedo pet',
+  'Utensílio': 'Papel Alumínio|Filme plástico|Papel manteiga|Saco para freezer @pct|Saco para sanduíche @pct|Pote plástico|Guardanapo @pct|Copo descartável @pct|Prato descartável @pct|Talher descartável @pct|Canudo @pct|Palito de dente|Palito de churrasco @pct|Fósforo @cx|Isqueiro|Vela|Pilha AA @pct|Pilha AAA @pct|Lâmpada|Fita adesiva|Coador de café|Filtro de papel @cx|Forminha de papel @pct|Prendedor de roupa @pct|Extensão / benjamim|Pano de prato',
+  'Outros': 'Tulipinha|Carvão @pct|Gás de cozinha|Revista|Cartão presente|Flores|Recarga de celular|Sacola retornável'
+};
 const COMPRA_UN = [['un','Unidade'],['kg','Quilo (kg)'],['100g','A cada 100 g'],['g','Grama (g)'],['L','Litro (L)'],['pct','Pacote'],['cx','Caixa'],['dz','Dúzia']];
 const COMPRA_UN_LABEL = {un:'un', kg:'kg', '100g':'100 g', g:'g', L:'L', pct:'pct', cx:'cx', dz:'dz'};
 const COMPRA_PRIO = [['alta','Alta'],['media','Média'],['baixa','Baixa']];
@@ -2294,7 +2382,7 @@ function sanCompras(c){
       qtd:(isFinite(q)&&q>0)?Math.min(q,9999):1, un:COMPRA_UN.some(u=>u[0]===i.un)?i.un:'un', prio:['alta','media','baixa'].includes(i.prio)?i.prio:'media',
       precoSug:numOuNull(i.precoSug), precoAtual:numOuNull(i.precoAtual), precoUltimo:numOuNull(i.precoUltimo), estoque:numOuNull(i.estoque),
       precos:(Array.isArray(i.precos)?i.precos:[]).map(numOuNull).filter(v=>v!==null).slice(-30), levando:numOuNull(i.levando), promo:i.promo===true, promoUltimo:i.promoUltimo===true,
-      precisa:i.precisa===true, comprado:i.comprado===true, obs:txtA(i.obs,120), ts:Number(i.ts)||0});
+      precisa:i.precisa===true, comprado:i.comprado===true, obs:txtA(i.obs,120), ts:Number(i.ts)||0, usos:Math.min(9999, Math.max(0, Math.floor(Number(i.usos)||0)))});
   });
   return out;
 }
@@ -2309,7 +2397,7 @@ function deslocarPreco(it, novo){
   it.precoAtual = novo; it.promo = false;
 }
 function colocarNoCarrinho(it, qtd){
-  if(!it.precisa){ deslocarPreco(it, null); it.precisa = true; }
+  if(!it.precisa){ deslocarPreco(it, null); it.precisa = true; it.usos = (it.usos||0)+1; }
   it.comprado = false; it.levando = null; if(qtd>0) it.qtd = qtd; it.ts = Date.now();
 }
 const lsNum = v => {
@@ -2354,7 +2442,7 @@ function lsMsgVazia(icone, tituloVazio, subVazio){
 function linhaCompra(it, modo){
   const merc = it.listaId===MERCADO_ID;
   const meta = [];
-  if(merc){ meta.push(it.cat ? `<span class="pill neutral">${it.cat}</span>` : `<button type="button" class="pill warn ls-semcat" data-ls-edit="${it.id}">Sem categoria: escolher</button>`); }
+  if(merc){ meta.push(it.cat ? `<span class="pill neutral">${catLabel(it.cat)}</span>` : `<button type="button" class="pill warn ls-semcat" data-ls-edit="${it.id}">Sem categoria: escolher</button>`); }
   else meta.push(`<span class="pill ${it.prio==='alta'?'bad':it.prio==='baixa'?'neutral':'warn'}">Prioridade ${COMPRA_PRIO.find(p=>p[0]===it.prio)[1].toLowerCase()}</span>`);
   meta.push(`<span class="ls-qtd">${lsQtd(it.qtd)} ${COMPRA_UN_LABEL[it.un]}</span>`);
   if(modo==='catalogo' && it.estoque!=null) meta.push(`<span class="ls-qtd ls-estoque${it.estoque<=0?' zero':''}">estoque: ${lsQtd(it.estoque)} ${COMPRA_UN_LABEL[it.un]}</span>`);
@@ -2421,18 +2509,18 @@ function renderListas(){
       const visiv = cart.filter(i=>passa(i) && passaFiltroLs(i));
       const pend = visiv.filter(i=>!i.comprado), don = visiv.filter(i=>i.comprado);
       const gruposCat = arr => ['', ...COMPRA_CATS].map(c=>({c, its:arr.filter(i=>(i.cat||'')===c)})).filter(g=>g.its.length);
-      const htmlGrupos = arr => gruposCat(arr).map(g=>`<div class="ls-grupo"><div class="ls-grupo-t">${g.c||'Sem categoria'}<span>${g.its.length}</span></div>${g.its.map(i=>linhaCompra(i,'carrinho')).join('')}</div>`).join('');
+      const htmlGrupos = arr => gruposCat(arr).map(g=>`<div class="ls-grupo"><div class="ls-grupo-t">${catLabel(g.c)}<span>${g.its.length}</span></div>${g.its.map(i=>linhaCompra(i,'carrinho')).join('')}</div>`).join('');
       /* os já marcados descem para uma seção "Comprados" ao final, deixando os que faltam mais visíveis */
       const donHtml = don.length ? `<div class="ls-grupo ls-feitos"><div class="ls-grupo-t">Comprados<span>${don.length}</span></div>${don.slice().sort((a,b)=>(a.cat||'').localeCompare(b.cat||'','pt-BR')||a.nome.localeCompare(b.nome,'pt-BR')).map(i=>linhaCompra(i,'carrinho')).join('')}</div>` : '';
       corpo = abas + `<div class="ls-resumo card"><div class="ls-vals" id="ls-vals">${lsResumoVals(lista)}</div>
-        <button type="button" class="btn btn-primary btn-sm" id="ls-concluir" ${feitos.length?'':'disabled'}>${icon('check')} Concluir compra</button></div>`
+        <div class="ls-resumo-acts"><button type="button" class="btn btn-primary btn-sm" id="ls-modo-mercado" ${cart.length?'':'disabled'}>${icon('cart')} Modo mercado</button><button type="button" class="btn btn-ghost btn-sm" id="ls-concluir" ${feitos.length?'':'disabled'}>${icon('check')} Concluir compra</button></div></div>`
         + (cart.length ? lsFiltroBar() : '')
         + (visiv.length ? htmlGrupos(pend) + donHtml
-          : lsMsgVazia('cart', 'A lista de compras está vazia.', 'Marque “Precisa comprar” em <b>Todos os itens</b> ou digite “precisa comprar leite” na barra de lançamento.'));
+          : lsMsgVazia('cart', 'A lista de compras está vazia.', 'Toque em <b>Adicionar do catálogo</b> e escolha os itens com um toque cada, marque “Precisa comprar” em <b>Todos os itens</b> ou digite “precisa comprar leite” na barra de lançamento.'));
     } else {
       const visivCat = todos.filter(passa);
       const grupos = ['', ...COMPRA_CATS].map(c=>({c, its:visivCat.filter(i=>(i.cat||'')===c).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'))})).filter(g=>g.its.length);
-      corpo = abas + (visivCat.length ? grupos.map(g=>`<div class="ls-grupo"><div class="ls-grupo-t">${g.c||'Sem categoria'}<span>${g.its.length}</span></div>${g.its.map(i=>linhaCompra(i,'catalogo')).join('')}</div>`).join('')
+      corpo = abas + (visivCat.length ? grupos.map(g=>`<div class="ls-grupo"><div class="ls-grupo-t">${catLabel(g.c)}<span>${g.its.length}</span></div>${g.its.map(i=>linhaCompra(i,'catalogo')).join('')}</div>`).join('')
         : lsMsgVazia('layers', 'Ainda não há itens cadastrados.', 'Esta é a lista geral: cadastre tudo o que lembrar, com categoria e preço. A lista de compras é feita só com os itens marcados “Precisa comprar”.'));
     }
   } else {
@@ -2448,13 +2536,14 @@ function renderListas(){
   }
   host.innerHTML = `
     <div class="view-head"><div><h2>Listas de compra</h2><div class="view-sub">Mercado e listas por tema, com comparação entre o último preço e o atual</div></div>
-      <div class="ls-head-acts"><button class="btn btn-ghost" id="ls-compartilhar" title="Compartilhar esta lista">${icon('share')} Compartilhar</button><button class="btn btn-ghost" id="ls-nova-lista">${icon('plus')} Nova lista</button><button class="btn btn-primary" id="ls-novo-item">${icon('plus')} Adicionar vários itens</button></div></div>
+      <div class="ls-head-acts"><button class="btn btn-ghost" id="ls-compartilhar" title="Compartilhar esta lista">${icon('share')} Compartilhar</button><button class="btn btn-ghost" id="ls-nova-lista">${icon('plus')} Nova lista</button>${merc?`<button class="btn btn-ghost" id="ls-novo-item">${icon('edit')} Cadastrar itens</button><button class="btn btn-primary" id="ls-catalogo">${icon('plus')} Adicionar do catálogo</button>`:`<button class="btn btn-primary" id="ls-novo-item">${icon('plus')} Adicionar vários itens</button>`}</div></div>
     <div class="ls-chips">${chips}</div>
     <div class="ls-bar"><div class="ls-busca"><span>${icon('search')}</span><input type="search" id="ls-busca" placeholder="Buscar item" value="${escHtml(lsBusca)}"></div>
       ${!merc && dono ? `<button type="button" class="btn btn-ghost btn-sm" id="ls-edit-lista">${icon('edit')} Editar lista</button>` : ''}</div>
     ${!merc && !dono ? `<div class="view-sub" style="margin-bottom:10px;">Lista compartilhada por ${USERS[lista.dono].nome}.</div>` : ''}
     <div id="ls-corpo">${corpo}</div>`;
   ligarListas(lista);
+  renderCatalogo(); renderModoMercado();   /* se estiverem abertos, acompanham o que mudou (ex.: o parceiro marcou um item) */
   const pend = itemPendenteCategoria();
   if(pend && !document.getElementById('mini-wrap')) abrirItemModal(pend, {semFechar:true});
 }
@@ -2498,11 +2587,9 @@ function ligarListas(lista){
   document.getElementById('ls-nova-lista').addEventListener('click', ()=>abrirListaModal(null));
   document.getElementById('ls-compartilhar').addEventListener('click', ()=>abrirCompartilharLista(lista));
   const el = document.getElementById('ls-edit-lista'); if(el) el.addEventListener('click', ()=>abrirListaModal(lista));
-  const cc = document.getElementById('ls-concluir'); if(cc) cc.addEventListener('click', ()=>{
-    const f = itensDe(MERCADO_ID).filter(i=>i.precisa && i.comprado);
-    openChoiceModal({title:'Concluir compra?', desc:`${f.length} ${f.length===1?'item sai':'itens saem'} da lista de compras e ${f.length===1?'fica':'ficam'} no cadastro com o valor pago. Na próxima vez que voltarem à lista, esse valor vira o “último valor registrado”.`,
-      options:[{label:'Concluir', onChoose:()=>{ f.forEach(i=>{ i.precisa=false; i.comprado=false; i.levando=null; }); toast('Compra concluída','good'); salvar(); }},{label:'Cancelar', onChoose:()=>{}}]});
-  });
+  const cc = document.getElementById('ls-concluir'); if(cc) cc.addEventListener('click', ()=>concluirCompra());
+  const cg = document.getElementById('ls-catalogo'); if(cg) cg.addEventListener('click', abrirCatalogo);
+  const mm = document.getElementById('ls-modo-mercado'); if(mm) mm.addEventListener('click', abrirModoMercado);
 }
 function abrirAtualizarPreco(it){
   if(!it) return;
@@ -2545,7 +2632,7 @@ function abrirItemModal(it, opc){
   const sel = (id, arr, v)=>`<select id="${id}">${arr.map(([k,l])=>`<option value="${k}" ${k===v?'selected':''}>${l}</option>`).join('')}</select>`;
   const m = abrirMini({ic:'cart', titulo: novo?(opc.varios?'Adicionar itens':'Novo item'):'Editar item', sub: opc.varios?`${escHtml(lista.nome)} — um item de cada vez, a tela limpa depois de cada "Adicionar"`:escHtml(lista.nome), semFechar:!!opc.semFechar,
     corpo:`<div class="field"><label for="it-nome">Nome do item</label><input id="it-nome" type="text" maxlength="80" value="${escHtml(d.nome)}" autocomplete="off"></div>
-      ${merc?`<div class="field" style="margin-top:10px;"><label for="it-cat">Categoria</label><select id="it-cat"><option value="">Escolha uma categoria</option>${COMPRA_CATS.map(c=>`<option value="${c}" ${d.cat===c?'selected':''}>${c}</option>`).join('')}</select></div>`
+      ${merc?`<div class="field" style="margin-top:10px;"><label for="it-cat">Categoria</label><select id="it-cat"><option value="">Escolha uma categoria</option>${COMPRA_CATS.map(c=>`<option value="${c}" ${d.cat===c?'selected':''}>${catLabel(c)}</option>`).join('')}</select></div>`
         :`<div class="field" style="margin-top:10px;"><label for="it-prio">Prioridade</label>${sel('it-prio', COMPRA_PRIO, d.prio)}</div>`}
       <div class="form-grid" style="margin-top:10px;">
         <div class="field"><label for="it-qtd">Quantidade</label><input id="it-qtd" type="text" inputmode="decimal" value="${lsEditNum(d.qtd)}"></div>
@@ -2602,6 +2689,242 @@ function abrirItemModal(it, opc){
 }
 const mercado_ = ()=>{ garantirMercado(); return compras.listas.find(l=>l.id===MERCADO_ID); };
 
+/* ============ CATÁLOGO PADRÃO: montar a lista rápido ============ */
+let _catalogo = null;
+function catalogo(){
+  if(_catalogo) return _catalogo;
+  const vistos = new Set(); _catalogo = [];
+  COMPRA_CATS.forEach(cat=>String(CATALOGO_TXT[cat]||'').split('|').forEach(bruto=>{
+    const m = bruto.trim().match(/^(.*?)(?:\s+@(\S+))?$/); const nome = m[1].trim(); if(!nome) return;
+    const k = chaveNome(nome); if(!k || vistos.has(k)) return; vistos.add(k);
+    _catalogo.push({nome, cat, un:COMPRA_UN.some(u=>u[0]===m[2])?m[2]:'un', k, b:norm(nome)});
+  }));
+  return _catalogo;
+}
+/* uso do item: vezes que entrou na lista + compras com preço registrado (para os itens antigos, sem contador) */
+const usoItem = it => (it.usos||0)*3 + (it.precos?it.precos.length:0) + (it.precoAtual!=null||it.precoUltimo!=null?1:0);
+const acharCadastro = k => itensDe(MERCADO_ID).find(i=>chaveNome(i.nome)===k);
+/* entradas = cadastro do casal (Mercado) + catálogo; o que já está cadastrado tem prioridade (nome, seção e unidade dele) */
+function catEntradas(){
+  const mapa = new Map();
+  itensDe(MERCADO_ID).forEach(it=>{ const k = chaveNome(it.nome); if(k && !mapa.has(k)) mapa.set(k, {k, nome:it.nome, cat:it.cat, un:it.un, b:norm(it.nome), it}); });
+  catalogo().forEach(c=>{ if(!mapa.has(c.k)) mapa.set(c.k, {k:c.k, nome:c.nome, cat:c.cat, un:c.un, b:c.b, it:null}); });
+  return [...mapa.values()];
+}
+let catEstado = null;   /* {q, criados:Set, undo:{txt, fn, t}} enquanto a tela está aberta */
+function abrirCatalogo(){
+  garantirMercado();
+  const velho = document.getElementById('cat-wrap'); if(velho) velho.remove();
+  catEstado = {q:'', criados:new Set(), undo:null};
+  const w = document.createElement('div'); w.id = 'cat-wrap'; w.className = 'cat-wrap';
+  w.innerHTML = `<div class="cat-sheet" role="dialog" aria-modal="true" aria-labelledby="cat-t">
+    <div class="cat-head"><div class="cat-head-t"><h3 id="cat-t">Adicionar do catálogo</h3><p>Toque para pôr na lista · toque de novo para somar</p></div>
+      <button type="button" class="btn btn-primary" id="cat-ok">${icon('check')} Pronto <b class="cat-n" id="cat-n"></b></button></div>
+    <div class="cat-busca"><span>${icon('search')}</span><input type="search" id="cat-q" placeholder="Buscar: leite, arroz, sabão…" autocomplete="off" enterkeyhint="search" aria-label="Buscar no catálogo"></div>
+    <div class="cat-secs" id="cat-secs" role="navigation" aria-label="Seções"></div>
+    <div class="cat-lista" id="cat-lista"></div>
+    <div class="cat-undo" id="cat-undo" role="status" aria-live="polite" hidden><span id="cat-undo-t"></span><button type="button" id="cat-undo-b">Desfazer</button></div>
+  </div>`;
+  document.body.appendChild(w);
+  document.documentElement.classList.add('sem-rolar','cat-aberto');
+  const fechar = ()=>{ document.removeEventListener('keydown', kd); w.remove(); catEstado = null; document.documentElement.classList.remove('cat-aberto'); if(!document.getElementById('mm-wrap')) document.documentElement.classList.remove('sem-rolar'); renderListas(); };
+  const kd = e=>{ if(e.key==='Escape' && !document.querySelector('#choice-wrap:not(.hidden-el), .dd-ov, #mini-wrap')) fechar(); };
+  document.addEventListener('keydown', kd);
+  w.querySelector('#cat-ok').addEventListener('click', fechar);
+  w.addEventListener('click', e=>{ if(e.target===w) fechar(); });
+  const q = w.querySelector('#cat-q');
+  q.addEventListener('input', ()=>{ catEstado.q = q.value; renderCatalogo(); w.querySelector('#cat-lista').scrollTop = 0; });
+  q.addEventListener('keydown', e=>{ if(e.key!=='Enter') return; e.preventDefault(); const b = w.querySelector('#cat-lista [data-cat-add]'); if(b) b.click(); else { const n = w.querySelector('#cat-novo'); if(n) n.click(); } });
+  w.querySelector('#cat-undo-b').addEventListener('click', ()=>{ const u = catEstado && catEstado.undo; if(!u) return; u.fn(); catEstado.undo = null; schedulePersist(); renderCatalogo(); toastCat(null); });
+  /* um único ouvinte para a lista inteira: rápido mesmo com centenas de itens */
+  w.querySelector('#cat-lista').addEventListener('click', e=>{
+    const add = e.target.closest('[data-cat-add]'), menos = e.target.closest('[data-cat-menos]'), novo = e.target.closest('#cat-novo');
+    if(add) catSomar(add.dataset.catAdd, +1); else if(menos) catSomar(menos.dataset.catMenos, -1);
+    else if(novo){ const nome = catEstado.q.trim(); abrirItemModal(null, {listaId:MERCADO_ID, nome:nome.charAt(0).toUpperCase()+nome.slice(1), precisa:true, aoSalvar:()=>{ q.value=''; catEstado.q=''; renderCatalogo(); }}); }
+  });
+  w.querySelector('#cat-secs').addEventListener('click', e=>{
+    const b = e.target.closest('[data-cat-sec]'); if(!b) return;
+    if(catEstado.q){ q.value=''; catEstado.q=''; renderCatalogo(); }
+    const alvo = w.querySelector('#'+b.dataset.catSec); const lst = w.querySelector('#cat-lista');
+    if(alvo) lst.scrollTo({top: alvo.offsetTop - lst.offsetTop, behavior:'smooth'});
+  });
+  renderCatalogo();
+  if(matchMedia('(min-width:821px)').matches) setTimeout(()=>q.focus(), 60);
+}
+function toastCat(txt, fn){
+  const box = document.getElementById('cat-undo'); if(!box || !catEstado) return;
+  clearTimeout(catEstado.undoT);
+  if(!txt){ box.hidden = true; catEstado.undo = null; return; }
+  catEstado.undo = {fn};
+  box.querySelector('#cat-undo-t').textContent = txt; box.hidden = false;
+  catEstado.undoT = setTimeout(()=>{ box.hidden = true; if(catEstado) catEstado.undo = null; }, 6000);
+}
+/* +1: coloca na lista (ou soma 1 se já está). -1: tira 1 (ou tira da lista). Item do catálogo só vira cadastro aqui. */
+function catSomar(k, delta){
+  const e = catEntradas().find(x=>x.k===k); if(!e) return;
+  let it = acharCadastro(k);
+  if(!it){
+    if(delta<0) return;
+    it = {id:uid('it'), listaId:MERCADO_ID, nome:e.nome, cat:e.cat, qtd:1, un:e.un, prio:'media', precoSug:null, precoAtual:null, precoUltimo:null, precos:[], levando:null, promo:false, promoUltimo:false, estoque:null, precisa:true, comprado:false, obs:'', ts:Date.now(), usos:1};
+    compras.itens.push(it); catEstado.criados.add(it.id);
+    const id = it.id;
+    toastCat(`${e.nome} na lista`, ()=>{ compras.itens = compras.itens.filter(x=>x.id!==id); catEstado.criados.delete(id); });
+  } else {
+    const antes = JSON.parse(JSON.stringify(it)); const id = it.id;
+    const volta = ()=>{ const x = compras.itens.find(y=>y.id===id); if(x) Object.assign(x, antes); };
+    if(delta>0){
+      if(!it.precisa){ colocarNoCarrinho(it, 0); toastCat(`${it.nome} na lista (${lsQtd(it.qtd)} ${COMPRA_UN_LABEL[it.un]})`, volta); }
+      else { it.qtd = Math.min(9999, Math.round((it.qtd+1)*100)/100); it.ts = Date.now(); toastCat(`${it.nome}: ${lsQtd(it.qtd)} ${COMPRA_UN_LABEL[it.un]}`, volta); }
+    } else {
+      if(!it.precisa) return;
+      if(it.qtd>1){ it.qtd = Math.max(1, Math.round((it.qtd-1)*100)/100); toastCat(`${it.nome}: ${lsQtd(it.qtd)} ${COMPRA_UN_LABEL[it.un]}`, volta); }
+      else if(catEstado.criados.has(id)){   /* criado agora e desistiu: some do cadastro, como se nunca tivesse sido usado */
+        compras.itens = compras.itens.filter(x=>x.id!==id); catEstado.criados.delete(id);
+        toastCat(`${it.nome} saiu da lista`, ()=>{ compras.itens.push(Object.assign({}, antes)); catEstado.criados.add(id); });
+      } else { it.precisa = false; it.comprado = false; it.levando = null; toastCat(`${it.nome} saiu da lista`, volta); }
+    }
+  }
+  schedulePersist(); renderCatalogo();
+}
+function renderCatalogo(){
+  const w = document.getElementById('cat-wrap'); if(!w || !catEstado) return;
+  const ents = catEntradas();
+  const naLista = itensDe(MERCADO_ID).filter(i=>i.precisa).length;
+  w.querySelector('#cat-n').textContent = naLista;
+  const linha = (e, comSecao)=>{
+    const it = e.it && compras.itens.includes(e.it) ? e.it : acharCadastro(e.k);
+    const on = !!(it && it.precisa);
+    const qtd = on ? `${lsQtd(it.qtd)} ${COMPRA_UN_LABEL[it.un]||'un'}` : '';
+    const sub = [comSecao?catLabel(e.cat):'', it&&!on?'já cadastrado':''].filter(Boolean).join(' · ');
+    return `<div class="cat-row${on?' on':''}"><button type="button" class="cat-add" data-cat-add="${escHtml(e.k)}" aria-label="${on?'Somar 1 em':'Colocar na lista:'} ${escHtml(e.nome)}${on?', agora '+qtd:''}">
+        <span class="cat-nome">${escHtml(e.nome)}${sub?`<small>${sub}</small>`:''}</span>
+        ${on?`<span class="cat-qtd">${qtd}</span>`:''}<span class="cat-mais" aria-hidden="true">${icon('plus')}</span></button>
+      ${on?`<button type="button" class="cat-menos" data-cat-menos="${escHtml(e.k)}" aria-label="Tirar 1 de ${escHtml(e.nome)}">${icon('minus')}</button>`:''}</div>`;
+  };
+  const busca = norm(catEstado.q).replace(/[^a-z0-9 ]/g,' ').trim();
+  let html = '';
+  const secs = w.querySelector('#cat-secs');
+  if(busca){
+    const toks = busca.split(/\s+/);
+    const achados = ents.filter(e=>{ const b = e.b.replace(/[^a-z0-9 ]/g,' '); return toks.every(t=>b.includes(t) || e.k.includes(singPt(t))); })   /* “sabonetes” também acha “Sabonete” */
+      .map(e=>({e, s:(e.b.startsWith(busca)?0:(' '+e.b).includes(' '+toks[0])?1:2) - (e.it?0.5:0)}))
+      .sort((a,b)=>a.s-b.s || a.e.nome.localeCompare(b.e.nome,'pt-BR')).slice(0,80).map(x=>x.e);
+    const exato = ents.some(e=>e.k===chaveNome(catEstado.q));
+    html = (achados.length ? `<div class="cat-grupo">${achados.map(e=>linha(e,true)).join('')}</div>` : `<div class="cat-vazio">Nada com “${escHtml(catEstado.q.trim())}” no catálogo.</div>`)
+      + (exato ? '' : `<button type="button" class="cat-novo" id="cat-novo">${icon('plus')} Adicionar “${escHtml(catEstado.q.trim())}” como item novo</button>`);
+    secs.hidden = true;
+  } else {
+    const usados = itensDe(MERCADO_ID).filter(i=>usoItem(i)>0).sort((a,b)=>usoItem(b)-usoItem(a) || a.nome.localeCompare(b.nome,'pt-BR')).slice(0,12)
+      .map(it=>ents.find(e=>e.k===chaveNome(it.nome))).filter(Boolean);
+    const grupos = COMPRA_CATS.map((c,i)=>({id:'cat-s'+i, c, its:ents.filter(e=>e.cat===c).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'))})).filter(g=>g.its.length);
+    const semCat = ents.filter(e=>!e.cat);
+    if(semCat.length) grupos.push({id:'cat-sx', c:null, its:semCat});
+    const blocos = (usados.length?[{id:'cat-su', titulo:'Mais usados', its:usados}]:[]).concat(grupos.map(g=>({id:g.id, titulo:catLabel(g.c), its:g.its})));
+    html = blocos.map(b=>`<div class="cat-grupo" id="${b.id}"><div class="cat-grupo-t">${b.titulo}<span>${b.its.length}</span></div>${b.its.map(e=>linha(e,false)).join('')}</div>`).join('');
+    const sig = blocos.map(b=>b.id).join();
+    if(secs.dataset.sig!==sig){ secs.dataset.sig = sig; secs.innerHTML = blocos.map(b=>`<button type="button" class="cat-sec" data-cat-sec="${b.id}">${b.titulo}</button>`).join(''); }
+    secs.hidden = false;
+  }
+  const lst = w.querySelector('#cat-lista'); const top = lst.scrollTop;
+  lst.innerHTML = html; lst.scrollTop = top;
+}
+
+/* ============ MODO MERCADO: letras grandes, toque risca, tela sempre acesa ============ */
+/* vídeo mudo de 2 s em loop: alternativa para manter a tela acesa onde não existe a Wake Lock API */
+const VIDEO_TELA_ACESA = 'data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAMrbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAB9AAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAlV0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAB9AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAABAAAAAQAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAAfQAAAAAAABAAAAAAHNbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAABAAAAAgABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABeG1pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAThzdGJsAAAAuHN0c2QAAAAAAAAAAQAAAKhhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAABAAEABIAAAASAAAAAAAAAABFUxhdmM2MC4zMS4xMDIgbGlieDI2NAAAAAAAAAAAAAAAGP//AAAALmF2Y0MBQsAK/+EAFmdCwArZHsBEAAADAAQAAAMACDxImSABAAVoy4PLIAAAABBwYXNwAAAAAQAAAAEAAAAUYnRydAAAAAAAAApAAAAKQAAAABhzdHRzAAAAAAAAAAEAAAACAABAAAAAABRzdHNzAAAAAAAAAAEAAAABAAAAHHN0c2MAAAAAAAAAAQAAAAEAAAACAAAAAQAAABxzdHN6AAAAAAAAAAAAAAACAAAChgAAAAoAAAAUc3RjbwAAAAAAAAABAAADWwAAAGJ1ZHRhAAAAWm1ldGEAAAAAAAAAIWhkbHIAAAAAAAAAAG1kaXJhcHBsAAAAAAAAAAAAAAAALWlsc3QAAAAlqXRvbwAAAB1kYXRhAAAAAQAAAABMYXZmNjAuMTYuMTAwAAAACGZyZWUAAAKYbWRhdAAAAnAGBf//bNxF6b3m2Ui3lizYINkj7u94MjY0IC0gY29yZSAxNjQgcjMxMDggMzFlMTlmOSAtIEguMjY0L01QRUctNCBBVkMgY29kZWMgLSBDb3B5bGVmdCAyMDAzLTIwMjMgLSBodHRwOi8vd3d3LnZpZGVvbGFuLm9yZy94MjY0Lmh0bWwgLSBvcHRpb25zOiBjYWJhYz0wIHJlZj0zIGRlYmxvY2s9MTowOjAgYW5hbHlzZT0weDE6MHgxMTEgbWU9aGV4IHN1Ym1lPTcgcHN5PTEgcHN5X3JkPTEuMDA6MC4wMCBtaXhlZF9yZWY9MSBtZV9yYW5nZT0xNiBjaHJvbWFfbWU9MSB0cmVsbGlzPTEgOHg4ZGN0PTAgY3FtPTAgZGVhZHpvbmU9MjEsMTEgZmFzdF9wc2tpcD0xIGNocm9tYV9xcF9vZmZzZXQ9LTIgdGhyZWFkcz0xIGxvb2thaGVhZF90aHJlYWRzPTEgc2xpY2VkX3RocmVhZHM9MCBucj0wIGRlY2ltYXRlPTEgaW50ZXJsYWNlZD0wIGJsdXJheV9jb21wYXQ9MCBjb25zdHJhaW5lZF9pbnRyYT0wIGJmcmFtZXM9MCB3ZWlnaHRwPTAga2V5aW50PTI1MCBrZXlpbnRfbWluPTEgc2NlbmVjdXQ9NDAgaW50cmFfcmVmcmVzaD0wIHJjX2xvb2thaGVhZD00MCByYz1jcmYgbWJ0cmVlPTEgY3JmPTIzLjAgcWNvbXA9MC42MCBxcG1pbj0wIHFwbWF4PTY5IHFwc3RlcD00IGlwX3JhdGlvPTEuNDAgYXE9MToxLjAwAIAAAAAOZYiEBb///w9FAAFPf4AAAAAGQZo4CvqA';
+const telaAcesa = {
+  quer:false, lock:null, video:null, modo:null,
+  async ligar(){
+    this.quer = true;
+    if('wakeLock' in navigator){
+      try{ this.lock = await navigator.wakeLock.request('screen'); this.modo = 'lock';
+        this.lock.addEventListener('release', ()=>{ this.lock = null; if(this.modo==='lock') this.modo = null; mmTelaStatus(); });
+        mmTelaStatus(); return; }catch(e){ /* sem permissão (ex.: aba em segundo plano) → tenta o vídeo */ }
+    }
+    try{
+      if(!this.video){ const v = document.createElement('video'); v.setAttribute('playsinline',''); v.setAttribute('muted',''); v.muted = true; v.loop = true; v.setAttribute('aria-hidden','true'); v.className = 'tela-acesa-v'; v.src = VIDEO_TELA_ACESA; document.body.appendChild(v); this.video = v; }
+      await this.video.play(); this.modo = 'video';
+    }catch(e){ this.modo = null; }
+    mmTelaStatus();
+  },
+  desligar(){
+    this.quer = false; this.modo = null;
+    if(this.lock){ const l = this.lock; this.lock = null; l.release().catch(()=>{}); }
+    if(this.video){ this.video.pause(); this.video.remove(); this.video = null; }
+    mmTelaStatus();
+  }
+};
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && telaAcesa.quer && !telaAcesa.lock) telaAcesa.ligar(); });
+function mmTelaStatus(){
+  const b = document.getElementById('mm-tela'); if(!b) return;
+  const on = !!telaAcesa.modo;
+  b.classList.toggle('on', on); b.classList.toggle('falhou', telaAcesa.quer && !on);
+  b.setAttribute('aria-pressed', on?'true':'false');
+  b.innerHTML = `${icon(on?'sun':'moon')}<span>${on?'Tela acesa':(telaAcesa.quer?'Tela pode apagar':'Manter tela acesa')}</span>`;
+  b.title = on ? 'A tela não apaga enquanto o modo mercado está aberto. Toque para desligar.'
+    : (telaAcesa.quer ? 'Este aparelho não deixou manter a tela acesa. Toque para tentar de novo, ou aumente o tempo de bloqueio da tela nas configurações do celular.' : 'Toque para impedir que a tela apague.');
+}
+function concluirCompra(depois){
+  const f = itensDe(MERCADO_ID).filter(i=>i.precisa && i.comprado);
+  if(!f.length) return;
+  openChoiceModal({title:'Concluir compra?', desc:`${f.length} ${f.length===1?'item sai':'itens saem'} da lista de compras e ${f.length===1?'fica':'ficam'} no cadastro com o valor pago. Na próxima vez que voltarem à lista, esse valor vira o “último valor registrado”.`,
+    options:[{label:'Concluir', onChoose:()=>{ f.forEach(i=>{ i.precisa=false; i.comprado=false; i.levando=null; }); toast('Compra concluída','good'); schedulePersist(); if(depois) depois(); renderListas(); }},{label:'Cancelar', onChoose:()=>{}}]});
+}
+const mmOrdem = {};   /* quando cada item foi riscado nesta ida ao mercado: o último riscado vai para o fim */
+function abrirModoMercado(){
+  garantirMercado();
+  const velho = document.getElementById('mm-wrap'); if(velho) velho.remove();
+  const w = document.createElement('div'); w.id = 'mm-wrap'; w.className = 'mm-wrap'; w.setAttribute('role','dialog'); w.setAttribute('aria-modal','true'); w.setAttribute('aria-label','Modo mercado');
+  w.innerHTML = `<div class="mm-top">
+      <button type="button" class="mm-sair" id="mm-sair">${icon('chevLeft')}<span>Sair</span></button>
+      <div class="mm-cont" id="mm-cont" aria-live="polite"></div>
+      <button type="button" class="mm-tela" id="mm-tela"></button>
+    </div>
+    <div class="mm-prog" aria-hidden="true"><span id="mm-prog"></span></div>
+    <div class="mm-lista" id="mm-lista"></div>`;
+  document.body.appendChild(w);
+  document.documentElement.classList.add('sem-rolar','mm-aberto');
+  const fechar = ()=>{ document.removeEventListener('keydown', kd); telaAcesa.desligar(); w.remove(); document.documentElement.classList.remove('sem-rolar','mm-aberto'); renderListas(); };
+  const kd = e=>{ if(e.key==='Escape' && !document.querySelector('#choice-wrap:not(.hidden-el), .dd-ov, #mini-wrap')) fechar(); };
+  document.addEventListener('keydown', kd);
+  w.querySelector('#mm-sair').addEventListener('click', fechar);
+  w.querySelector('#mm-tela').addEventListener('click', ()=>{ if(telaAcesa.modo) telaAcesa.desligar(); else telaAcesa.ligar(); });
+  w.querySelector('#mm-lista').addEventListener('click', e=>{
+    if(e.target.closest('#mm-concluir')) return concluirCompra(()=>fechar());
+    if(e.target.closest('#mm-catalogo')) return abrirCatalogo();
+    const b = e.target.closest('[data-mm]'); if(!b) return;
+    const it = compras.itens.find(i=>i.id===b.dataset.mm); if(!it) return;
+    it.comprado = !it.comprado;
+    if(it.comprado) mmOrdem[it.id] = Date.now(); else delete mmOrdem[it.id];
+    if(it.comprado && it.levando==null) it.levando = it.qtd;
+    if(navigator.vibrate) try{ navigator.vibrate(12); }catch(_){}
+    schedulePersist(); renderModoMercado();
+  });
+  telaAcesa.ligar();   /* dentro do toque: o vídeo alternativo só pode tocar a partir de um gesto */
+  renderModoMercado();
+}
+function renderModoMercado(){
+  const w = document.getElementById('mm-wrap'); if(!w) return;
+  const cart = itensDe(MERCADO_ID).filter(i=>i.precisa);
+  const feitos = cart.filter(i=>i.comprado), pend = cart.filter(i=>!i.comprado);
+  const total = cart.length, n = feitos.length;
+  w.querySelector('#mm-cont').innerHTML = total ? `<b>${n}</b> de <b>${total}</b><small>${n===total?'tudo no carrinho':'no carrinho'}</small>` : '<small>lista vazia</small>';
+  w.querySelector('#mm-prog').style.width = total ? (n/total*100)+'%' : '0';
+  const linha = it => `<button type="button" class="mm-item${it.comprado?' feito':''}" data-mm="${it.id}" aria-pressed="${it.comprado?'true':'false'}">
+      <span class="mm-chk" aria-hidden="true">${icon('check')}</span>
+      <span class="mm-txt"><span class="mm-nome">${escHtml(it.nome)}</span>${it.obs?`<span class="mm-obs">${escHtml(it.obs)}</span>`:''}</span>
+      <span class="mm-qtd">${lsQtd(it.qtd)} <small>${COMPRA_UN_LABEL[it.un]||'un'}</small></span></button>`;
+  const ordem = c => { const i = COMPRA_CATS.indexOf(c); return i<0 ? 99 : i; };
+  const grupos = [];
+  [...new Set(pend.map(i=>i.cat||''))].sort((a,b)=>ordem(a)-ordem(b)).forEach(c=>grupos.push({t:catLabel(c), its:pend.filter(i=>(i.cat||'')===c).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'))}));
+  let html = grupos.map(g=>`<section class="mm-grupo"><h4>${g.t}<span>${g.its.length}</span></h4>${g.its.map(linha).join('')}</section>`).join('');
+  if(!total) html = `<div class="mm-vazio"><div>A lista de compras está vazia.</div><button type="button" class="btn btn-primary" id="mm-catalogo">${icon('plus')} Adicionar do catálogo</button></div>`;
+  else if(!pend.length) html = `<div class="mm-fim"><div class="mm-fim-t">Tudo no carrinho!</div><button type="button" class="btn btn-primary" id="mm-concluir">${icon('check')} Concluir compra</button></div>`;
+  if(feitos.length) html += `<section class="mm-grupo mm-feitos"><h4>No carrinho<span>${feitos.length}</span></h4>${feitos.slice().sort((a,b)=>(mmOrdem[a.id]||0)-(mmOrdem[b.id]||0)||a.nome.localeCompare(b.nome,'pt-BR')).map(linha).join('')}</section>`;
+  const lst = w.querySelector('#mm-lista'); const top = lst.scrollTop;
+  lst.innerHTML = html; lst.scrollTop = top;
+}
+
 
 /* ---- compartilhar a lista (texto pronto para WhatsApp, e-mail, etc.) ---- */
 function textoLista(lista){
@@ -2614,7 +2937,7 @@ function textoLista(lista){
     L.push(`*Lista de compras: ${lista.nome}* (${dt})`, '');
     ['', ...COMPRA_CATS].forEach(c=>{
       const g = cart.filter(i=>(i.cat||'')===c); if(!g.length) return;
-      L.push(`*${c||'Sem categoria'}*`);
+      L.push(`*${catLabel(c)}*`);
       g.forEach(i=>L.push(`${i.comprado?'✅':'⬜'} ${i.nome} (${q(i)})`+(i.obs?` - ${i.obs}`:'')));
       L.push('');
     });
@@ -2682,7 +3005,7 @@ function achaItemMercado(nome){
 function escolherItemMercado(nome, cands){
   return new Promise(res=>{
     openChoiceModal({title:`Qual item é “${nome}”?`, desc:'Encontrei mais de um parecido na lista geral.',
-      options:[...cands.map(c=>({label:c.nome+(c.cat?' · '+c.cat:''), onChoose:()=>res(c)})), {label:'Criar “'+nome+'” como item novo', onChoose:()=>res('novo')}, {label:'Pular', onChoose:()=>res('pular')}]});
+      options:[...cands.map(c=>({label:c.nome+(c.cat?' · '+catLabel(c.cat):''), onChoose:()=>res(c)})), {label:'Criar “'+nome+'” como item novo', onChoose:()=>res('novo')}, {label:'Pular', onChoose:()=>res('pular')}]});
   });
 }
 function cmdComprar(texto){
